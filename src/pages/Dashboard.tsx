@@ -12,22 +12,25 @@ import { CoffeeIcon, UtensilsCrossedIcon, SoupIcon, CakeIcon } from "lucide-reac
 export default function Dashboard() {
   const { user } = useUser();
   const { 
-    dailyNutrition, 
-    totals, 
-    addFood, 
-    removeFood, 
-    updateWater 
+    todayNutrition, 
+    getTotalCalories,
+    getTotalProteins,
+    getTotalFats,
+    getTotalCarbs,
+    addFoodToMeal, 
+    removeFoodFromMeal, 
+    updateWaterIntake 
   } = useNutrition();
   
   const [selectedMealType, setSelectedMealType] = useState<"breakfast" | "lunch" | "dinner" | "snack" | null>(null);
   const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
 
   const handleAddWater = () => {
-    updateWater(250); // Добавляем 250 мл воды
+    updateWaterIntake(250); // Добавляем 250 мл воды
   };
   
   const handleRemoveWater = () => {
-    updateWater(-250); // Уменьшаем на 250 мл
+    updateWaterIntake(-250); // Уменьшаем на 250 мл
   };
   
   const handleOpenAddFood = (mealType: "breakfast" | "lunch" | "dinner" | "snack") => {
@@ -42,15 +45,23 @@ export default function Dashboard() {
   
   const handleAddFood = (food: FoodItem) => {
     if (selectedMealType) {
-      addFood(selectedMealType, food);
+      addFoodToMeal(selectedMealType, food);
     }
   };
 
+  // Создаем объект для тотальных значений
+  const totals = {
+    calories: getTotalCalories(),
+    proteins: getTotalProteins(),
+    fats: getTotalFats(),
+    carbs: getTotalCarbs()
+  };
+
   // Находим завтрак, обед, ужин и перекус
-  const breakfast = dailyNutrition.meals.find(meal => meal.type === "breakfast")?.foods || [];
-  const lunch = dailyNutrition.meals.find(meal => meal.type === "lunch")?.foods || [];
-  const dinner = dailyNutrition.meals.find(meal => meal.type === "dinner")?.foods || [];
-  const snack = dailyNutrition.meals.find(meal => meal.type === "snack")?.foods || [];
+  const breakfast = todayNutrition.meals.find(meal => meal.type === "breakfast")?.foods || [];
+  const lunch = todayNutrition.meals.find(meal => meal.type === "lunch")?.foods || [];
+  const dinner = todayNutrition.meals.find(meal => meal.type === "dinner")?.foods || [];
+  const snack = todayNutrition.meals.find(meal => meal.type === "snack")?.foods || [];
 
   const { calorieGoal, proteinGoal, fatGoal, carbGoal, waterGoal } = user?.settings || {
     calorieGoal: 2000,
@@ -92,7 +103,7 @@ export default function Dashboard() {
 
       {/* Водный баланс */}
       <WaterTracker
-        current={dailyNutrition.water}
+        current={todayNutrition.water}
         goal={waterGoal}
         onAdd={handleAddWater}
         onRemove={handleRemoveWater}
@@ -105,28 +116,28 @@ export default function Dashboard() {
           icon={<CoffeeIcon className="h-5 w-5" />}
           foods={breakfast}
           onAddFood={() => handleOpenAddFood("breakfast")}
-          onRemoveFood={(foodId) => removeFood("breakfast", foodId)}
+          onRemoveFood={(foodId) => removeFoodFromMeal("breakfast", foodId)}
         />
         <MealCard
           title="Обед"
           icon={<UtensilsCrossedIcon className="h-5 w-5" />}
           foods={lunch}
           onAddFood={() => handleOpenAddFood("lunch")}
-          onRemoveFood={(foodId) => removeFood("lunch", foodId)}
+          onRemoveFood={(foodId) => removeFoodFromMeal("lunch", foodId)}
         />
         <MealCard
           title="Ужин"
           icon={<SoupIcon className="h-5 w-5" />}
           foods={dinner}
           onAddFood={() => handleOpenAddFood("dinner")}
-          onRemoveFood={(foodId) => removeFood("dinner", foodId)}
+          onRemoveFood={(foodId) => removeFoodFromMeal("dinner", foodId)}
         />
         <MealCard
           title="Перекус"
           icon={<CakeIcon className="h-5 w-5" />}
           foods={snack}
           onAddFood={() => handleOpenAddFood("snack")}
-          onRemoveFood={(foodId) => removeFood("snack", foodId)}
+          onRemoveFood={(foodId) => removeFoodFromMeal("snack", foodId)}
         />
       </div>
 

@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { FoodItem } from "./MealCard";
+import { FoodItem } from "@/context/NutritionContext";
 import { useState } from "react";
 import { foodDatabase } from "@/data/foodDatabase";
 import { Search } from "lucide-react";

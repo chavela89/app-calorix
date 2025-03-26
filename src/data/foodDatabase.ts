@@ -1,5 +1,5 @@
 
-import { FoodItem } from "@/components/MealCard";
+import { FoodItem } from "@/context/NutritionContext";
 import { v4 as uuidv4 } from "uuid";
 
 // База данных продуктов для прототипа

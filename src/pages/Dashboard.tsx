@@ -7,6 +7,7 @@ import { MacrosSummary } from "@/components/MacrosSummary";
 import { WaterTracker } from "@/components/WaterTracker";
 import { MealCard } from "@/components/MealCard";
 import { AddFoodDialog } from "@/components/AddFoodDialog";
+import { PremiumBanner } from "@/components/PremiumBanner";
 import { Calendar } from "@/components/ui/calendar";
 import { 
   CoffeeIcon, 
@@ -22,7 +23,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { 
   Tabs,
@@ -47,8 +48,19 @@ export default function Dashboard() {
   
   const [selectedMealType, setSelectedMealType] = useState<"breakfast" | "lunch" | "dinner" | "snack" | null>(null);
   const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [activeTab, setActiveTab] = useState<string>("meals");
+
+  // Функция для смены даты
+  const changeDate = (days: number) => {
+    if (days > 0) {
+      setSelectedDate(prev => addDays(prev, days));
+    } else {
+      setSelectedDate(prev => subDays(prev, Math.abs(days)));
+    }
+  };
+
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
 
   const handleAddWater = () => {
     updateWaterIntake(250); // Добавляем 250 мл воды
@@ -98,22 +110,35 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">
+      {/* Премиум баннер */}
+      <PremiumBanner />
+      
       {/* Заголовок и дата */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Дневник питания</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" className="h-8 w-8">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={() => changeDate(-1)}
+          >
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
           <Button variant="outline" className="flex items-center gap-2 h-8 px-3">
             <CalendarIcon className="h-4 w-4" />
             <span className="text-sm">
-              {selectedDate 
-                ? format(selectedDate, "EEEE, d MMMM", { locale: ru }) 
-                : "сегодня"}
+              {isToday 
+                ? "Сегодня" 
+                : format(selectedDate, "EEEE, d MMMM", { locale: ru })}
             </span>
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={() => changeDate(1)}
+          >
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
         </div>
@@ -124,7 +149,8 @@ export default function Dashboard() {
         <Card className="p-6 col-span-1 lg:col-span-1">
           <CaloriesSummary 
             consumed={totals.calories} 
-            goal={calorieGoal} 
+            goal={calorieGoal}
+            burnedCalories={320} 
           />
         </Card>
         
@@ -211,19 +237,19 @@ export default function Dashboard() {
               <div>
                 <h3 className="text-md font-semibold mb-3">Недавно добавленные</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="p-3 border rounded-lg">
+                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
                     <div className="font-medium">Куриная грудка</div>
                     <div className="text-sm text-muted-foreground">120 ккал</div>
                   </div>
-                  <div className="p-3 border rounded-lg">
+                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
                     <div className="font-medium">Гречка</div>
                     <div className="text-sm text-muted-foreground">150 ккал</div>
                   </div>
-                  <div className="p-3 border rounded-lg">
+                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
                     <div className="font-medium">Творог 5%</div>
                     <div className="text-sm text-muted-foreground">90 ккал</div>
                   </div>
-                  <div className="p-3 border rounded-lg">
+                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
                     <div className="font-medium">Яблоко</div>
                     <div className="text-sm text-muted-foreground">70 ккал</div>
                   </div>
@@ -272,6 +298,17 @@ export default function Dashboard() {
                 onAdd={handleAddWater}
                 onRemove={handleRemoveWater}
               />
+              
+              {/* Календарь */}
+              <Card className="p-4 mt-6">
+                <h3 className="text-md font-semibold mb-3">Календарь</h3>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  className="w-full border rounded-md"
+                />
+              </Card>
             </div>
           </div>
         </>

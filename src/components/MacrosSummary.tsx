@@ -29,6 +29,15 @@ export function MacrosSummary({ proteins, fats, carbs }: MacrosSummaryProps) {
         goal={fats.goal}
         color="bg-amber-500"
       />
+      
+      <div className="mt-4 text-sm text-muted-foreground">
+        <p className="mb-1">Рекомендуемый баланс макронутриентов:</p>
+        <ul className="list-disc pl-5">
+          <li>Белки: 10-35% калорий</li>
+          <li>Углеводы: 45-65% калорий</li>
+          <li>Жиры: 20-35% калорий</li>
+        </ul>
+      </div>
     </div>
   );
 }

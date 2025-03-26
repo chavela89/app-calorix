@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   TrophyIcon,
   BarChart3Icon,
   CalendarIcon,
-  FireIcon,
+  Flame,
   HeartIcon,
   SparklesIcon
 } from "lucide-react";
@@ -153,7 +152,7 @@ export default function Profile() {
                   <Card>
                     <CardContent className="pt-6">
                       <div className="flex flex-col items-center">
-                        <FireIcon className="h-8 w-8 text-orange-500 mb-2" />
+                        <Flame className="h-8 w-8 text-orange-500 mb-2" />
                         <p className="text-xl font-bold">{stats.totalCaloriesTracked.toLocaleString()}</p>
                         <p className="text-sm text-muted-foreground">Калорий отслежено</p>
                       </div>

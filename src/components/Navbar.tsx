@@ -8,7 +8,7 @@ import { LanguageSelector } from "./LanguageSelector";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
-  BookOpenIcon,
+  Apple,
   LayoutDashboardIcon,
   LineChartIcon,
   ListChecksIcon,
@@ -17,6 +17,7 @@ import {
   UtensilsIcon,
   UserIcon,
   UsersIcon,
+  BookOpenIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -35,12 +36,12 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { path: "/", label: "Дневник", icon: <UtensilsIcon className="h-5 w-5" /> },
-    { path: "/analytics", label: "Аналитика", icon: <LineChartIcon className="h-5 w-5" /> },
-    { path: "/planner", label: "Планировщик", icon: <ListChecksIcon className="h-5 w-5" /> },
-    { path: "/recipes", label: "Рецепты", icon: <BookOpenIcon className="h-5 w-5" /> },
-    { path: "/progress", label: "Прогресс", icon: <PieChartIcon className="h-5 w-5" /> },
-    { path: "/community", label: "Сообщество", icon: <UsersIcon className="h-5 w-5" /> },
+    { path: "/", label: translate("diary"), icon: <UtensilsIcon className="h-5 w-5" /> },
+    { path: "/analytics", label: translate("analytics"), icon: <LineChartIcon className="h-5 w-5" /> },
+    { path: "/planner", label: translate("planner"), icon: <ListChecksIcon className="h-5 w-5" /> },
+    { path: "/recipes", label: translate("recipes"), icon: <BookOpenIcon className="h-5 w-5" /> },
+    { path: "/progress", label: translate("progress"), icon: <PieChartIcon className="h-5 w-5" /> },
+    { path: "/community", label: translate("community"), icon: <UsersIcon className="h-5 w-5" /> },
   ];
 
   return (
@@ -49,7 +50,7 @@ export function Navbar() {
         {/* Logo and brand */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-            <UtensilsIcon className="h-6 w-6 text-orange-500" />
+            <Apple className="h-6 w-6 text-orange-500" />
             <span>CaloriX</span>
           </Link>
         </div>
@@ -90,29 +91,35 @@ export function Navbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
+                <DropdownMenuLabel>{translate("my_account")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Link to="/profile" className="flex w-full items-center">
                     <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Профиль</span>
+                    <span>{translate("profile")}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link to="/settings" className="flex w-full items-center">
                     <Settings2Icon className="mr-2 h-4 w-4" />
-                    <span>Настройки</span>
+                    <span>{translate("settings")}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="/premium" className="flex w-full items-center">
+                    <span className="mr-2 text-amber-500">✨</span>
+                    <span>{translate("premium")}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
-                  Выйти
+                  {translate("logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button asChild size="sm" variant="default">
-              <Link to="/login">Войти</Link>
+              <Link to="/login">{translate("login")}</Link>
             </Button>
           )}
         </div>

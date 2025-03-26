@@ -45,16 +45,55 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         document.documentElement.classList.remove("dark");
       }
+      
+      // Устанавливаем цвет фона в зависимости от выбранной темы
+      const selectedTheme = THEMES.find(t => t.id === theme);
+      if (selectedTheme) {
+        if (theme === "dark") {
+          document.documentElement.style.setProperty('--background-color', selectedTheme.color);
+          document.documentElement.style.setProperty('--text-color', '#ffffff');
+        } else {
+          document.documentElement.style.setProperty('--background-color', selectedTheme.color);
+          document.documentElement.style.setProperty('--text-color', '#1a1a1a');
+        }
+        
+        // Добавляем дополнительные CSS-переменные для специфических тем
+        switch(theme) {
+          case "cream":
+            document.documentElement.style.setProperty('--primary-color', '#d4a373');
+            break;
+          case "coral":
+            document.documentElement.style.setProperty('--primary-color', '#e63946');
+            break;
+          case "mint":
+            document.documentElement.style.setProperty('--primary-color', '#2d6a4f');
+            break;
+          case "yellow":
+            document.documentElement.style.setProperty('--primary-color', '#e9c46a');
+            break;
+          case "green":
+            document.documentElement.style.setProperty('--primary-color', '#386641');
+            break;
+          case "blue":
+            document.documentElement.style.setProperty('--primary-color', '#023e8a');
+            break;
+          case "orange":
+            document.documentElement.style.setProperty('--primary-color', '#f4a261');
+            break;
+          case "purple":
+            document.documentElement.style.setProperty('--primary-color', '#7b2cbf');
+            break;
+          default:
+            document.documentElement.style.setProperty('--primary-color', '#3b82f6');
+            break;
+        }
+      }
     }
   };
 
-  // Устанавливаем класс dark при первой загрузке, если тема темная
+  // Устанавливаем CSS-переменные при первой загрузке
   useEffect(() => {
-    if (currentTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    setTheme(currentTheme);
   }, [currentTheme]);
 
   return (

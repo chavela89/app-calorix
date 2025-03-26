@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { PlusIcon, Trash2Icon, MoreHorizontal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { FoodItem } from "@/context/NutritionContext";
 
@@ -10,29 +10,47 @@ interface MealCardProps {
   foods: FoodItem[];
   onAddFood: () => void;
   onRemoveFood: (id: string) => void;
+  time?: string;
+  totalCalories?: number;
 }
 
-export function MealCard({ title, icon, foods, onAddFood, onRemoveFood }: MealCardProps) {
-  const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
+export function MealCard({ 
+  title, 
+  icon, 
+  foods, 
+  onAddFood, 
+  onRemoveFood, 
+  time,
+  totalCalories
+}: MealCardProps) {
+  const mealTotalCalories = totalCalories || foods.reduce((sum, food) => sum + food.calories, 0);
 
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
           {icon}
-          <span>{title}</span>
+          <div className="flex flex-col items-start">
+            <span>{title}</span>
+            {time && <span className="text-xs text-muted-foreground">{time}</span>}
+          </div>
           <span className="text-sm font-normal text-muted-foreground ml-2">
-            {totalCalories} ккал
+            {mealTotalCalories} ккал
           </span>
         </CardTitle>
-        <Button size="sm" variant="ghost" onClick={onAddFood}>
-          <PlusIcon className="h-4 w-4 mr-1" /> Добавить
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button size="sm" variant="ghost" onClick={onAddFood} className="h-8 w-8 p-0">
+            <PlusIcon className="h-4 w-4" />
+          </Button>
+          <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {foods.length === 0 ? (
           <div className="text-center py-4 text-muted-foreground">
-            Нет добавленных продуктов
+            Нет запланированных блюд
           </div>
         ) : (
           <div className="space-y-2">
@@ -44,13 +62,11 @@ export function MealCard({ title, icon, foods, onAddFood, onRemoveFood }: MealCa
                 <div className="flex-1">
                   <div className="font-medium">{food.name}</div>
                   <div className="text-sm text-muted-foreground">
-                    {food.amount || '--'} {food.unit || 'г'} • {food.calories} ккал
+                    {food.amount || '--'} {food.unit || 'г'}
                   </div>
                 </div>
-                <div className="text-sm text-right mr-4">
-                  <div>{food.proteins}г Б</div>
-                  <div>{food.fats}г Ж</div>
-                  <div>{food.carbs}г У</div>
+                <div className="text-right mr-4">
+                  <div>{food.calories} ккал</div>
                 </div>
                 <Button
                   size="icon"
@@ -63,6 +79,16 @@ export function MealCard({ title, icon, foods, onAddFood, onRemoveFood }: MealCa
               </div>
             ))}
           </div>
+        )}
+        
+        {foods.length > 0 && (
+          <Button 
+            variant="ghost" 
+            className="w-full mt-4 text-muted-foreground hover:text-foreground"
+            onClick={onAddFood}
+          >
+            <PlusIcon className="h-4 w-4 mr-2" /> Добавить продукты
+          </Button>
         )}
       </CardContent>
     </Card>

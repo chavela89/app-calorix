@@ -8,21 +8,44 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FoodItem } from "@/context/NutritionContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { foodDatabase } from "@/data/foodDatabase";
-import { Search } from "lucide-react";
+import { Search, Plus, Minus, X } from "lucide-react";
 
 interface AddFoodDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onAddFood: (food: FoodItem) => void;
+  mealType?: string;
 }
 
-export function AddFoodDialog({ isOpen, onClose, onAddFood }: AddFoodDialogProps) {
+export function AddFoodDialog({ isOpen, onClose, onAddFood, mealType }: AddFoodDialogProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItem[]>([]);
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [amount, setAmount] = useState(100);
+  const [recentlyAdded, setRecentlyAdded] = useState<FoodItem[]>([]);
+
+  // Populate recently added foods (in a real app this would come from storage/API)
+  useEffect(() => {
+    const recent = [
+      foodDatabase.find(food => food.name === "Куриная грудка"),
+      foodDatabase.find(food => food.name === "Гречка"),
+      foodDatabase.find(food => food.name === "Творог 5%"),
+      foodDatabase.find(food => food.name === "Яблоко"),
+    ].filter(food => food !== undefined) as FoodItem[];
+    
+    setRecentlyAdded(recent);
+  }, []);
+
+  // Perform search as user types
+  useEffect(() => {
+    if (searchTerm.trim().length >= 2) {
+      handleSearch();
+    } else if (searchTerm.trim().length === 0) {
+      setSearchResults([]);
+    }
+  }, [searchTerm]);
 
   const handleSearch = () => {
     if (searchTerm.trim().length < 2) return;
@@ -66,34 +89,56 @@ export function AddFoodDialog({ isOpen, onClose, onAddFood }: AddFoodDialogProps
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Добавить продукт</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{mealType ? `Добавить продукт (${mealType})` : "Добавить продукт"}</DialogTitle>
         </DialogHeader>
         
         {!selectedFood ? (
           <div className="space-y-4">
             <div className="flex gap-2">
-              <Input
-                placeholder="Поиск продуктов..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              />
+              <div className="relative flex-1">
+                <Input
+                  placeholder="Поиск продуктов..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                  className="pl-9 w-full"
+                />
+                <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
+              </div>
               <Button variant="outline" onClick={handleSearch}>
                 <Search className="h-4 w-4" />
               </Button>
             </div>
             
-            <div className="overflow-auto max-h-[300px]">
-              {searchResults.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                  {searchTerm ? "Ничего не найдено" : "Введите название продукта"}
+            {searchTerm.length === 0 && (
+              <div className="space-y-4">
+                <h3 className="font-medium text-sm">Недавно добавленные</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {recentlyAdded.map((food) => (
+                    <div
+                      key={food.id}
+                      className="p-3 rounded-lg border border-border hover:bg-accent cursor-pointer"
+                      onClick={() => handleSelectFood(food)}
+                    >
+                      <div className="font-medium">{food.name}</div>
+                      <div className="text-sm text-muted-foreground">{food.calories} ккал</div>
+                    </div>
+                  ))}
                 </div>
-              ) : (
+              </div>
+            )}
+            
+            <div className="overflow-auto max-h-[300px]">
+              {searchTerm.length > 0 && searchResults.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  Ничего не найдено
+                </div>
+              ) : searchResults.length > 0 ? (
                 <div className="space-y-1">
                   {searchResults.map((food) => (
                     <div
                       key={food.id}
-                      className="p-2 rounded hover:bg-muted cursor-pointer"
+                      className="p-3 border rounded-lg hover:bg-muted cursor-pointer"
                       onClick={() => handleSelectFood(food)}
                     >
                       <div className="font-medium">{food.name}</div>
@@ -103,7 +148,7 @@ export function AddFoodDialog({ isOpen, onClose, onAddFood }: AddFoodDialogProps
                     </div>
                   ))}
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         ) : (
@@ -123,7 +168,7 @@ export function AddFoodDialog({ isOpen, onClose, onAddFood }: AddFoodDialogProps
                   size="icon"
                   onClick={() => setAmount((prev) => Math.max(10, prev - 10))}
                 >
-                  -
+                  <Minus className="h-4 w-4" />
                 </Button>
                 <Input
                   type="number"
@@ -137,7 +182,7 @@ export function AddFoodDialog({ isOpen, onClose, onAddFood }: AddFoodDialogProps
                   size="icon"
                   onClick={() => setAmount((prev) => prev + 10)}
                 >
-                  +
+                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -166,9 +211,11 @@ export function AddFoodDialog({ isOpen, onClose, onAddFood }: AddFoodDialogProps
             
             <div className="flex justify-between">
               <Button variant="outline" onClick={() => setSelectedFood(null)}>
-                Назад
+                <X className="h-4 w-4 mr-2" /> Назад
               </Button>
-              <Button onClick={handleAddFood}>Добавить</Button>
+              <Button onClick={handleAddFood}>
+                <Plus className="h-4 w-4 mr-2" /> Добавить
+              </Button>
             </div>
           </div>
         )}

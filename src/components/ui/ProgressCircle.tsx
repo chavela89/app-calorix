@@ -45,6 +45,7 @@ export function ProgressCircle({
           strokeDasharray={circumference}
           strokeDashoffset={circumference - dash}
           strokeLinecap="round"
+          className="transition-all duration-500 ease-in-out"
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">{children}</div>

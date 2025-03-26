@@ -13,9 +13,9 @@ export interface FoodItem {
   proteins: number;
   fats: number;
   carbs: number;
-  // Add other nutritional info as needed
-  servingSize?: number;
+  amount?: number;
   unit?: string;
+  servingSize?: number;
 }
 
 export interface Meal {

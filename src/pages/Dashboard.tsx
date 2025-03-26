@@ -1,11 +1,11 @@
 
 import { useEffect, useState } from "react";
-import { useNutrition } from "@/context/NutritionContext";
+import { useNutrition, FoodItem } from "@/context/NutritionContext";
 import { useUser } from "@/context/UserContext";
 import { CaloriesSummary } from "@/components/CaloriesSummary";
 import { MacrosSummary } from "@/components/MacrosSummary";
 import { WaterTracker } from "@/components/WaterTracker";
-import { MealCard, FoodItem } from "@/components/MealCard";
+import { MealCard } from "@/components/MealCard";
 import { AddFoodDialog } from "@/components/AddFoodDialog";
 import { CoffeeIcon, UtensilsCrossedIcon, SoupIcon, CakeIcon } from "lucide-react";
 
@@ -114,28 +114,28 @@ export default function Dashboard() {
         <MealCard
           title="Завтрак"
           icon={<CoffeeIcon className="h-5 w-5" />}
-          foods={breakfast}
+          foods={breakfast as any[]}
           onAddFood={() => handleOpenAddFood("breakfast")}
           onRemoveFood={(foodId) => removeFoodFromMeal("breakfast", foodId)}
         />
         <MealCard
           title="Обед"
           icon={<UtensilsCrossedIcon className="h-5 w-5" />}
-          foods={lunch}
+          foods={lunch as any[]}
           onAddFood={() => handleOpenAddFood("lunch")}
           onRemoveFood={(foodId) => removeFoodFromMeal("lunch", foodId)}
         />
         <MealCard
           title="Ужин"
           icon={<SoupIcon className="h-5 w-5" />}
-          foods={dinner}
+          foods={dinner as any[]}
           onAddFood={() => handleOpenAddFood("dinner")}
           onRemoveFood={(foodId) => removeFoodFromMeal("dinner", foodId)}
         />
         <MealCard
           title="Перекус"
           icon={<CakeIcon className="h-5 w-5" />}
-          foods={snack}
+          foods={snack as any[]}
           onAddFood={() => handleOpenAddFood("snack")}
           onRemoveFood={(foodId) => removeFoodFromMeal("snack", foodId)}
         />

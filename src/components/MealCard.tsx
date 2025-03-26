@@ -2,17 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-
-export interface FoodItem {
-  id: string;
-  name: string;
-  calories: number;
-  proteins: number;
-  fats: number;
-  carbs: number;
-  amount: number;
-  unit: string;
-}
+import { FoodItem } from "@/context/NutritionContext";
 
 interface MealCardProps {
   title: string;
@@ -54,7 +44,7 @@ export function MealCard({ title, icon, foods, onAddFood, onRemoveFood }: MealCa
                 <div className="flex-1">
                   <div className="font-medium">{food.name}</div>
                   <div className="text-sm text-muted-foreground">
-                    {food.amount} {food.unit} • {food.calories} ккал
+                    {food.amount || '--'} {food.unit || 'г'} • {food.calories} ккал
                   </div>
                 </div>
                 <div className="text-sm text-right mr-4">

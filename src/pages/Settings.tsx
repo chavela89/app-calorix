@@ -11,7 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { Separator } from "@/components/ui/separator";
-import { toast } from '@/hooks/use-toast';
+import { toast } from "@/hooks/use-toast";
 import { ChevronLeftIcon, SaveIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

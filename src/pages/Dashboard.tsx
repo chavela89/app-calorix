@@ -181,158 +181,154 @@ export default function Dashboard() {
               <TabsTrigger value="meals" className="flex-1">Приемы пищи</TabsTrigger>
               <TabsTrigger value="analytics" className="flex-1">Аналитика</TabsTrigger>
             </TabsList>
-          </Tabs>
-        </div>
-      </div>
+            
+            <TabsContent value="meals">
+              <div className="mt-4">
+                {/* Поиск продуктов */}
+                <div className="relative">
+                  <Input 
+                    placeholder="Найти продукт..." 
+                    className="pl-10 pr-10"
+                    onClick={() => setIsAddFoodOpen(true)}
+                    readOnly
+                  />
+                  <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <MicIcon className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+                </div>
+                
+                {/* Быстрое добавление */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+                  <Button 
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => handleOpenAddFood("breakfast")}
+                  >
+                    <CoffeeIcon className="h-4 w-4 mr-2" /> Завтрак
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => handleOpenAddFood("lunch")}
+                  >
+                    <UtensilsCrossedIcon className="h-4 w-4 mr-2" /> Обед
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => handleOpenAddFood("dinner")}
+                  >
+                    <SoupIcon className="h-4 w-4 mr-2" /> Ужин
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => handleOpenAddFood("snack")}
+                  >
+                    <CakeIcon className="h-4 w-4 mr-2" /> Перекус
+                  </Button>
+                </div>
 
-      {activeTab === "meals" ? (
-        <>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="col-span-1 lg:col-span-2 space-y-6">
-              {/* Поиск продуктов */}
-              <div className="relative">
-                <Input 
-                  placeholder="Найти продукт..." 
-                  className="pl-10 pr-10"
-                  onClick={() => setIsAddFoodOpen(true)}
-                  readOnly
-                />
-                <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <MicIcon className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
-              </div>
-              
-              {/* Быстрое добавление */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <Button 
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => handleOpenAddFood("breakfast")}
-                >
-                  <CoffeeIcon className="h-4 w-4 mr-2" /> Завтрак
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => handleOpenAddFood("lunch")}
-                >
-                  <UtensilsCrossedIcon className="h-4 w-4 mr-2" /> Обед
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => handleOpenAddFood("dinner")}
-                >
-                  <SoupIcon className="h-4 w-4 mr-2" /> Ужин
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => handleOpenAddFood("snack")}
-                >
-                  <CakeIcon className="h-4 w-4 mr-2" /> Перекус
-                </Button>
-              </div>
-
-              {/* Недавно добавленные */}
-              <div>
-                <h3 className="text-md font-semibold mb-3">Недавно добавленные</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
-                    <div className="font-medium">Куриная грудка</div>
-                    <div className="text-sm text-muted-foreground">120 ккал</div>
-                  </div>
-                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
-                    <div className="font-medium">Гречка</div>
-                    <div className="text-sm text-muted-foreground">150 ккал</div>
-                  </div>
-                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
-                    <div className="font-medium">Творог 5%</div>
-                    <div className="text-sm text-muted-foreground">90 ккал</div>
-                  </div>
-                  <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
-                    <div className="font-medium">Яблоко</div>
-                    <div className="text-sm text-muted-foreground">70 ккал</div>
+                {/* Недавно добавленные */}
+                <div className="mt-6">
+                  <h3 className="text-md font-semibold mb-3">Недавно добавленные</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+                      <div className="font-medium">Куриная грудка</div>
+                      <div className="text-sm text-muted-foreground">120 ккал</div>
+                    </div>
+                    <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+                      <div className="font-medium">Гречка</div>
+                      <div className="text-sm text-muted-foreground">150 ккал</div>
+                    </div>
+                    <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+                      <div className="font-medium">Творог 5%</div>
+                      <div className="text-sm text-muted-foreground">90 ккал</div>
+                    </div>
+                    <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+                      <div className="font-medium">Яблоко</div>
+                      <div className="text-sm text-muted-foreground">70 ккал</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Приемы пищи */}
-              <MealCard
-                title="Завтрак"
-                icon={<CoffeeIcon className="h-5 w-5 text-orange-400" />}
-                foods={breakfast}
-                onAddFood={() => handleOpenAddFood("breakfast")}
-                onRemoveFood={(foodId) => removeFoodFromMeal("breakfast", foodId)}
-                time="08:30"
-              />
-              <MealCard
-                title="Обед"
-                icon={<UtensilsCrossedIcon className="h-5 w-5 text-orange-400" />}
-                foods={lunch}
-                onAddFood={() => handleOpenAddFood("lunch")}
-                onRemoveFood={(foodId) => removeFoodFromMeal("lunch", foodId)}
-                time="13:00"
-              />
-              <MealCard
-                title="Ужин"
-                icon={<SoupIcon className="h-5 w-5 text-orange-400" />}
-                foods={dinner}
-                onAddFood={() => handleOpenAddFood("dinner")}
-                onRemoveFood={(foodId) => removeFoodFromMeal("dinner", foodId)}
-                time="19:00"
-              />
-              <MealCard
-                title="Перекус"
-                icon={<CakeIcon className="h-5 w-5 text-orange-400" />}
-                foods={snack}
-                onAddFood={() => handleOpenAddFood("snack")}
-                onRemoveFood={(foodId) => removeFoodFromMeal("snack", foodId)}
-              />
-            </div>
-
-            {/* Водный баланс */}
-            <div className="col-span-1 lg:col-span-1">
-              <WaterTracker
-                current={todayNutrition.water}
-                goal={waterGoal}
-                onAdd={handleAddWater}
-                onRemove={handleRemoveWater}
-              />
-              
-              {/* Календарь */}
-              <Card className="p-4 mt-6">
-                <h3 className="text-md font-semibold mb-3">Календарь</h3>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => date && setSelectedDate(date)}
-                  className="w-full border rounded-md"
-                />
-              </Card>
-            </div>
-          </div>
-        </>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="col-span-1 lg:col-span-2">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Калории по дням</h2>
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">График калорий будет доступен в ближайшем обновлении</p>
+                {/* Приемы пищи */}
+                <div className="mt-6 space-y-6">
+                  <MealCard
+                    title="Завтрак"
+                    icon={<CoffeeIcon className="h-5 w-5 text-orange-400" />}
+                    foods={breakfast}
+                    onAddFood={() => handleOpenAddFood("breakfast")}
+                    onRemoveFood={(foodId) => removeFoodFromMeal("breakfast", foodId)}
+                    time="08:30"
+                  />
+                  <MealCard
+                    title="Обед"
+                    icon={<UtensilsCrossedIcon className="h-5 w-5 text-orange-400" />}
+                    foods={lunch}
+                    onAddFood={() => handleOpenAddFood("lunch")}
+                    onRemoveFood={(foodId) => removeFoodFromMeal("lunch", foodId)}
+                    time="13:00"
+                  />
+                  <MealCard
+                    title="Ужин"
+                    icon={<SoupIcon className="h-5 w-5 text-orange-400" />}
+                    foods={dinner}
+                    onAddFood={() => handleOpenAddFood("dinner")}
+                    onRemoveFood={(foodId) => removeFoodFromMeal("dinner", foodId)}
+                    time="19:00"
+                  />
+                  <MealCard
+                    title="Перекус"
+                    icon={<CakeIcon className="h-5 w-5 text-orange-400" />}
+                    foods={snack}
+                    onAddFood={() => handleOpenAddFood("snack")}
+                    onRemoveFood={(foodId) => removeFoodFromMeal("snack", foodId)}
+                  />
+                </div>
               </div>
-            </Card>
-          </div>
-          
-          <div className="col-span-1">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Распределение нутриентов</h2>
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Статистика будет доступна в ближайшем обновлении</p>
+            </TabsContent>
+            
+            <TabsContent value="analytics">
+              <div className="mt-6">
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Калории по дням</h2>
+                  <div className="h-64 flex items-center justify-center">
+                    <p className="text-muted-foreground">График калорий будет доступен в ближайшем обновлении</p>
+                  </div>
+                </Card>
+                
+                <Card className="p-6 mt-6">
+                  <h2 className="text-xl font-semibold mb-4">Распределение нутриентов</h2>
+                  <div className="h-64 flex items-center justify-center">
+                    <p className="text-muted-foreground">Статистика будет доступна в ближайшем обновлении</p>
+                  </div>
+                </Card>
               </div>
-            </Card>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
-      )}
+
+        {/* Водный баланс */}
+        <div className="col-span-1 lg:col-span-1">
+          <WaterTracker
+            current={todayNutrition.water}
+            goal={waterGoal}
+            onAdd={handleAddWater}
+            onRemove={handleRemoveWater}
+          />
+          
+          {/* Календарь */}
+          <Card className="p-4 mt-6">
+            <h3 className="text-md font-semibold mb-3">Календарь</h3>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              className="w-full border rounded-md"
+            />
+          </Card>
+        </div>
+      </div>
 
       {/* Диалог добавления продукта */}
       <AddFoodDialog

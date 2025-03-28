@@ -267,52 +267,28 @@ export default function Community() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">{challenge.description}</p>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>{translate("progress")}</span>
-                        <span>{challenge.progress}%</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-primary rounded-full" 
-                          style={{ width: `${challenge.progress}%` }}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1 text-muted-foreground" />
-                        <span className="text-sm">{challenge.participants} {translate("participants")}</span>
-                      </div>
-                      {challenge.active && (
-                        <div className="text-sm text-primary">
-                          {challenge.daysLeft} {translate("days_left")}
-                        </div>
-                      )}
-                    </div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>{translate("participants")}: {challenge.participants}</span>
+                    {challenge.active && <span>{challenge.daysLeft} {translate("days")} {translate("left")}</span>}
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary rounded-full" 
+                      style={{ width: `${challenge.progress}%` }}
+                    />
+                  </div>
+                  <div className="text-right text-xs text-muted-foreground mt-1">
+                    {challenge.progress}% {translate("completed")}
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button variant={challenge.active ? "default" : "outline"} className="w-full">
-                    {challenge.active ? translate("join_challenge") : translate("view_results")}
-                  </Button>
-                </CardFooter>
               </Card>
             ))}
-            
-            <Card className="border-dashed flex flex-col items-center justify-center p-6">
-              <div className="rounded-full bg-muted/50 p-4 mb-4">
-                <Trophy className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="font-medium text-lg mb-2">{translate("create_challenge")}</h3>
-              <p className="text-sm text-muted-foreground text-center mb-4">{translate("create_challenge_description")}</p>
-              <Button variant="outline">
-                {translate("create_challenge")}
-              </Button>
-            </Card>
+          </div>
+          
+          <div className="text-center">
+            <Button>
+              {translate("view_all_challenges")}
+            </Button>
           </div>
         </TabsContent>
         
@@ -320,7 +296,7 @@ export default function Community() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {groups.map((group) => (
               <Card key={group.id} className="overflow-hidden">
-                <div className="h-32 w-full overflow-hidden">
+                <div className="h-40 overflow-hidden">
                   <img 
                     src={group.image} 
                     alt={group.name} 
@@ -328,20 +304,23 @@ export default function Community() {
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle>{group.name}</CardTitle>
+                  <CardTitle className="text-lg">{group.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{translate("members")}</span>
-                    <span>{group.members}</span>
+                <CardContent>
+                  <div className="flex justify-between text-sm mb-4">
+                    <div className="flex items-center">
+                      <Users className="h-4 w-4 mr-1 text-muted-foreground" />
+                      <span>{group.members} {translate("members")}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <MessageCircle className="h-4 w-4 mr-1 text-muted-foreground" />
+                      <span>{group.postsPerDay} / {translate("day")}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{translate("posts_per_day")}</span>
-                    <span>{group.postsPerDay}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {group.topics.map((topic, i) => (
-                      <Badge key={i} variant="outline" className="text-xs">
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {group.topics.map((topic, index) => (
+                      <Badge key={index} variant="outline">
                         #{topic}
                       </Badge>
                     ))}
@@ -354,59 +333,24 @@ export default function Community() {
                 </CardFooter>
               </Card>
             ))}
-            
-            <Card className="border-dashed flex flex-col items-center justify-center p-6">
-              <div className="rounded-full bg-muted/50 p-4 mb-4">
-                <Users className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="font-medium text-lg mb-2">{translate("create_group")}</h3>
-              <p className="text-sm text-muted-foreground text-center mb-4">{translate("create_group_description")}</p>
-              <Button variant="outline">
-                {translate("create_group")}
-              </Button>
-            </Card>
           </div>
         </TabsContent>
         
         <TabsContent value="friends" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(5)].map((_, index) => (
-              <Card key={index}>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage src={`https://i.pravatar.cc/150?img=${20 + index}`} />
-                      <AvatarFallback>
-                        <UserIcon className="h-6 w-6" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-medium text-lg">{["Анна К.", "Иван С.", "Ольга П.", "Дмитрий В.", "Наталья М."][index]}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">{translate("active_today")}</p>
-                      <div className="flex gap-1">
-                        <Badge variant="outline" className="text-xs">-2.5 кг</Badge>
-                        <Badge variant="outline" className="text-xs">14 {translate("days_streak")}</Badge>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="p-6 pt-0 flex gap-2">
-                  <Button variant="outline" className="flex-1">
-                    {translate("message")}
-                  </Button>
-                  <Button className="flex-1">
-                    {translate("view_profile")}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="text-center">
-            <Button variant="outline">
-              {translate("find_friends")}
-            </Button>
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <UserIcon className="h-16 w-16 text-muted-foreground mb-4" />
+                <h3 className="text-xl font-medium mb-2">{translate("find_friends")}</h3>
+                <p className="text-muted-foreground mb-6">
+                  {translate("friends_description")}
+                </p>
+                <Button>
+                  {translate("find_friends")}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

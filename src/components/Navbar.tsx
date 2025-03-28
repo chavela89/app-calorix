@@ -18,6 +18,8 @@ import {
   UserIcon,
   UsersIcon,
   BookOpenIcon,
+  Menu,
+  X,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -28,12 +30,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function Navbar() {
   const { user, logout } = useUser();
   const { translate } = useLanguage();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const navItems = [
     { path: "/", label: translate("diary"), icon: <UtensilsIcon className="h-5 w-5" /> },
@@ -74,6 +79,69 @@ export function Navbar() {
             </Link>
           ))}
         </nav>
+
+        {/* Mobile navigation */}
+        {isMobile && (
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <div className="flex flex-col h-full py-4">
+                <div className="flex items-center mb-6">
+                  <Apple className="h-6 w-6 text-orange-500 mr-2" />
+                  <span className="font-bold text-xl">CaloriX</span>
+                </div>
+                
+                <nav className="space-y-2 flex-1">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        location.pathname === item.path
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      }`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </Link>
+                  ))}
+                </nav>
+                
+                <div className="pt-4 border-t mt-auto">
+                  <div className="flex items-center gap-2 mb-4">
+                    <ThemeSelector />
+                    <LanguageSelector />
+                  </div>
+                  
+                  {user ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Avatar className="h-8 w-8 mr-2">
+                          <AvatarImage src="/avatar.png" alt={user.name} />
+                          <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">{user.name}</span>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={logout}>
+                        {translate("logout")}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button asChild size="sm" variant="default" className="w-full">
+                      <Link to="/login">{translate("login")}</Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
 
         {/* User menu, theme, language */}
         <div className="flex items-center gap-2">

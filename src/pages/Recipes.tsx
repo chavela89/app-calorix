@@ -1,19 +1,32 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BookOpenIcon, ChevronRightIcon, ClockIcon, SearchIcon, StarIcon, UtensilsIcon, HeartIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { RecipeDetail } from "@/components/RecipeDetail";
+import { 
+  BookOpenIcon, 
+  ChevronRightIcon, 
+  ClockIcon, 
+  SearchIcon, 
+  StarIcon, 
+  UtensilsIcon, 
+  HeartIcon 
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FoodSearch } from "@/components/FoodSearch";
 
 export default function Recipes() {
   const { translate } = useLanguage();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+  const [isRecipeDetailOpen, setIsRecipeDetailOpen] = useState(false);
   
   // Демо-данные для рецептов
   const recipes = [
@@ -109,18 +122,55 @@ export default function Recipes() {
     }
   ];
 
-  // Фильтрация рецептов по активной вкладке и поисковому запросу
+  // Tags mapping
+  const tagsMappings: Record<string, string[]> = {
+    "vegetarian": ["vegetarian", "vegan"],
+    "high_protein": ["protein"],
+    "low_carb": ["low-carb"],
+    "quick_meal": ["quick"],
+    "gluten_free": ["gluten-free"],
+    "dairy_free": ["dairy-free"],
+  };
+
+  // Toggle tag filter
+  const toggleTag = (tag: string) => {
+    if (activeTag === tag) {
+      setActiveTag(null);
+    } else {
+      setActiveTag(tag);
+    }
+  };
+
+  // Фильтрация рецептов по активной вкладке, тегу и поисковому запросу
   const filteredRecipes = recipes.filter(recipe => {
     const matchesTab = activeTab === "all" || recipe.category === activeTab;
-    const matchesSearch = recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          recipe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesTab && matchesSearch;
+    
+    const matchesTag = !activeTag || 
+      (tagsMappings[activeTag] && 
+      tagsMappings[activeTag].some(mappedTag => recipe.tags.includes(mappedTag)));
+    
+    const matchesSearch = !searchQuery || 
+      recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    return matchesTab && matchesTag && matchesSearch;
   });
+
+  // Функция для открытия рецепта
+  const openRecipeDetail = (recipe: any) => {
+    setSelectedRecipe(recipe);
+    setIsRecipeDetailOpen(true);
+  };
 
   // Функция для перехода на страницу калькулятора рецептов
   const goToRecipeCalculator = () => {
-    window.location.href = "/recipe-calculator";
+    navigate("/recipe-calculator");
+  };
+  
+  // Обработка поиска через компонент FoodSearch
+  const handleFoodSelection = (food: any) => {
+    setSearchQuery(food.name);
   };
 
   return (
@@ -157,22 +207,46 @@ export default function Recipes() {
           </TabsList>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
+            <Badge 
+              variant={activeTag === "vegetarian" ? "default" : "outline"} 
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() => toggleTag("vegetarian")}
+            >
               {translate("vegetarian")}
             </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
+            <Badge 
+              variant={activeTag === "high_protein" ? "default" : "outline"} 
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() => toggleTag("high_protein")}
+            >
               {translate("high_protein")}
             </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
+            <Badge 
+              variant={activeTag === "low_carb" ? "default" : "outline"} 
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() => toggleTag("low_carb")}
+            >
               {translate("low_carb")}
             </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
+            <Badge 
+              variant={activeTag === "quick_meal" ? "default" : "outline"} 
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() => toggleTag("quick_meal")}
+            >
               {translate("quick_meal")}
             </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
+            <Badge 
+              variant={activeTag === "gluten_free" ? "default" : "outline"} 
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() => toggleTag("gluten_free")}
+            >
               {translate("gluten_free")}
             </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
+            <Badge 
+              variant={activeTag === "dairy_free" ? "default" : "outline"} 
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() => toggleTag("dairy_free")}
+            >
               {translate("dairy_free")}
             </Badge>
           </div>
@@ -222,7 +296,11 @@ export default function Recipes() {
                   </div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0">
-                  <Button variant="secondary" className="w-full gap-2">
+                  <Button 
+                    variant="secondary" 
+                    className="w-full gap-2"
+                    onClick={() => openRecipeDetail(recipe)}
+                  >
                     {translate("view_recipe")}
                     <ChevronRightIcon className="h-4 w-4" />
                   </Button>
@@ -232,6 +310,12 @@ export default function Recipes() {
           </div>
         </Tabs>
       </div>
+      
+      <RecipeDetail 
+        recipe={selectedRecipe}
+        isOpen={isRecipeDetailOpen}
+        onClose={() => setIsRecipeDetailOpen(false)}
+      />
     </div>
   );
 }

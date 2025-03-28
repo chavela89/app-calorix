@@ -1,365 +1,476 @@
 
 import { useState } from "react";
-import { useUser, User } from "@/context/UserContext";
+import { useUser } from "@/context/UserContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { UserProfileForm } from "@/components/UserProfileForm";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ThemeSelector } from "@/components/ThemeSelector";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { useTheme } from "@/context/ThemeContext";
-import { useLanguage } from "@/context/LanguageContext";
-import { Separator } from "@/components/ui/separator";
-import { toast } from "@/hooks/use-toast";
-import { ChevronLeftIcon, SaveIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { 
+  BellIcon, 
+  DownloadIcon, 
+  GlobeIcon, 
+  KeyIcon, 
+  MailIcon, 
+  MoonIcon, 
+  ShieldIcon, 
+  SmartphoneIcon, 
+  UserIcon 
+} from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Settings() {
   const { user, updateUser } = useUser();
-  const { currentTheme, setTheme, themes } = useTheme();
-  const { currentLanguage, setLanguage, languages } = useLanguage();
-  const navigate = useNavigate();
+  const { translate } = useLanguage();
+  const [activeTab, setActiveTab] = useState("account");
   
-  const [formData, setFormData] = useState<Partial<User>>(user || {
-    name: "",
-    email: "",
-    settings: {
-      calorieGoal: 2000,
-      proteinGoal: 120,
-      fatGoal: 65,
-      carbGoal: 250,
-      waterGoal: 2500,
-    }
-  });
+  // Настройки уведомлений
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [appNotifications, setAppNotifications] = useState(true);
+  const [dailyReminder, setDailyReminder] = useState(true);
+  const [weeklyReport, setWeeklyReport] = useState(true);
   
-  const [notifications, setNotifications] = useState({
-    meals: true,
-    water: true,
-    daily: true,
-    goals: true,
-  });
+  const handleSaveGoals = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    toast({
+      title: translate("settings_saved"),
+      description: translate("settings_saved_description"),
+    });
+  };
   
-  const [units, setUnits] = useState({
-    metric: true, // true = метрическая, false = имперская
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleExportData = () => {
+    toast({
+      title: translate("data_export"),
+      description: translate("data_export_started"),
+    });
   };
-
-  const handleSettingsChange = (name: keyof User['settings'], value: number) => {
-    setFormData(prev => ({
-      ...prev,
-      settings: {
-        ...prev.settings!,
-        [name]: value,
-      }
-    }));
+  
+  const handleChangePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    toast({
+      title: translate("password_changed"),
+      description: translate("password_change_success"),
+    });
   };
-
-  const handleSave = () => {
-    if (user) {
-      updateUser(formData);
-      toast({
-        title: "Настройки сохранены",
-        description: "Ваши изменения были успешно сохранены.",
-      });
-    }
-  };
-
-  if (!user) {
-    return null;
-  }
-
+  
   return (
-    <div className="container mx-auto py-6 px-4 md:px-6">
-      <div className="flex items-center gap-2 mb-6">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => navigate(-1)}
-        >
-          <ChevronLeftIcon className="h-5 w-5" />
-        </Button>
-        <h1 className="text-2xl font-bold">Настройки</h1>
-      </div>
-
-      <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid grid-cols-4 md:w-[400px]">
-          <TabsTrigger value="profile">Профиль</TabsTrigger>
-          <TabsTrigger value="goals">Цели</TabsTrigger>
-          <TabsTrigger value="appearance">Внешний вид</TabsTrigger>
-          <TabsTrigger value="notifications">Уведомления</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="profile" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Личная информация</CardTitle>
-              <CardDescription>
-                Обновите свою личную информацию и контактные данные.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Имя</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
-              <Separator className="my-4" />
-              
-              <div className="space-y-2">
-                <Label>Единицы измерения</Label>
-                <div className="flex items-center justify-between">
-                  <span>Метрическая система (кг, см)</span>
-                  <Switch
-                    checked={units.metric}
-                    onCheckedChange={(checked) => setUnits({ metric: checked })}
-                  />
+    <div className="container mx-auto py-6 px-4">
+      <h1 className="text-3xl font-bold mb-6">{translate("settings")}</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Sidebar */}
+        <div className="lg:col-span-1">
+          <Tabs 
+            orientation="vertical" 
+            value={activeTab} 
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            <TabsList className="flex flex-col h-auto justify-start items-stretch bg-transparent space-y-1">
+              <TabsTrigger 
+                value="account" 
+                className="justify-start"
+              >
+                <UserIcon className="h-4 w-4 mr-2" />
+                {translate("account_settings")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="body-metrics" 
+                className="justify-start"
+              >
+                <UserIcon className="h-4 w-4 mr-2" />
+                {translate("body_metrics")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="goals" 
+                className="justify-start"
+              >
+                <UserIcon className="h-4 w-4 mr-2" />
+                {translate("nutrition_goals")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="notifications" 
+                className="justify-start"
+              >
+                <BellIcon className="h-4 w-4 mr-2" />
+                {translate("notification_settings")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="appearance" 
+                className="justify-start"
+              >
+                <MoonIcon className="h-4 w-4 mr-2" />
+                {translate("appearance")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="privacy" 
+                className="justify-start"
+              >
+                <ShieldIcon className="h-4 w-4 mr-2" />
+                {translate("privacy_settings")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="data" 
+                className="justify-start"
+              >
+                <DownloadIcon className="h-4 w-4 mr-2" />
+                {translate("data_management")}
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+        
+        {/* Content */}
+        <div className="lg:col-span-3 space-y-6">
+          <TabsContent value="account" className="space-y-6 mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("personal_info")}</CardTitle>
+                <CardDescription>
+                  {translate("update_personal_info")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">{translate("name")}</Label>
+                    <Input 
+                      id="name" 
+                      defaultValue={user?.name} 
+                      placeholder={translate("your_name")}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">{translate("email")}</Label>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      defaultValue={user?.email} 
+                      placeholder={translate("your_email")}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">{translate("phone")}</Label>
+                    <Input 
+                      id="phone" 
+                      type="tel" 
+                      placeholder={translate("your_phone")}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="country">{translate("country")}</Label>
+                    <Input 
+                      id="country" 
+                      placeholder={translate("your_country")}
+                      defaultValue="Россия"
+                    />
+                  </div>
                 </div>
-              </div>
-              
-              <Button onClick={handleSave} className="w-full md:w-auto">
-                <SaveIcon className="mr-2 h-4 w-4" />
-                Сохранить изменения
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="goals" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Цели питания</CardTitle>
-              <CardDescription>
-                Настройте свои ежедневные цели потребления калорий и нутриентов.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="calorieGoal">Калории</Label>
-                  <span className="text-sm font-medium">{formData.settings?.calorieGoal} ккал</span>
-                </div>
-                <Slider
-                  id="calorieGoal"
-                  min={1000}
-                  max={5000}
-                  step={50}
-                  value={[formData.settings?.calorieGoal || 2000]}
-                  onValueChange={(value) => handleSettingsChange('calorieGoal', value[0])}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="proteinGoal">Белки</Label>
-                  <span className="text-sm font-medium">{formData.settings?.proteinGoal} г</span>
-                </div>
-                <Slider
-                  id="proteinGoal"
-                  min={50}
-                  max={300}
-                  step={5}
-                  value={[formData.settings?.proteinGoal || 120]}
-                  onValueChange={(value) => handleSettingsChange('proteinGoal', value[0])}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="fatGoal">Жиры</Label>
-                  <span className="text-sm font-medium">{formData.settings?.fatGoal} г</span>
-                </div>
-                <Slider
-                  id="fatGoal"
-                  min={20}
-                  max={150}
-                  step={5}
-                  value={[formData.settings?.fatGoal || 65]}
-                  onValueChange={(value) => handleSettingsChange('fatGoal', value[0])}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="carbGoal">Углеводы</Label>
-                  <span className="text-sm font-medium">{formData.settings?.carbGoal} г</span>
-                </div>
-                <Slider
-                  id="carbGoal"
-                  min={50}
-                  max={500}
-                  step={10}
-                  value={[formData.settings?.carbGoal || 250]}
-                  onValueChange={(value) => handleSettingsChange('carbGoal', value[0])}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="waterGoal">Вода</Label>
-                  <span className="text-sm font-medium">{formData.settings?.waterGoal} мл</span>
-                </div>
-                <Slider
-                  id="waterGoal"
-                  min={1000}
-                  max={5000}
-                  step={100}
-                  value={[formData.settings?.waterGoal || 2500]}
-                  onValueChange={(value) => handleSettingsChange('waterGoal', value[0])}
-                />
-              </div>
-              
-              <Button onClick={handleSave} className="w-full md:w-auto">
-                <SaveIcon className="mr-2 h-4 w-4" />
-                Сохранить цели
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="appearance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Внешний вид</CardTitle>
-              <CardDescription>
-                Настройте внешний вид приложения под свои предпочтения.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Тема оформления</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2">
-                  {themes.map((theme) => (
-                    <div
-                      key={theme.id}
-                      onClick={() => setTheme(theme.id)}
-                      className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                        currentTheme === theme.id ? "ring-2 ring-primary" : ""
-                      }`}
-                    >
-                      <div
-                        className="w-full h-12 rounded-md mb-2"
-                        style={{ backgroundColor: theme.color }}
+              </CardContent>
+              <CardFooter>
+                <Button>{translate("save_changes")}</Button>
+              </CardFooter>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("change_password")}</CardTitle>
+                <CardDescription>
+                  {translate("update_password")}
+                </CardDescription>
+              </CardHeader>
+              <form onSubmit={handleChangePassword}>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="current-password">{translate("current_password")}</Label>
+                      <Input 
+                        id="current-password" 
+                        type="password" 
+                        placeholder="••••••••"
                       />
-                      <div className="text-sm font-medium text-center">{theme.name}</div>
                     </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="space-y-2 pt-4">
-                <Label>Язык интерфейса</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
-                  {languages.map((lang) => (
-                    <div
-                      key={lang.id}
-                      onClick={() => setLanguage(lang.id)}
-                      className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                        currentLanguage === lang.id ? "ring-2 ring-primary" : ""
-                      }`}
-                    >
-                      <div className="text-sm font-medium text-center">{lang.name}</div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password">{translate("new_password")}</Label>
+                      <Input 
+                        id="new-password" 
+                        type="password" 
+                        placeholder="••••••••"
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="notifications" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Уведомления</CardTitle>
-              <CardDescription>
-                Настройте, какие уведомления вы хотите получать.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Напоминания о приёме пищи</p>
-                    <p className="text-sm text-muted-foreground">
-                      Получайте напоминания о запланированных приёмах пищи
-                    </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password">{translate("confirm_password")}</Label>
+                      <Input 
+                        id="confirm-password" 
+                        type="password" 
+                        placeholder="••••••••"
+                      />
+                    </div>
                   </div>
-                  <Switch
-                    checked={notifications.meals}
-                    onCheckedChange={(checked) => setNotifications({...notifications, meals: checked})}
-                  />
+                </CardContent>
+                <CardFooter>
+                  <Button type="submit">{translate("change_password")}</Button>
+                </CardFooter>
+              </form>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="body-metrics" className="mt-0">
+            <UserProfileForm />
+          </TabsContent>
+          
+          <TabsContent value="goals" className="mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("nutrition_goals")}</CardTitle>
+                <CardDescription>
+                  {translate("nutrition_goals_description")}
+                </CardDescription>
+              </CardHeader>
+              <form onSubmit={handleSaveGoals}>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="calories">{translate("calories")} ({translate("kcal")})</Label>
+                      <Input 
+                        id="calories" 
+                        type="number" 
+                        defaultValue={user?.settings?.calorieGoal || 2200}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="protein">{translate("protein")} (g)</Label>
+                      <Input 
+                        id="protein" 
+                        type="number" 
+                        defaultValue={user?.settings?.proteinGoal || 150}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="carbs">{translate("carbs")} (g)</Label>
+                      <Input 
+                        id="carbs" 
+                        type="number" 
+                        defaultValue={user?.settings?.carbGoal || 220}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="fat">{translate("fat")} (g)</Label>
+                      <Input 
+                        id="fat" 
+                        type="number" 
+                        defaultValue={user?.settings?.fatGoal || 73}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="water">{translate("water")} (ml)</Label>
+                      <Input 
+                        id="water" 
+                        type="number" 
+                        defaultValue={user?.settings?.waterGoal || 2500}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button type="submit">{translate("save_goals")}</Button>
+                </CardFooter>
+              </form>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="notifications" className="mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("notification_settings")}</CardTitle>
+                <CardDescription>
+                  {translate("notification_settings_description")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="email-notifications">{translate("email_notifications")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("email_notifications_description")}
+                      </p>
+                    </div>
+                    <Switch 
+                      id="email-notifications" 
+                      checked={emailNotifications} 
+                      onCheckedChange={setEmailNotifications}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="app-notifications">{translate("app_notifications")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("app_notifications_description")}
+                      </p>
+                    </div>
+                    <Switch 
+                      id="app-notifications" 
+                      checked={appNotifications} 
+                      onCheckedChange={setAppNotifications}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="daily-reminder">{translate("daily_reminder")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("daily_reminder_description")}
+                      </p>
+                    </div>
+                    <Switch 
+                      id="daily-reminder" 
+                      checked={dailyReminder} 
+                      onCheckedChange={setDailyReminder}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="weekly-report">{translate("weekly_report")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("weekly_report_description")}
+                      </p>
+                    </div>
+                    <Switch 
+                      id="weekly-report" 
+                      checked={weeklyReport} 
+                      onCheckedChange={setWeeklyReport}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button>{translate("save_changes")}</Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="appearance" className="mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("appearance")}</CardTitle>
+                <CardDescription>
+                  {translate("appearance_description")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label className="mb-2 block">{translate("theme")}</Label>
+                  <ThemeSelector />
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Питьевой режим</p>
-                    <p className="text-sm text-muted-foreground">
-                      Напоминания о необходимости пить воду
-                    </p>
-                  </div>
-                  <Switch
-                    checked={notifications.water}
-                    onCheckedChange={(checked) => setNotifications({...notifications, water: checked})}
-                  />
+                <div>
+                  <Label className="mb-2 block">{translate("language")}</Label>
+                  <LanguageSelector />
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Ежедневная сводка</p>
-                    <p className="text-sm text-muted-foreground">
-                      Получайте итоги дня в конце дня
-                    </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="privacy" className="mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("privacy_settings")}</CardTitle>
+                <CardDescription>
+                  {translate("privacy_settings_description")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="profile-visibility">{translate("profile_visibility")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("profile_visibility_description")}
+                      </p>
+                    </div>
+                    <Switch id="profile-visibility" defaultChecked />
                   </div>
-                  <Switch
-                    checked={notifications.daily}
-                    onCheckedChange={(checked) => setNotifications({...notifications, daily: checked})}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Достижение целей</p>
-                    <p className="text-sm text-muted-foreground">
-                      Уведомления о достижении или превышении целей
-                    </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="data-collection">{translate("data_collection")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("data_collection_description")}
+                      </p>
+                    </div>
+                    <Switch id="data-collection" defaultChecked />
                   </div>
-                  <Switch
-                    checked={notifications.goals}
-                    onCheckedChange={(checked) => setNotifications({...notifications, goals: checked})}
-                  />
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="third-party">{translate("third_party_sharing")}</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {translate("third_party_sharing_description")}
+                      </p>
+                    </div>
+                    <Switch id="third-party" />
+                  </div>
                 </div>
-              </div>
-              
-              <Button onClick={handleSave} className="w-full md:w-auto">
-                <SaveIcon className="mr-2 h-4 w-4" />
-                Сохранить настройки
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </CardContent>
+              <CardFooter>
+                <Button>{translate("save_changes")}</Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="data" className="mt-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>{translate("data_management")}</CardTitle>
+                <CardDescription>
+                  {translate("data_management_description")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">{translate("export_your_data")}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {translate("export_data_description")}
+                    </p>
+                    <Button onClick={handleExportData}>
+                      <DownloadIcon className="h-4 w-4 mr-2" />
+                      {translate("download_data")}
+                    </Button>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-medium mb-2">{translate("delete_account")}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {translate("delete_account_description")}
+                    </p>
+                    <Button variant="destructive">
+                      {translate("delete_account")}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </div>
+      </div>
     </div>
   );
 }

@@ -23,7 +23,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 
 // Define interface for bodyMetrics
-interface BodyMetrics {
+export interface BodyMetrics {
   height: number;
   weight: number;
   targetWeight: number;

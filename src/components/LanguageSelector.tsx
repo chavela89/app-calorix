@@ -20,16 +20,14 @@ export function LanguageSelector() {
           <span className="sr-only">Сменить язык</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="bg-background border">
         {availableLanguages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => setLanguage(lang.code)}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${language === lang.code ? "font-medium" : ""}`}
           >
-            <span className={language === lang.code ? "font-medium" : ""}>
-              {lang.label}
-            </span>
+            {lang.label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

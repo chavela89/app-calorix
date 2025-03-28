@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 export default function Profile() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const [activeTabValue, setActiveTabValue] = useState("stats");
   
   // Демонстрационные данные
   const stats = {
@@ -131,7 +132,7 @@ export default function Profile() {
             <CardTitle>Прогресс и достижения</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="stats">
+            <Tabs value={activeTabValue} onValueChange={setActiveTabValue}>
               <TabsList className="w-full">
                 <TabsTrigger value="stats">Статистика</TabsTrigger>
                 <TabsTrigger value="achievements">Достижения</TabsTrigger>

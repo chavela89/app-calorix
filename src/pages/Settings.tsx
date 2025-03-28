@@ -74,166 +74,168 @@ export default function Settings() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <Tabs 
-            orientation="vertical" 
-            value={activeTab} 
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="flex flex-col h-auto justify-start items-stretch bg-transparent space-y-1">
-              <TabsTrigger 
-                value="account" 
-                className="justify-start"
-              >
-                <UserIcon className="h-4 w-4 mr-2" />
-                {translate("account_settings")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="body-metrics" 
-                className="justify-start"
-              >
-                <UserIcon className="h-4 w-4 mr-2" />
-                {translate("body_metrics")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="goals" 
-                className="justify-start"
-              >
-                <UserIcon className="h-4 w-4 mr-2" />
-                {translate("nutrition_goals")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="notifications" 
-                className="justify-start"
-              >
-                <BellIcon className="h-4 w-4 mr-2" />
-                {translate("notification_settings")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="appearance" 
-                className="justify-start"
-              >
-                <MoonIcon className="h-4 w-4 mr-2" />
-                {translate("appearance")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="privacy" 
-                className="justify-start"
-              >
-                <ShieldIcon className="h-4 w-4 mr-2" />
-                {translate("privacy_settings")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="data" 
-                className="justify-start"
-              >
-                <DownloadIcon className="h-4 w-4 mr-2" />
-                {translate("data_management")}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex flex-col h-auto justify-start items-stretch bg-transparent space-y-1">
+            <Button 
+              variant={activeTab === "account" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("account")}
+            >
+              <UserIcon className="h-4 w-4 mr-2" />
+              {translate("account_settings")}
+            </Button>
+            <Button 
+              variant={activeTab === "body-metrics" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("body-metrics")}
+            >
+              <UserIcon className="h-4 w-4 mr-2" />
+              {translate("body_metrics")}
+            </Button>
+            <Button 
+              variant={activeTab === "goals" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("goals")}
+            >
+              <UserIcon className="h-4 w-4 mr-2" />
+              {translate("nutrition_goals")}
+            </Button>
+            <Button 
+              variant={activeTab === "notifications" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("notifications")}
+            >
+              <BellIcon className="h-4 w-4 mr-2" />
+              {translate("notification_settings")}
+            </Button>
+            <Button 
+              variant={activeTab === "appearance" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("appearance")}
+            >
+              <MoonIcon className="h-4 w-4 mr-2" />
+              {translate("appearance")}
+            </Button>
+            <Button 
+              variant={activeTab === "privacy" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("privacy")}
+            >
+              <ShieldIcon className="h-4 w-4 mr-2" />
+              {translate("privacy_settings")}
+            </Button>
+            <Button 
+              variant={activeTab === "data" ? "default" : "ghost"} 
+              className="justify-start"
+              onClick={() => setActiveTab("data")}
+            >
+              <DownloadIcon className="h-4 w-4 mr-2" />
+              {translate("data_management")}
+            </Button>
+          </div>
         </div>
         
         {/* Content */}
         <div className="lg:col-span-3 space-y-6">
-          <TabsContent value="account" className="space-y-6 mt-0">
-            <Card>
-              <CardHeader>
-                <CardTitle>{translate("personal_info")}</CardTitle>
-                <CardDescription>
-                  {translate("update_personal_info")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">{translate("name")}</Label>
-                    <Input 
-                      id="name" 
-                      defaultValue={user?.name} 
-                      placeholder={translate("your_name")}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">{translate("email")}</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      defaultValue={user?.email} 
-                      placeholder={translate("your_email")}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">{translate("phone")}</Label>
-                    <Input 
-                      id="phone" 
-                      type="tel" 
-                      placeholder={translate("your_phone")}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="country">{translate("country")}</Label>
-                    <Input 
-                      id="country" 
-                      placeholder={translate("your_country")}
-                      defaultValue="Россия"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>{translate("save_changes")}</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>{translate("change_password")}</CardTitle>
-                <CardDescription>
-                  {translate("update_password")}
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleChangePassword}>
+          {activeTab === "account" && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{translate("personal_info")}</CardTitle>
+                  <CardDescription>
+                    {translate("update_personal_info")}
+                  </CardDescription>
+                </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="current-password">{translate("current_password")}</Label>
+                      <Label htmlFor="name">{translate("name")}</Label>
                       <Input 
-                        id="current-password" 
-                        type="password" 
-                        placeholder="••••••••"
+                        id="name" 
+                        defaultValue={user?.name} 
+                        placeholder={translate("your_name")}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="new-password">{translate("new_password")}</Label>
+                      <Label htmlFor="email">{translate("email")}</Label>
                       <Input 
-                        id="new-password" 
-                        type="password" 
-                        placeholder="••••••••"
+                        id="email" 
+                        type="email" 
+                        defaultValue={user?.email} 
+                        placeholder={translate("your_email")}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password">{translate("confirm_password")}</Label>
+                      <Label htmlFor="phone">{translate("phone")}</Label>
                       <Input 
-                        id="confirm-password" 
-                        type="password" 
-                        placeholder="••••••••"
+                        id="phone" 
+                        type="tel" 
+                        placeholder={translate("your_phone")}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="country">{translate("country")}</Label>
+                      <Input 
+                        id="country" 
+                        placeholder={translate("your_country")}
+                        defaultValue="Россия"
                       />
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit">{translate("change_password")}</Button>
+                  <Button>{translate("save_changes")}</Button>
                 </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>{translate("change_password")}</CardTitle>
+                  <CardDescription>
+                    {translate("update_password")}
+                  </CardDescription>
+                </CardHeader>
+                <form onSubmit={handleChangePassword}>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="current-password">{translate("current_password")}</Label>
+                        <Input 
+                          id="current-password" 
+                          type="password" 
+                          placeholder="••••••••"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="new-password">{translate("new_password")}</Label>
+                        <Input 
+                          id="new-password" 
+                          type="password" 
+                          placeholder="••••••••"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password">{translate("confirm_password")}</Label>
+                        <Input 
+                          id="confirm-password" 
+                          type="password" 
+                          placeholder="••••••••"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button type="submit">{translate("change_password")}</Button>
+                  </CardFooter>
+                </form>
+              </Card>
+            </div>
+          )}
           
-          <TabsContent value="body-metrics" className="mt-0">
+          {activeTab === "body-metrics" && (
             <UserProfileForm />
-          </TabsContent>
+          )}
           
-          <TabsContent value="goals" className="mt-0">
+          {activeTab === "goals" && (
             <Card>
               <CardHeader>
                 <CardTitle>{translate("nutrition_goals")}</CardTitle>
@@ -291,9 +293,9 @@ export default function Settings() {
                 </CardFooter>
               </form>
             </Card>
-          </TabsContent>
+          )}
           
-          <TabsContent value="notifications" className="mt-0">
+          {activeTab === "notifications" && (
             <Card>
               <CardHeader>
                 <CardTitle>{translate("notification_settings")}</CardTitle>
@@ -364,9 +366,9 @@ export default function Settings() {
                 <Button>{translate("save_changes")}</Button>
               </CardFooter>
             </Card>
-          </TabsContent>
+          )}
           
-          <TabsContent value="appearance" className="mt-0">
+          {activeTab === "appearance" && (
             <Card>
               <CardHeader>
                 <CardTitle>{translate("appearance")}</CardTitle>
@@ -386,9 +388,9 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
           
-          <TabsContent value="privacy" className="mt-0">
+          {activeTab === "privacy" && (
             <Card>
               <CardHeader>
                 <CardTitle>{translate("privacy_settings")}</CardTitle>
@@ -433,9 +435,9 @@ export default function Settings() {
                 <Button>{translate("save_changes")}</Button>
               </CardFooter>
             </Card>
-          </TabsContent>
+          )}
           
-          <TabsContent value="data" className="mt-0">
+          {activeTab === "data" && (
             <Card>
               <CardHeader>
                 <CardTitle>{translate("data_management")}</CardTitle>
@@ -468,7 +470,7 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
         </div>
       </div>
     </div>

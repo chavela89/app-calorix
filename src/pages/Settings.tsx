@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
 import { UserProfileForm } from "@/components/UserProfileForm";
 import { Button } from "@/components/ui/button";
 import { ThemeSelector } from "@/components/ThemeSelector";

@@ -1,8 +1,7 @@
 
 import { useState } from "react";
 import { useUser, User } from "@/context/UserContext"; // Explicitly import User type
-import { useLanguage } from "@/context/LanguageContext";
-import { useEnhancedLanguage } from "./LanguageProvider";
+import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 

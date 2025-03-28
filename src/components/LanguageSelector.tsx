@@ -23,12 +23,12 @@ export function LanguageSelector() {
       <DropdownMenuContent align="end">
         {availableLanguages.map((lang) => (
           <DropdownMenuItem
-            key={lang.id}
-            onClick={() => setLanguage(lang.id)}
+            key={lang.code}
+            onClick={() => setLanguage(lang.code)}
             className="flex items-center gap-2"
           >
-            <span className={language === lang.id ? "font-medium" : ""}>
-              {lang.name}
+            <span className={language === lang.code ? "font-medium" : ""}>
+              {lang.label}
             </span>
           </DropdownMenuItem>
         ))}

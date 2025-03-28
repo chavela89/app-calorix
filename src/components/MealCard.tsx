@@ -12,6 +12,7 @@ interface MealCardProps {
   onRemoveFood: (id: string) => void;
   time?: string;
   totalCalories?: number;
+  actionComponent?: React.ReactNode;
 }
 
 export function MealCard({ 
@@ -21,7 +22,8 @@ export function MealCard({
   onAddFood, 
   onRemoveFood, 
   time,
-  totalCalories
+  totalCalories,
+  actionComponent
 }: MealCardProps) {
   const mealTotalCalories = totalCalories || foods.reduce((sum, food) => sum + food.calories, 0);
 
@@ -42,9 +44,11 @@ export function MealCard({
           <Button size="sm" variant="ghost" onClick={onAddFood} className="h-8 w-8 p-0">
             <PlusIcon className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          {actionComponent || (
+            <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>

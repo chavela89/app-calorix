@@ -32,6 +32,11 @@ interface BodyMetrics {
   activityLevel: string;
 }
 
+// Update User interface to include bodyMetrics
+export interface UserWithMetrics extends User {
+  bodyMetrics?: BodyMetrics;
+}
+
 // Ensure UserProfileForm can work with User type including bodyMetrics
 export function UserProfileForm() {
   const { user, updateUser } = useUser();
@@ -47,8 +52,11 @@ export function UserProfileForm() {
     activityLevel: "moderate"
   };
   
+  // Create a typed variable for the user with metrics
+  const typedUser = user as UserWithMetrics;
+  
   // Use user bodyMetrics or default values
-  const userMetrics = user?.bodyMetrics || defaultMetrics;
+  const userMetrics = typedUser?.bodyMetrics || defaultMetrics;
   
   const [formData, setFormData] = useState<BodyMetrics>({
     height: userMetrics.height,
@@ -71,11 +79,13 @@ export function UserProfileForm() {
     
     if (!user) return;
     
-    // Update user profile with bodyMetrics
-    updateUser({
+    // Update user profile with bodyMetrics by creating a new object with type assertion
+    const updatedUser = {
       ...user,
       bodyMetrics: formData
-    });
+    } as UserWithMetrics;
+    
+    updateUser(updatedUser);
     
     toast({
       title: translate("profile_updated"),

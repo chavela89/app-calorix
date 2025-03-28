@@ -1,5 +1,14 @@
-
 import React, { createContext, useContext, useEffect, useState } from "react";
+
+// Define BodyMetrics interface
+export interface BodyMetrics {
+  height: number;
+  weight: number;
+  targetWeight: number;
+  birthYear: number;
+  gender: string;
+  activityLevel: string;
+}
 
 export interface User {
   id: string;
@@ -14,6 +23,7 @@ export interface User {
     carbGoal: number;
     waterGoal: number;
   };
+  bodyMetrics?: BodyMetrics;
 }
 
 type UserContextType = {
@@ -42,6 +52,14 @@ const MOCK_USER: User = {
     carbGoal: 220,
     waterGoal: 2500,
   },
+  bodyMetrics: {
+    height: 175,
+    weight: 75,
+    targetWeight: 70,
+    birthYear: 1990,
+    gender: "male",
+    activityLevel: "moderate"
+  }
 };
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {

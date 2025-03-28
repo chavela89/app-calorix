@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNutrition, FoodItem } from "@/context/NutritionContext";
 import { useUser } from "@/context/UserContext";
@@ -28,7 +27,7 @@ import {
   Card
 } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -48,7 +47,6 @@ export default function Dashboard() {
   const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Функция для смены даты
   const changeDate = (days: number) => {
     if (days > 0) {
       setSelectedDate(prev => addDays(prev, days));
@@ -60,11 +58,11 @@ export default function Dashboard() {
   const isToday = selectedDate.toDateString() === new Date().toDateString();
 
   const handleAddWater = () => {
-    updateWaterIntake(250); // Добавляем 250 мл воды
+    updateWaterIntake(250);
   };
   
   const handleRemoveWater = () => {
-    updateWaterIntake(-250); // Уменьшаем на 250 мл
+    updateWaterIntake(-250);
   };
   
   const handleOpenAddFood = (mealType: "breakfast" | "lunch" | "dinner" | "snack") => {
@@ -92,7 +90,7 @@ export default function Dashboard() {
 
   const handleFoodSelection = (food: any) => {
     if (!selectedMealType) {
-      setSelectedMealType("snack"); // Default to snack if no meal selected
+      setSelectedMealType("snack");
     }
     addFoodToMeal(selectedMealType || "snack", {
       id: food.id,
@@ -109,7 +107,6 @@ export default function Dashboard() {
     });
   };
 
-  // Создаем объект для тотальных значений
   const totals = {
     calories: getTotalCalories(),
     proteins: getTotalProteins(),
@@ -117,7 +114,6 @@ export default function Dashboard() {
     carbs: getTotalCarbs()
   };
 
-  // Находим завтрак, обед, ужин и перекус
   const breakfast = todayNutrition.meals.find(meal => meal.type === "breakfast")?.foods || [];
   const lunch = todayNutrition.meals.find(meal => meal.type === "lunch")?.foods || [];
   const dinner = todayNutrition.meals.find(meal => meal.type === "dinner")?.foods || [];
@@ -133,10 +129,8 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">
-      {/* Премиум баннер */}
       <PremiumBanner />
       
-      {/* Заголовок и дата */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{translate("diary")}</h1>
         <div className="flex items-center gap-2">
@@ -167,7 +161,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Сводка калорий и макронутриентов */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="p-6 col-span-1 lg:col-span-1">
           <CaloriesSummary 
@@ -201,17 +194,14 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Поиск продуктов и быстрое добавление приемов пищи */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="col-span-1 lg:col-span-2">
           <div className="mt-4">
-            {/* Поиск продуктов */}
             <FoodSearch 
               onSelectFood={handleFoodSelection}
               placeholder={translate("search_food_or_scan")}
             />
             
-            {/* Быстрое добавление */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
               <Button 
                 variant="outline"
@@ -243,7 +233,6 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            {/* Недавно добавленные */}
             <div className="mt-6">
               <h3 className="text-md font-semibold mb-3">{translate("recently_added")}</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -306,7 +295,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Приемы пищи */}
             <div className="mt-6 space-y-6">
               <MealCard
                 title={translate("breakfast")}
@@ -347,7 +335,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Водный баланс */}
         <div className="col-span-1 lg:col-span-1">
           <WaterTracker
             current={todayNutrition.water}
@@ -356,7 +343,6 @@ export default function Dashboard() {
             onRemove={handleRemoveWater}
           />
           
-          {/* Календарь */}
           <Card className="p-4 mt-6">
             <h3 className="text-md font-semibold mb-3">{translate("calendar")}</h3>
             <Calendar
@@ -369,7 +355,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Диалог добавления продукта */}
       <AddFoodDialog
         isOpen={isAddFoodOpen}
         onClose={handleCloseAddFood}
@@ -377,7 +362,6 @@ export default function Dashboard() {
         mealType={selectedMealType || undefined}
       />
       
-      {/* Плавающая кнопка добавления */}
       <div className="fixed bottom-6 right-6">
         <Button 
           size="lg" 

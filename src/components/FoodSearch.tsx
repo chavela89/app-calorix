@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VoiceSearch } from "@/components/VoiceSearch";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 
 interface FoodItem {
   id: string;
@@ -50,7 +49,6 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
     { id: "18", name: language === "ru" ? "Брокколи" : "Broccoli", calories: 34, protein: 2.8, carbs: 7, fat: 0.4 },
     { id: "19", name: language === "ru" ? "Тунец консервированный" : "Canned tuna", calories: 103, protein: 23, carbs: 0, fat: 0.7 },
     { id: "20", name: language === "ru" ? "Говядина" : "Beef", calories: 250, protein: 26, carbs: 0, fat: 17 },
-    // Adding more items
     { id: "21", name: language === "ru" ? "Тофу" : "Tofu", calories: 144, protein: 17, carbs: 3, fat: 8 },
     { id: "22", name: language === "ru" ? "Шпинат" : "Spinach", calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4 },
     { id: "23", name: language === "ru" ? "Кускус" : "Couscous", calories: 112, protein: 3.8, carbs: 23, fat: 0.2 },

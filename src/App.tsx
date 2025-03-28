@@ -5,12 +5,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { LanguageProvider } from "@/context/LanguageContext";
+import { LanguageProvider, EnhancedLanguageProvider } from "@/context/LanguageContextFixed";
 import { UserProvider } from "@/context/UserContext";
 import { NutritionProvider } from "@/context/NutritionContext";
 import { Navbar } from "@/components/Navbar";
 
-// Страницы
+// Pages
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Dashboard from "./pages/Dashboard";
@@ -28,7 +28,7 @@ import { useUser } from "./context/UserContext";
 
 const queryClient = new QueryClient();
 
-// Защищенный роут
+// Protected route
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useUser();
 
@@ -54,7 +54,7 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
-          {/* Основные страницы */}
+          {/* Main pages */}
           <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
           <Route path="/planner" element={<PrivateRoute><Planner /></PrivateRoute>} />
@@ -63,12 +63,12 @@ const AppRoutes = () => {
           <Route path="/progress" element={<PrivateRoute><Progress /></PrivateRoute>} />
           <Route path="/community" element={<PrivateRoute><Community /></PrivateRoute>} />
           
-          {/* Пользовательские страницы */}
+          {/* User pages */}
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
           <Route path="/premium" element={<PrivateRoute><Premium /></PrivateRoute>} />
           
-          {/* Страница 404 */}
+          {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
@@ -80,17 +80,19 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <LanguageProvider>
-        <UserProvider>
-          <NutritionProvider>
-            <TooltipProvider>
-              <BrowserRouter>
-                <AppRoutes />
-                <Toaster />
-                <Sonner />
-              </BrowserRouter>
-            </TooltipProvider>
-          </NutritionProvider>
-        </UserProvider>
+        <EnhancedLanguageProvider>
+          <UserProvider>
+            <NutritionProvider>
+              <TooltipProvider>
+                <BrowserRouter>
+                  <AppRoutes />
+                  <Toaster />
+                  <Sonner />
+                </BrowserRouter>
+              </TooltipProvider>
+            </NutritionProvider>
+          </UserProvider>
+        </EnhancedLanguageProvider>
       </LanguageProvider>
     </ThemeProvider>
   </QueryClientProvider>

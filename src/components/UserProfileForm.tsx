@@ -1,7 +1,8 @@
 
 import { useState } from "react";
-import { useUser, User } from "@/context/UserContext"; // Added explicit import of User type
+import { useUser, User } from "@/context/UserContext"; // Explicitly import User type
 import { useLanguage } from "@/context/LanguageContext";
+import { useEnhancedLanguage } from "./LanguageProvider";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -41,6 +42,7 @@ export interface UserWithMetrics extends User {
 export function UserProfileForm() {
   const { user, updateUser } = useUser();
   const { translate } = useLanguage();
+  const { translateMacro } = useEnhancedLanguage();
   
   // Default values if user or bodyMetrics is undefined
   const defaultMetrics: BodyMetrics = {
@@ -96,7 +98,7 @@ export function UserProfileForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{translate("body_metrics")}</CardTitle>
+        <CardTitle>{translateMacro(translate("body_metrics"))}</CardTitle>
         <CardDescription>
           {translate("body_metrics_description")}
         </CardDescription>

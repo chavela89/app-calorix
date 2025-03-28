@@ -7,17 +7,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/context/LanguageContext";
+import { useEnhancedLanguage } from "./LanguageProvider";
 import { GlobeIcon } from "lucide-react";
 
 export function LanguageSelector() {
   const { language, setLanguage, availableLanguages } = useLanguage();
+  const { isEnglish } = useEnhancedLanguage();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
           <GlobeIcon className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">Сменить язык</span>
+          <span className="sr-only">{isEnglish ? "Change language" : "Сменить язык"}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-background border">

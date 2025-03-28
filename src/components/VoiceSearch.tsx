@@ -78,8 +78,8 @@ export function VoiceSearch({ onResult }: VoiceSearchProps) {
     setTranscript("");
 
     // Use the SpeechRecognition API
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognitionAPI();
     
     recognition.lang = 'ru-RU'; // Set to Russian by default
     recognition.continuous = false;

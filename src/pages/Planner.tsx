@@ -8,11 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarIcon, BookOpenIcon, PlusIcon, SaveIcon, Trash2Icon, CheckCircleIcon } from "lucide-react";
+import { FoodSearch } from "@/components/FoodSearch";
+import { useNutrition, FoodItem } from "@/context/NutritionContext";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Planner() {
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState("day");
+  const { addFoodToMeal } = useNutrition();
 
   // Демо-данные для планировщика
   const mealPlan = [
@@ -21,9 +25,9 @@ export default function Planner() {
       label: translate("breakfast"),
       time: "08:00",
       items: [
-        { name: "Овсяная каша", calories: 150, protein: 5, fat: 3, carbs: 27 },
-        { name: "Банан", calories: 105, protein: 1.3, fat: 0.4, carbs: 27 },
-        { name: "Миндальное молоко", calories: 30, protein: 1, fat: 2.5, carbs: 1 }
+        { name: language === "ru" ? "Овсяная каша" : "Oatmeal", calories: 150, protein: 5, fat: 3, carbs: 27 },
+        { name: language === "ru" ? "Банан" : "Banana", calories: 105, protein: 1.3, fat: 0.4, carbs: 27 },
+        { name: language === "ru" ? "Миндальное молоко" : "Almond milk", calories: 30, protein: 1, fat: 2.5, carbs: 1 }
       ]
     },
     {
@@ -31,9 +35,9 @@ export default function Planner() {
       label: translate("lunch"),
       time: "13:00",
       items: [
-        { name: "Куриная грудка", calories: 165, protein: 31, fat: 3.6, carbs: 0 },
-        { name: "Рис бурый", calories: 110, protein: 2.5, fat: 0.9, carbs: 23 },
-        { name: "Овощной салат", calories: 45, protein: 1, fat: 0.2, carbs: 10 }
+        { name: language === "ru" ? "Куриная грудка" : "Chicken breast", calories: 165, protein: 31, fat: 3.6, carbs: 0 },
+        { name: language === "ru" ? "Рис бурый" : "Brown rice", calories: 110, protein: 2.5, fat: 0.9, carbs: 23 },
+        { name: language === "ru" ? "Овощной салат" : "Vegetable salad", calories: 45, protein: 1, fat: 0.2, carbs: 10 }
       ]
     },
     {
@@ -41,9 +45,9 @@ export default function Planner() {
       label: translate("dinner"),
       time: "19:00",
       items: [
-        { name: "Лосось", calories: 180, protein: 22, fat: 10, carbs: 0 },
-        { name: "Киноа", calories: 120, protein: 4, fat: 1.9, carbs: 22 },
-        { name: "Брокколи", calories: 55, protein: 2.6, fat: 0.4, carbs: 11 }
+        { name: language === "ru" ? "Лосось" : "Salmon", calories: 180, protein: 22, fat: 10, carbs: 0 },
+        { name: language === "ru" ? "Киноа" : "Quinoa", calories: 120, protein: 4, fat: 1.9, carbs: 22 },
+        { name: language === "ru" ? "Брокколи" : "Broccoli", calories: 55, protein: 2.6, fat: 0.4, carbs: 11 }
       ]
     },
     {
@@ -51,17 +55,21 @@ export default function Planner() {
       label: translate("snack"),
       time: "16:00",
       items: [
-        { name: "Греческий йогурт", calories: 100, protein: 10, fat: 2, carbs: 8 },
-        { name: "Черника", calories: 45, protein: 0.6, fat: 0.2, carbs: 11 }
+        { name: language === "ru" ? "Греческий йогурт" : "Greek yogurt", calories: 100, protein: 10, fat: 2, carbs: 8 },
+        { name: language === "ru" ? "Черника" : "Blueberries", calories: 45, protein: 0.6, fat: 0.2, carbs: 11 }
       ]
     }
   ];
 
-  const dayLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+  const dayLabels = language === "ru" ? ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const monthDays = Array.from({ length: 35 }, (_, i) => i - 3); // Пример для отображения календарного месяца
 
   const formatDate = (date = new Date()) => {
-    return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+    return new Intl.DateTimeFormat(language === "ru" ? 'ru-RU' : 'en-US', { 
+      day: 'numeric', 
+      month: language === "ru" ? 'long' : 'long', 
+      year: 'numeric' 
+    }).format(date);
   };
 
   // Расчет общих макронутриентов за день
@@ -84,12 +92,42 @@ export default function Planner() {
 
   // Шаблоны питания для выбора
   const mealTemplates = [
-    { id: 1, name: "Стандартное питание", description: "Сбалансированное питание для поддержания веса" },
-    { id: 2, name: "Низкоуглеводная диета", description: "Диета с ограничением углеводов для похудения" },
-    { id: 3, name: "Высокобелковая диета", description: "Для набора мышечной массы и интенсивных тренировок" },
-    { id: 4, name: "Вегетарианский план", description: "Сбалансированный план без мяса" },
-    { id: 5, name: "Кето-диета", description: "Высокожировая и низкоуглеводная диета" },
+    { id: 1, name: language === "ru" ? "Стандартное питание" : "Standard diet", description: language === "ru" ? "Сбалансированное питание для поддержания веса" : "Balanced diet for weight maintenance" },
+    { id: 2, name: language === "ru" ? "Низкоуглеводная диета" : "Low-carb diet", description: language === "ru" ? "Диета с ограничением углеводов для похудения" : "Diet with limited carbs for weight loss" },
+    { id: 3, name: language === "ru" ? "Высокобелковая диета" : "High-protein diet", description: language === "ru" ? "Для набора мышечной массы и интенсивных тренировок" : "For muscle gain and intensive training" },
+    { id: 4, name: language === "ru" ? "Вегетарианский план" : "Vegetarian plan", description: language === "ru" ? "Сбалансированный план без мяса" : "Balanced plan without meat" },
+    { id: 5, name: language === "ru" ? "Кето-диета" : "Keto diet", description: language === "ru" ? "Высокожировая и низкоуглеводная диета" : "High-fat and low-carb diet" },
   ];
+
+  // Function to handle adding a food item to a meal plan
+  const handleAddFood = (mealType) => {
+    // Show a dialog or navigate to add food page
+    toast({
+      title: translate("add_food"),
+      description: `${translate("to")} ${translate(mealType)}`,
+    });
+  };
+
+  // Handle food selection from search
+  const handleFoodSelect = (food, mealType) => {
+    const newFood = {
+      id: Math.random().toString(36).substring(7),
+      name: food.name,
+      calories: food.calories,
+      proteins: food.protein,
+      fats: food.fat,
+      carbs: food.carbs,
+      amount: 100,
+      unit: "g"
+    };
+    
+    addFoodToMeal(mealType, newFood);
+    
+    toast({
+      title: translate("food_added"),
+      description: `${food.name} ${translate("added_to")} ${translate(mealType)}`,
+    });
+  };
 
   return (
     <div className="container mx-auto py-6 px-4">
@@ -135,7 +173,11 @@ export default function Planner() {
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-center">
                       <CardTitle className="text-lg font-medium">{meal.label} • {meal.time}</CardTitle>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleAddFood(meal.mealType)}
+                      >
                         <PlusIcon className="h-4 w-4" />
                       </Button>
                     </div>
@@ -159,8 +201,20 @@ export default function Planner() {
                         </div>
                       ))}
                       
+                      <div className="py-2">
+                        <FoodSearch 
+                          onSelectFood={(food) => handleFoodSelect(food, meal.mealType)}
+                          placeholder={`${translate("add_food")} ${translate("to")} ${meal.label}`}
+                        />
+                      </div>
+                      
                       <div className="py-2 text-center">
-                        <Button variant="ghost" className="w-full" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full" 
+                          size="sm"
+                          onClick={() => handleAddFood(meal.mealType)}
+                        >
                           <PlusIcon className="h-4 w-4 mr-2" />
                           {translate("add_food")}
                         </Button>
@@ -254,23 +308,23 @@ export default function Planner() {
                     <div className="space-y-2 mt-4">
                       <div className="flex items-center gap-2">
                         <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                        <span>Куриная грудка (500г)</span>
+                        <span>{language === "ru" ? "Куриная грудка (500г)" : "Chicken breast (500g)"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">Овощи для салата</span>
+                        <span className="text-muted-foreground">{language === "ru" ? "Овощи для салата" : "Vegetables for salad"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">Рис бурый (1кг)</span>
+                        <span className="text-muted-foreground">{language === "ru" ? "Рис бурый (1кг)" : "Brown rice (1kg)"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">Йогурт греческий (4 шт)</span>
+                        <span className="text-muted-foreground">{language === "ru" ? "Йогурт греческий (4 шт)" : "Greek yogurt (4 pcs)"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">Бананы (6 шт)</span>
+                        <span className="text-muted-foreground">{language === "ru" ? "Бананы (6 шт)" : "Bananas (6 pcs)"}</span>
                       </div>
                     </div>
                     

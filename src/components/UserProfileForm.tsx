@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useUser, User } from "@/context/UserContext";
+import { useUser, User } from "@/context/UserContext"; // Added explicit import of User type
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { 

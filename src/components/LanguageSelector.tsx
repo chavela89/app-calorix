@@ -10,7 +10,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { GlobeIcon } from "lucide-react";
 
 export function LanguageSelector() {
-  const { currentLanguage, setLanguage, languages } = useLanguage();
+  const { language, setLanguage, availableLanguages } = useLanguage();
 
   return (
     <DropdownMenu>
@@ -21,13 +21,13 @@ export function LanguageSelector() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {languages.map((lang) => (
+        {availableLanguages.map((lang) => (
           <DropdownMenuItem
             key={lang.id}
             onClick={() => setLanguage(lang.id)}
             className="flex items-center gap-2"
           >
-            <span className={currentLanguage === lang.id ? "font-medium" : ""}>
+            <span className={language === lang.id ? "font-medium" : ""}>
               {lang.name}
             </span>
           </DropdownMenuItem>

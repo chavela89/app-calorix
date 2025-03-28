@@ -5,6 +5,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
 
+// Add TypeScript definitions for the Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+
 interface VoiceSearchProps {
   onResult: (transcript: string) => void;
 }

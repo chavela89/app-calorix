@@ -22,20 +22,44 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 
+// Define interface for bodyMetrics
+interface BodyMetrics {
+  height: number;
+  weight: number;
+  targetWeight: number;
+  birthYear: number;
+  gender: string;
+  activityLevel: string;
+}
+
+// Ensure UserProfileForm can work with User type including bodyMetrics
 export function UserProfileForm() {
   const { user, updateUser } = useUser();
   const { translate } = useLanguage();
   
-  const [formData, setFormData] = useState({
-    height: user?.bodyMetrics?.height || 170,
-    weight: user?.bodyMetrics?.weight || 70,
-    targetWeight: user?.bodyMetrics?.targetWeight || 65,
-    birthYear: user?.bodyMetrics?.birthYear || 1990,
-    gender: user?.bodyMetrics?.gender || "male",
-    activityLevel: user?.bodyMetrics?.activityLevel || "moderate"
+  // Default values if user or bodyMetrics is undefined
+  const defaultMetrics: BodyMetrics = {
+    height: 170,
+    weight: 70,
+    targetWeight: 65,
+    birthYear: 1990,
+    gender: "male",
+    activityLevel: "moderate"
+  };
+  
+  // Use user bodyMetrics or default values
+  const userMetrics = user?.bodyMetrics || defaultMetrics;
+  
+  const [formData, setFormData] = useState<BodyMetrics>({
+    height: userMetrics.height,
+    weight: userMetrics.weight,
+    targetWeight: userMetrics.targetWeight,
+    birthYear: userMetrics.birthYear,
+    gender: userMetrics.gender,
+    activityLevel: userMetrics.activityLevel
   });
   
-  const handleChange = (field: string, value: string | number) => {
+  const handleChange = (field: keyof BodyMetrics, value: string | number) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value
@@ -45,9 +69,11 @@ export function UserProfileForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Update user profile
+    if (!user) return;
+    
+    // Update user profile with bodyMetrics
     updateUser({
-      ...user!,
+      ...user,
       bodyMetrics: formData
     });
     

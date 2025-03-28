@@ -4,10 +4,13 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { SparklesIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
 
 export function PremiumBanner() {
   const { user } = useUser();
   const [dismissed, setDismissed] = useState(false);
+  const { translate } = useLanguage();
+  const { translateCost, isEnglish } = useEnhancedLanguage();
 
   if (user?.isPremium || dismissed) {
     return null;
@@ -28,23 +31,31 @@ export function PremiumBanner() {
         </div>
         
         <div className="flex-grow text-center md:text-left">
-          <h3 className="font-semibold text-lg mb-1">Откройте все возможности CaloriX</h3>
+          <h3 className="font-semibold text-lg mb-1">
+            {isEnglish ? "Unlock all CaloriX features" : "Откройте все возможности CaloriX"}
+          </h3>
           <p className="text-sm text-muted-foreground mb-2">
-            Получите доступ к расширенной аналитике, персональным рекомендациям и многому другому!
+            {isEnglish 
+              ? "Get access to advanced analytics, personalized recommendations and more!" 
+              : "Получите доступ к расширенной аналитике, персональным рекомендациям и многому другому!"}
           </p>
           <div className="flex gap-2 justify-center md:justify-start">
             <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 text-white">
-              Активировать Premium
+              {translate("go_premium")}
             </Button>
             <Button size="sm" variant="outline">
-              Подробнее
+              {isEnglish ? "Learn more" : "Подробнее"}
             </Button>
           </div>
         </div>
 
         <div className="flex-shrink-0 text-center">
-          <div className="text-2xl font-bold">$5<span className="text-sm font-normal">/мес</span></div>
-          <div className="text-sm text-muted-foreground">или $42/год</div>
+          <div className="text-2xl font-bold">
+            {isEnglish ? "$5" : "399₽"}<span className="text-sm font-normal">/{translate("monthly")}</span>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {isEnglish ? "or $42/year" : "или 3999₽/год"}
+          </div>
         </div>
       </div>
     </Card>

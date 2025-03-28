@@ -1,15 +1,13 @@
-
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useTheme } from "@/context/ThemeContext";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 import { ThemeSelector } from "./ThemeSelector";
 import { LanguageSelector } from "./LanguageSelector";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   Apple,
-  LayoutDashboardIcon,
   LineChartIcon,
   ListChecksIcon,
   PieChartIcon,
@@ -19,7 +17,6 @@ import {
   UsersIcon,
   BookOpenIcon,
   Menu,
-  X,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {

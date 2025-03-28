@@ -6,8 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useLanguage } from "@/context/LanguageContext";
-import { useEnhancedLanguage } from "./LanguageProvider";
+import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
 import { GlobeIcon } from "lucide-react";
 
 export function LanguageSelector() {

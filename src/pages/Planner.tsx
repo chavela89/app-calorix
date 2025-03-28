@@ -125,231 +125,234 @@ export default function Planner() {
         </div>
       </div>
 
-      <TabsContent value="day" className="mt-0">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3 space-y-6">
-            {mealPlan.map((meal, index) => (
-              <Card key={index}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-lg font-medium">{meal.label} • {meal.time}</CardTitle>
-                    <Button variant="ghost" size="sm">
-                      <PlusIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
+      {/* Main tabs content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsContent value="day">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3 space-y-6">
+              {mealPlan.map((meal, index) => (
+                <Card key={index}>
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-lg font-medium">{meal.label} • {meal.time}</CardTitle>
+                      <Button variant="ghost" size="sm">
+                        <PlusIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="divide-y">
+                      {meal.items.map((item, itemIndex) => (
+                        <div key={itemIndex} className="py-2 flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">{item.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.calories} {translate("kcal")} • {item.protein}g {translate("protein")} • 
+                              {item.fat}g {translate("fat")} • {item.carbs}g {translate("carbs")}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm">
+                              <Trash2Icon className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      <div className="py-2 text-center">
+                        <Button variant="ghost" className="w-full" size="sm">
+                          <PlusIcon className="h-4 w-4 mr-2" />
+                          {translate("add_food")}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              <Button className="w-full">
+                <PlusIcon className="h-4 w-4 mr-2" />
+                {translate("add_meal")}
+              </Button>
+            </div>
+            
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{translate("daily_nutrition")}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="divide-y">
-                    {meal.items.map((item, itemIndex) => (
-                      <div key={itemIndex} className="py-2 flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {item.calories} {translate("kcal")} • {item.protein}g {translate("protein")} • 
-                            {item.fat}g {translate("fat")} • {item.carbs}g {translate("carbs")}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm">
-                            <Trash2Icon className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                        </div>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span>{translate("calories")}</span>
+                        <span>{dailyTotals.calories} / 2200 {translate("kcal")}</span>
                       </div>
-                    ))}
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary rounded-full" 
+                          style={{ width: `${Math.min(100, (dailyTotals.calories / 2200) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
                     
-                    <div className="py-2 text-center">
-                      <Button variant="ghost" className="w-full" size="sm">
-                        <PlusIcon className="h-4 w-4 mr-2" />
-                        {translate("add_food")}
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span>{translate("protein")}</span>
+                        <span>{dailyTotals.protein.toFixed(1)} / 130g</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-blue-500 rounded-full" 
+                          style={{ width: `${Math.min(100, (dailyTotals.protein / 130) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span>{translate("fat")}</span>
+                        <span>{dailyTotals.fat.toFixed(1)} / 70g</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-yellow-500 rounded-full" 
+                          style={{ width: `${Math.min(100, (dailyTotals.fat / 70) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span>{translate("carbs")}</span>
+                        <span>{dailyTotals.carbs.toFixed(1)} / 220g</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-500 rounded-full" 
+                          style={{ width: `${Math.min(100, (dailyTotals.carbs / 220) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>{translate("shopping_list")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Input placeholder={translate("add_item")} />
+                      <Button size="sm" variant="secondary">
+                        <PlusIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="space-y-2 mt-4">
+                      <div className="flex items-center gap-2">
+                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                        <span>Куриная грудка (500г)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-muted-foreground">Овощи для салата</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-muted-foreground">Рис бурый (1кг)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-muted-foreground">Йогурт греческий (4 шт)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-muted-foreground">Бананы (6 шт)</span>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4">
+                      <Button variant="outline" className="w-full gap-2">
+                        <SaveIcon className="h-4 w-4" />
+                        {translate("save_list")}
                       </Button>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-            
-            <Button className="w-full">
-              <PlusIcon className="h-4 w-4 mr-2" />
-              {translate("add_meal")}
-            </Button>
+            </div>
           </div>
-          
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{translate("daily_nutrition")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between mb-1">
-                      <span>{translate("calories")}</span>
-                      <span>{dailyTotals.calories} / 2200 {translate("kcal")}</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full" 
-                        style={{ width: `${Math.min(100, (dailyTotals.calories / 2200) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between mb-1">
-                      <span>{translate("protein")}</span>
-                      <span>{dailyTotals.protein.toFixed(1)} / 130g</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-blue-500 rounded-full" 
-                        style={{ width: `${Math.min(100, (dailyTotals.protein / 130) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between mb-1">
-                      <span>{translate("fat")}</span>
-                      <span>{dailyTotals.fat.toFixed(1)} / 70g</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-yellow-500 rounded-full" 
-                        style={{ width: `${Math.min(100, (dailyTotals.fat / 70) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between mb-1">
-                      <span>{translate("carbs")}</span>
-                      <span>{dailyTotals.carbs.toFixed(1)} / 220g</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-green-500 rounded-full" 
-                        style={{ width: `${Math.min(100, (dailyTotals.carbs / 220) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>{translate("shopping_list")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Input placeholder={translate("add_item")} />
-                    <Button size="sm" variant="secondary">
-                      <PlusIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-2 mt-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                      <span>Куриная грудка (500г)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-muted-foreground">Овощи для салата</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-muted-foreground">Рис бурый (1кг)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-muted-foreground">Йогурт греческий (4 шт)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-muted-foreground">Бананы (6 шт)</span>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <Button variant="outline" className="w-full gap-2">
-                      <SaveIcon className="h-4 w-4" />
-                      {translate("save_list")}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="week" className="mt-0">
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-7 gap-4">
-              {dayLabels.map((day, index) => (
-                <div key={index} className="text-center">
-                  <div className="font-medium mb-4">{day}</div>
-                  
-                  <div className="space-y-3">
-                    {mealPlan.map((meal, mealIndex) => (
-                      <div 
-                        key={mealIndex} 
-                        className="bg-muted/50 p-3 rounded-md text-xs cursor-pointer hover:bg-muted transition"
-                      >
-                        <div className="font-medium">{meal.label}</div>
-                        <div className="text-muted-foreground mt-1">
-                          {meal.items.length} {translate("items")}
+        <TabsContent value="week">
+          <Card>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-7 gap-4">
+                {dayLabels.map((day, index) => (
+                  <div key={index} className="text-center">
+                    <div className="font-medium mb-4">{day}</div>
+                    
+                    <div className="space-y-3">
+                      {mealPlan.map((meal, mealIndex) => (
+                        <div 
+                          key={mealIndex} 
+                          className="bg-muted/50 p-3 rounded-md text-xs cursor-pointer hover:bg-muted transition"
+                        >
+                          <div className="font-medium">{meal.label}</div>
+                          <div className="text-muted-foreground mt-1">
+                            {meal.items.length} {translate("items")}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      <Button variant="ghost" size="sm" className="w-full">
+                        <PlusIcon className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="month">
+          <Card>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-7 gap-4">
+                {dayLabels.map((day, index) => (
+                  <div key={index} className="text-center font-medium">{day}</div>
+                ))}
+                
+                {monthDays.map((day, index) => (
+                  <div 
+                    key={index} 
+                    className={`h-24 border rounded-md p-2 ${
+                      day < 1 || day > 30 ? 'text-muted-foreground bg-muted/20' : 'cursor-pointer hover:bg-muted/50'
+                    } ${day === 15 ? 'ring-2 ring-primary' : ''}`}
+                  >
+                    <div className="flex justify-between">
+                      <span>{day > 0 && day <= 30 ? day : ''}</span>
+                      {day === 15 && <div className="h-2 w-2 bg-primary rounded-full"></div>}
+                    </div>
+                    
+                    {day > 0 && day <= 30 && day % 3 === 0 && (
+                      <div className="mt-2">
+                        <div className="text-xs bg-green-500/20 text-green-700 p-1 rounded mt-1">
+                          {translate("planned")}
                         </div>
                       </div>
-                    ))}
-                    
-                    <Button variant="ghost" size="sm" className="w-full">
-                      <PlusIcon className="h-3 w-3" />
-                    </Button>
+                    )}
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-
-      <TabsContent value="month" className="mt-0">
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-7 gap-4">
-              {dayLabels.map((day, index) => (
-                <div key={index} className="text-center font-medium">{day}</div>
-              ))}
-              
-              {monthDays.map((day, index) => (
-                <div 
-                  key={index} 
-                  className={`h-24 border rounded-md p-2 ${
-                    day < 1 || day > 30 ? 'text-muted-foreground bg-muted/20' : 'cursor-pointer hover:bg-muted/50'
-                  } ${day === 15 ? 'ring-2 ring-primary' : ''}`}
-                >
-                  <div className="flex justify-between">
-                    <span>{day > 0 && day <= 30 ? day : ''}</span>
-                    {day === 15 && <div className="h-2 w-2 bg-primary rounded-full"></div>}
-                  </div>
-                  
-                  {day > 0 && day <= 30 && day % 3 === 0 && (
-                    <div className="mt-2">
-                      <div className="text-xs bg-green-500/20 text-green-700 p-1 rounded mt-1">
-                        {translate("planned")}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -225,8 +225,7 @@ const ruTranslations: Translation = {
   weekly_report_description: "Получайте еженедельный отчет о вашем прогрессе",
   appearance: "Внешний вид",
   appearance_description: "Настройте внешний вид приложения",
-  profile_visibility: "Видимость профиля",
-  profile_visibility_description: "Настройки отображения вашего профиля для других пользователей",
+  privacy_settings_description: "Настройки отображения вашего профиля для других пользователей",
   data_collection: "Сбор данных",
   data_collection_description: "Управление сбором данных о вашей активности для улучшения сервиса",
   third_party_sharing: "Передача данных третьим лицам",
@@ -240,8 +239,6 @@ const ruTranslations: Translation = {
   delete_account_description: "Безвозвратно удалить ваш аккаунт и все данные",
   
   // User profile
-  current_weight: "Текущий вес",
-  target_weight: "Целевой вес",
   birth_year: "Год рождения",
   gender: "Пол",
   male: "Мужской",
@@ -251,20 +248,11 @@ const ruTranslations: Translation = {
   sedentary: "Сидячий образ жизни",
   light_activity: "Легкая активность",
   moderate_activity: "Умеренная активность",
-  active: "Активный образ жизни",
   very_active: "Очень активный образ жизни",
   your_name: "Ваше имя",
   your_email: "Ваш email",
   your_phone: "Ваш телефон",
   your_country: "Ваша страна",
-  
-  // Privacy settings
-  profile_visibility: "Видимость профиля",
-  profile_visibility_description: "Настройки отображения вашего профиля для других пользователей",
-  data_collection: "Сбор данных",
-  data_collection_description: "Управление сбором данных о вашей активности для улучшения сервиса",
-  third_party_sharing: "Передача данных третьим лицам",
-  third_party_sharing_description: "Контроль над тем, какие данные могут быть доступны нашим партнерам",
   
   // Premium features
   premium_features: "Премиум функции",
@@ -277,7 +265,6 @@ const ruTranslations: Translation = {
   free_trial: "Бесплатный период",
   upgrade_to_premium: "Улучшить до Премиум",
   premium_description: "Разблокируйте все функции и улучшите свой опыт",
-  premium_features: "Премиум функции",
   basic_features: "Базовые функции",
   testimonials: "Отзывы",
   testimonial_1: "Премиум версия полностью изменила мой подход к питанию. Рекомендую всем!",
@@ -346,6 +333,9 @@ const ruTranslations: Translation = {
   password_change_success: "Ваш пароль был успешно изменен",
   data_export_started: "Экспорт данных начат",
   calendar: "Календарь",
+  
+  // Profile visibility
+  profile_visibility: "Видимость профиля",
 };
 
 // English translations
@@ -559,8 +549,7 @@ const enTranslations: Translation = {
   weekly_report_description: "Receive a weekly report of your progress",
   appearance: "Appearance",
   appearance_description: "Configure the appearance of the app",
-  profile_visibility: "Profile Visibility",
-  profile_visibility_description: "Control how your profile appears to other users",
+  privacy_settings_description: "Control how your profile appears to other users",
   data_collection: "Data Collection",
   data_collection_description: "Manage how we collect data about your activity to improve service",
   third_party_sharing: "Third Party Sharing",
@@ -574,8 +563,6 @@ const enTranslations: Translation = {
   delete_account_description: "Permanently delete your account and all data",
   
   // User profile
-  current_weight: "Current Weight",
-  target_weight: "Target Weight",
   birth_year: "Birth Year",
   gender: "Gender",
   male: "Male",
@@ -585,7 +572,6 @@ const enTranslations: Translation = {
   sedentary: "Sedentary",
   light_activity: "Light Activity",
   moderate_activity: "Moderate Activity",
-  active: "Active",
   very_active: "Very Active",
   your_name: "Your name",
   your_email: "Your email",
@@ -594,11 +580,6 @@ const enTranslations: Translation = {
   
   // Privacy settings
   profile_visibility: "Profile Visibility",
-  profile_visibility_description: "Control how your profile appears to other users",
-  data_collection: "Data Collection",
-  data_collection_description: "Manage how we collect data about your activity to improve service",
-  third_party_sharing: "Third Party Sharing",
-  third_party_sharing_description: "Control what data can be accessed by our partners",
   
   // Premium features
   premium_features: "Premium Features",
@@ -611,7 +592,6 @@ const enTranslations: Translation = {
   free_trial: "Free Trial",
   upgrade_to_premium: "Upgrade to Premium",
   premium_description: "Unlock all features and enhance your experience",
-  premium_features: "Premium Features",
   basic_features: "Basic Features",
   testimonials: "Testimonials",
   testimonial_1: "The premium version completely changed my approach to nutrition. Recommend to everyone!",

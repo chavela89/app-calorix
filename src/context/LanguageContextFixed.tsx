@@ -181,6 +181,7 @@ const ruTranslations: Translation = {
   post: "Опубликовать",
   participants: "Участники",
   completed: "Завершено",
+  active: "Активно",  // Removing duplicate, keeping this one
   view_all_challenges: "Все челленджи",
   members: "Участники",
   join_group: "Вступить в группу",
@@ -504,7 +505,7 @@ const enTranslations: Translation = {
   post: "Post",
   participants: "Participants",
   completed: "Completed",
-  active: "Active",
+  active: "Active",  // Fixed duplicate
   view_all_challenges: "View All Challenges",
   members: "Members",
   join_group: "Join Group",

@@ -181,7 +181,6 @@ const ruTranslations: Translation = {
   post: "Опубликовать",
   participants: "Участники",
   completed: "Завершено",
-  active: "Активно",
   view_all_challenges: "Все челленджи",
   members: "Участники",
   join_group: "Вступить в группу",

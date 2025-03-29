@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";

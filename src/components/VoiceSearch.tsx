@@ -1,11 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 
-// Add TypeScript definitions for the Web Speech API
 type SpeechRecognitionEvent = {
   results: {
     [index: number]: {
@@ -49,7 +47,6 @@ export function VoiceSearch({ onResult }: VoiceSearchProps) {
   const { translate } = useLanguage();
 
   useEffect(() => {
-    // Check if browser supports SpeechRecognition
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       setIsSupported(false);
       return;
@@ -77,11 +74,10 @@ export function VoiceSearch({ onResult }: VoiceSearchProps) {
     setIsListening(true);
     setTranscript("");
 
-    // Use the SpeechRecognition API
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognitionAPI();
     
-    recognition.lang = 'ru-RU'; // Set to Russian by default
+    recognition.lang = 'ru-RU';
     recognition.continuous = false;
     recognition.interimResults = false;
 

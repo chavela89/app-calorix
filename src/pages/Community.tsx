@@ -1,10 +1,9 @@
-
 import { useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/context/LanguageContextFixed";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SearchIcon, UserPlus, MessageCircle, Heart, Share2, Trophy, Clock, UserIcon, Users } from "lucide-react";
@@ -12,7 +11,8 @@ import { SearchIcon, UserPlus, MessageCircle, Heart, Share2, Trophy, Clock, User
 export default function Community() {
   const { translate } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
-  
+  const navigate = useNavigate();
+
   // Демо-данные для публикаций
   const posts = [
     {

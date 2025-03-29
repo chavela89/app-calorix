@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 import { toast } from "@/components/ui/use-toast";
 
 interface MoreFoodOptionsMenuProps {

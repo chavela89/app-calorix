@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContextFixed";
 import {
   Dialog,
   DialogContent,
@@ -50,7 +49,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
   const { translate } = useLanguage();
   const [isFavorite, setIsFavorite] = useState(false);
   
-  // Demo data for recipe details when not provided
   const defaultIngredients = [
     { name: translate("chicken_breast"), amount: "400g" },
     { name: translate("olive_oil"), amount: "2 " + translate("tbsp") },
@@ -117,7 +115,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Recipe image */}
           <div className="aspect-video w-full overflow-hidden rounded-md">
             <img 
               src={recipe.image} 
@@ -126,7 +123,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
             />
           </div>
           
-          {/* Recipe info */}
           <div className="flex flex-wrap gap-4 justify-between items-center">
             <div className="flex items-center gap-2">
               <ClockIcon className="h-4 w-4 text-muted-foreground" />
@@ -149,7 +145,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
             </div>
           </div>
           
-          {/* Tags */}
           <div className="flex flex-wrap gap-2">
             {recipe.tags.map((tag, index) => (
               <Badge key={index} variant="secondary">
@@ -158,7 +153,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
             ))}
           </div>
           
-          {/* Nutrition */}
           <div className="grid grid-cols-3 gap-4 mt-6 border-t border-b py-4">
             <div className="text-center">
               <div className="text-lg font-medium">{recipe.protein}g</div>
@@ -174,7 +168,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
             </div>
           </div>
           
-          {/* Ingredients */}
           <div>
             <h3 className="text-lg font-medium mb-3">{translate("ingredients")}</h3>
             <ul className="space-y-2">
@@ -187,7 +180,6 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
             </ul>
           </div>
           
-          {/* Instructions */}
           <div>
             <h3 className="text-lg font-medium mb-3">{translate("instructions")}</h3>
             <ol className="space-y-4">

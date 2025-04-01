@@ -21,8 +21,7 @@ export function LanguageSelector() {
 
   const handleLanguageChange = (langCode: string) => {
     setLanguage(langCode as "ru" | "en");
-    // Force reload to apply all translations
-    window.location.reload();
+    // No need to force reload, just refresh translations
   };
 
   return (

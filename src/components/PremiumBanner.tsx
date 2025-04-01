@@ -5,16 +5,26 @@ import { Card } from "./ui/card";
 import { SparklesIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
+import { useNavigate } from "react-router-dom";
 
 export function PremiumBanner() {
   const { user } = useUser();
   const [dismissed, setDismissed] = useState(false);
   const { translate } = useLanguage();
   const { translateCost, isEnglish } = useEnhancedLanguage();
+  const navigate = useNavigate();
 
   if (user?.isPremium || dismissed) {
     return null;
   }
+
+  const handlePremiumClick = () => {
+    navigate("/premium");
+  };
+
+  const handleLearnMoreClick = () => {
+    navigate("/premium");
+  };
 
   return (
     <Card className="relative bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 overflow-hidden p-4 mb-6">
@@ -40,10 +50,18 @@ export function PremiumBanner() {
               : "Получите доступ к расширенной аналитике, персональным рекомендациям и многому другому!"}
           </p>
           <div className="flex gap-2 justify-center md:justify-start">
-            <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 text-white">
+            <Button 
+              size="sm" 
+              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+              onClick={handlePremiumClick}
+            >
               {translate("go_premium")}
             </Button>
-            <Button size="sm" variant="outline">
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={handleLearnMoreClick}
+            >
               {isEnglish ? "Learn more" : "Подробнее"}
             </Button>
           </div>

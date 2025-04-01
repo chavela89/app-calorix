@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContextFixed";
 import {
@@ -46,11 +47,11 @@ export interface RecipeDetailProps {
 }
 
 export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
   const [isFavorite, setIsFavorite] = useState(false);
   
   const defaultIngredients = [
-    { name: translate("chicken_breast"), amount: "400g" },
+    { name: translate("chicken_breast"), amount: "400г" },
     { name: translate("olive_oil"), amount: "2 " + translate("tbsp") },
     { name: translate("salt"), amount: translate("to_taste") },
     { name: translate("black_pepper"), amount: translate("to_taste") },
@@ -155,15 +156,15 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
           
           <div className="grid grid-cols-3 gap-4 mt-6 border-t border-b py-4">
             <div className="text-center">
-              <div className="text-lg font-medium">{recipe.protein}g</div>
+              <div className="text-lg font-medium">{recipe.protein}г</div>
               <div className="text-sm text-muted-foreground">{translate("protein")}</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-medium">{recipe.carbs}g</div>
+              <div className="text-lg font-medium">{recipe.carbs}г</div>
               <div className="text-sm text-muted-foreground">{translate("carbs")}</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-medium">{recipe.fat}g</div>
+              <div className="text-lg font-medium">{recipe.fat}г</div>
               <div className="text-sm text-muted-foreground">{translate("fat")}</div>
             </div>
           </div>
@@ -203,7 +204,7 @@ export function RecipeDetail({ recipe, isOpen, onClose }: RecipeDetailProps) {
               onClick={handleToggleFavorite}
               className={isFavorite ? "text-red-500" : ""}
             >
-              <HeartIcon className="h-4 w-4 mr-2" />
+              <HeartIcon className={`h-4 w-4 mr-2 ${isFavorite ? "fill-red-500" : ""}`} />
               {isFavorite ? translate("remove_from_favorites") : translate("add_to_favorites")}
             </Button>
             

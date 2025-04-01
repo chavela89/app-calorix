@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -62,22 +63,24 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
   ];
 
   useEffect(() => {
-    // Update search results even with an empty query
+    // Очищаем результаты поиска при пустом запросе
     if (query === "") {
-      setResults(foodDatabase.slice(0, 5)); // Show first 5 items as suggestions
+      // Показываем только первые 5 популярных продуктов как предложения
+      setResults(foodDatabase.slice(0, 5));
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate API call delay
+    // Имитируем задержку API-запроса
     const timeoutId = setTimeout(() => {
+      // Фильтруем результаты на основе введенного запроса
       const filteredResults = foodDatabase.filter(food => 
         food.name.toLowerCase().includes(query.toLowerCase())
       );
       setResults(filteredResults);
       setIsLoading(false);
-    }, 100); // Reduced delay for better responsiveness
+    }, 50); // Уменьшаем задержку для лучшей отзывчивости интерфейса
     
     return () => clearTimeout(timeoutId);
   }, [query, language]);
@@ -87,8 +90,8 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
   };
 
   const handleBarcodeResult = (barcode: string) => {
-    // In a real app, you would look up the product by barcode
-    // For demo purposes, let's just set a fixed product
+    // В реальном приложении здесь был бы поиск продукта по штрих-коду
+    // Для демонстрации просто установим фиксированный продукт
     const mockProduct = foodDatabase[3]; // Творог 5%
     onSelectFood(mockProduct);
   };
@@ -130,8 +133,8 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
                   <div>
                     <div className="font-medium">{food.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {food.calories} {translate("kcal")} | {food.protein}g {translate("protein")} | 
-                      {food.carbs}g {translate("carbs")} | {food.fat}g {translate("fat")}
+                      {food.calories} {translate("kcal")} | {food.protein}г {translate("protein")} | 
+                      {food.carbs}г {translate("carbs")} | {food.fat}г {translate("fat")}
                     </div>
                   </div>
                 </Button>

@@ -51,7 +51,7 @@ export function PremiumBanner() {
           <div className="flex gap-2 justify-center md:justify-start">
             <Button 
               size="sm" 
-              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
               onClick={handlePremiumClick}
             >
               {translate("go_premium")}

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -38,12 +39,12 @@ export function Navbar() {
   const isMobile = useIsMobile();
 
   const navItems = [
-    { path: "/", label: translate("diary"), icon: <UtensilsIcon className="h-5 w-5" /> },
-    { path: "/analytics", label: translate("analytics"), icon: <LineChartIcon className="h-5 w-5" /> },
-    { path: "/planner", label: translate("planner"), icon: <ListChecksIcon className="h-5 w-5" /> },
-    { path: "/recipes", label: translate("recipes"), icon: <BookOpenIcon className="h-5 w-5" /> },
-    { path: "/progress", label: translate("progress"), icon: <PieChartIcon className="h-5 w-5" /> },
-    { path: "/community", label: translate("community"), icon: <UsersIcon className="h-5 w-5" /> },
+    { path: "/", label: translate("diary"), icon: <UtensilsIcon className="h-5 w-5 text-orange-500" /> },
+    { path: "/analytics", label: translate("analytics"), icon: <LineChartIcon className="h-5 w-5 text-blue-500" /> },
+    { path: "/planner", label: translate("planner"), icon: <ListChecksIcon className="h-5 w-5 text-green-500" /> },
+    { path: "/recipes", label: translate("recipes"), icon: <BookOpenIcon className="h-5 w-5 text-amber-500" /> },
+    { path: "/progress", label: translate("progress"), icon: <PieChartIcon className="h-5 w-5 text-purple-500" /> },
+    { path: "/community", label: translate("community"), icon: <UsersIcon className="h-5 w-5 text-pink-500" /> },
   ];
 
   return (

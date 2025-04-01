@@ -9,6 +9,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useLanguage } from "@/context/LanguageContextFixed";
+import { useNavigate } from "react-router-dom";
 
 interface CaloriesSummaryProps {
   consumed: number;
@@ -23,9 +25,16 @@ export function CaloriesSummary({
   className,
   burnedCalories = 0
 }: CaloriesSummaryProps) {
+  const { translate } = useLanguage();
+  const navigate = useNavigate();
+  
   const percentage = Math.min((consumed / goal) * 100, 100);
   const remaining = Math.max(goal - consumed, 0);
   const netCalories = consumed - burnedCalories;
+
+  const handleAnalyticsClick = () => {
+    navigate("/analytics");
+  };
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
@@ -38,7 +47,7 @@ export function CaloriesSummary({
         >
           <div className="text-center">
             <div className="text-4xl font-bold">{Math.round(consumed)}</div>
-            <div className="text-sm text-muted-foreground">потреблено</div>
+            <div className="text-sm text-muted-foreground">{translate("consumed")}</div>
           </div>
         </ProgressCircle>
         
@@ -51,8 +60,8 @@ export function CaloriesSummary({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Ваша цель на день: {goal} ккал</p>
-                <p className="mt-1">Это калории для {goal > 2000 ? 'поддержания веса' : 'снижения веса'}</p>
+                <p>{translate("your_daily_goal")}: {goal} {translate("kcal")}</p>
+                <p className="mt-1">{translate("these_calories_for")} {goal > 2000 ? translate("maintaining_weight") : translate("losing_weight")}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -62,23 +71,28 @@ export function CaloriesSummary({
       <div className="grid grid-cols-3 gap-4 w-full mt-4 text-center">
         <div>
           <div className="text-sm font-medium">{Math.round(remaining)}</div>
-          <div className="text-xs text-muted-foreground">осталось</div>
+          <div className="text-xs text-muted-foreground">{translate("remaining")}</div>
         </div>
         
         <div>
           <div className="text-sm font-medium">{goal}</div>
-          <div className="text-xs text-muted-foreground">цель</div>
+          <div className="text-xs text-muted-foreground">{translate("goal")}</div>
         </div>
         
         <div>
           <div className="text-sm font-medium">{burnedCalories}</div>
-          <div className="text-xs text-muted-foreground">сожжено</div>
+          <div className="text-xs text-muted-foreground">{translate("burned")}</div>
         </div>
       </div>
       
-      <Button variant="outline" size="sm" className="mt-4 w-full flex items-center justify-center gap-2">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className="mt-4 w-full flex items-center justify-center gap-2"
+        onClick={handleAnalyticsClick}
+      >
         <BarChart2Icon className="h-4 w-4" />
-        <span>Анализ питания</span>
+        <span>{translate("nutrition_analysis")}</span>
       </Button>
     </div>
   );

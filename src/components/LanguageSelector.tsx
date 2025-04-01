@@ -14,10 +14,18 @@ export function LanguageSelector() {
   const { language, setLanguage, availableLanguages, translate } = useLanguage();
   const { isEnglish } = useEnhancedLanguage();
   
-  // Memoize the language change handler for better performance
+  // Мемоизируем обработчик смены языка для лучшей производительности
   const handleLanguageChange = useCallback((langCode: string) => {
+    // Предотвращаем повторную установку того же языка
+    if (language === langCode) return;
+    
+    // Устанавливаем новый язык
     setLanguage(langCode as "ru" | "en");
-  }, [setLanguage]);
+    
+    // Сразу выполняем ключевые действия для ускорения обновления интерфейса
+    document.documentElement.lang = langCode;
+    document.documentElement.dir = 'ltr';
+  }, [setLanguage, language]);
 
   return (
     <DropdownMenu>

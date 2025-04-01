@@ -1,383 +1,713 @@
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-interface LanguageContextProps {
-  language: 'ru' | 'en';
-  setLanguage: (lang: 'ru' | 'en') => void;
-  translate: (key: string, params?: { [key: string]: string }) => string;
-  availableLanguages: { code: string; label: string }[];
+// Define the available languages
+export type Language = 'en' | 'ru';
+
+// Define the structure for translations
+interface Translations {
+  [key: string]: {
+    [key: string]: string;
+  };
 }
 
-interface EnhancedLanguageContextProps {
-  isEnglish: boolean;
-  translateCost: (cost: number) => string;
+// Define the context properties
+export interface LanguageContextProps {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  translate: (key: string) => string;
+  loading: boolean;
+}
+
+// Enhanced language context with additional functions
+export interface EnhancedLanguageContextProps {
   translateMacro: (text: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
-const EnhancedLanguageContext = createContext<EnhancedLanguageContextProps | undefined>(undefined);
+// Create the context with default values
+const LanguageContext = createContext<LanguageContextProps>({
+  language: 'en',
+  setLanguage: () => {},
+  translate: (key: string) => key,
+  loading: true,
+});
 
-export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguage] = useState<'ru' | 'en'>((localStorage.getItem('language') as 'ru' | 'en') || 'ru');
+const EnhancedLanguageContext = createContext<EnhancedLanguageContextProps>({
+  translateMacro: (text: string) => text,
+});
 
+// Define the translations
+const translations: Translations = {
+  en: {
+    // Login and Registration
+    welcome: 'Welcome to CaloriX',
+    login: 'Login',
+    register: 'Register',
+    email: 'Email',
+    password: 'Password',
+    confirm_password: 'Confirm Password',
+    name: 'Name',
+    forgot_password: 'Forgot password?',
+    dont_have_account: "Don't have an account?",
+    already_have_account: 'Already have an account?',
+    sign_up: 'Sign up',
+    sign_in: 'Sign in',
+    
+    // Dashboard
+    dashboard: 'Dashboard',
+    analytics: 'Analytics',
+    planner: 'Meal Planner',
+    recipes: 'Recipes',
+    progress: 'Progress',
+    community: 'Community',
+    settings: 'Settings',
+    profile: 'Profile',
+    
+    // Dashboard Content
+    today_stats: 'Today\'s Stats',
+    calories_consumed: 'Calories Consumed',
+    remaining: 'Remaining',
+    water: 'Water',
+    glasses: 'glasses',
+    steps: 'Steps',
+    macronutrients: 'Macronutrients',
+    protein: 'Protein',
+    carbs: 'Carbs',
+    fat: 'Fat',
+    diary: 'Food Diary',
+    breakfast: 'Breakfast',
+    lunch: 'Lunch',
+    dinner: 'Dinner',
+    snack: 'Snack',
+    add_food: 'Add Food',
+    
+    // Food and Nutrition
+    food: 'Food',
+    meal: 'Meal',
+    portion: 'Portion',
+    calories: 'Calories',
+    kcal: 'kcal',
+    nutrition: 'Nutrition',
+    nutrients: 'Nutrients',
+    serving: 'Serving',
+    amount: 'Amount',
+    unit: 'Unit',
+    grams: 'grams',
+    milliliters: 'milliliters',
+    
+    // Analytics
+    calorie_consumption: 'Calorie Consumption',
+    meal_distribution: 'Meal Distribution',
+    top_foods: 'Top Foods',
+    calories_burned: 'Calories Burned',
+    burned: 'Burned',
+    goals_comparison: 'Goals Comparison',
+    below_goal: 'below goal',
+    above_goal: 'above goal',
+    
+    // Meal Planning
+    meal_planner: 'Meal Planner',
+    day: 'Day',
+    week: 'Week',
+    month: 'Month',
+    select_template: 'Select Template',
+    daily_nutrition: 'Daily Nutrition',
+    shopping_list: 'Shopping List',
+    add_item: 'Add item',
+    save_list: 'Save List',
+    add_meal: 'Add Meal',
+    
+    // Recipe
+    recipe: 'Recipe',
+    recipes: 'Recipes',
+    recipe_calculator: 'Recipe Calculator',
+    ingredients: 'Ingredients',
+    instructions: 'Instructions',
+    preparation_time: 'Preparation Time',
+    cooking_time: 'Cooking Time',
+    servings: 'Servings',
+    difficulty: 'Difficulty',
+    tags: 'Tags',
+    save_recipe: 'Save Recipe',
+    edit_recipe: 'Edit Recipe',
+    delete_recipe: 'Delete Recipe',
+    add_ingredients: 'Add Ingredients',
+    add_instructions: 'Add Instructions',
+    
+    // Progress
+    weight: 'Weight',
+    weight_dynamics: 'Weight Dynamics',
+    current_weight: 'Current Weight',
+    target_weight: 'Target Weight',
+    goals: 'Goals',
+    achievements: 'Achievements',
+    habits: 'Habits',
+    streak: 'Streak',
+    days: 'days',
+    
+    // Community
+    feed: 'Feed',
+    challenges: 'Challenges',
+    groups: 'Groups',
+    friends: 'Friends',
+    join_challenge: 'Join Challenge',
+    create_post: 'Create Post',
+    like: 'Like',
+    comment: 'Comment',
+    share: 'Share',
+    
+    // Profile & Settings
+    account_settings: 'Account Settings',
+    personal_info: 'Personal Information',
+    notification_settings: 'Notification Settings',
+    privacy_settings: 'Privacy Settings',
+    appearance: 'Appearance',
+    theme: 'Theme',
+    language: 'Language',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    
+    // General
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    edit: 'Edit',
+    add: 'Add',
+    remove: 'Remove',
+    search: 'Search',
+    filter: 'Filter',
+    sort: 'Sort',
+    view: 'View',
+    more: 'More',
+    less: 'Less',
+    
+    // Time periods
+    today: 'Today',
+    yesterday: 'Yesterday',
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    
+    // Status messages
+    loading: 'Loading...',
+    error_occurred: 'An error occurred',
+    no_data: 'No data available',
+    coming_soon: 'Coming soon',
+    
+    // Metrics
+    height: 'Height',
+    weight: 'Weight',
+    age: 'Age',
+    gender: 'Gender',
+    
+    // Misc
+    getting_started: 'Getting Started',
+    tips: 'Tips',
+    explore: 'Explore',
+    premium: 'Premium',
+    upgrade: 'Upgrade',
+    help: 'Help',
+    support: 'Support',
+    feedback: 'Feedback',
+    share_app: 'Share App',
+    rate_app: 'Rate App',
+    visit_website: 'Visit Website',
+    follow_social: 'Follow on Social Media',
+    your_name: 'Your name',
+    your_email: 'Your email',
+    your_phone: 'Your phone',
+    your_country: 'Your country',
+    
+    // Additional keys
+    start: 'Start',
+    left: 'Left',
+    active: 'Active',
+    completed: 'Completed',
+    participants: 'Participants',
+    duplicate: 'Duplicate',
+    add_to_favorites: 'Add to Favorites',
+    nutrition_analysis: 'Nutrition Analysis',
+    per_100g: 'Per 100g',
+    
+    // Notifications
+    food_added: 'Food Added',
+    added_to: 'added to',
+    settings_saved: 'Settings Saved',
+    settings_saved_description: 'Your settings have been updated successfully.',
+    data_export: 'Data Export',
+    data_export_started: 'Your data export has been initiated. You will receive an email when it is ready to download.',
+    profile_updated: 'Profile Updated',
+    profile_update_success: 'Your profile information has been successfully updated.',
+    password_changed: 'Password Changed',
+    password_change_success: 'Your password has been successfully changed.',
+    
+    // User profile
+    body_metrics: 'Body Metrics',
+    body_metrics_description: 'Enter your physical details to get personalized recommendations',
+    birth_year: 'Birth Year',
+    gender: 'Gender',
+    male: 'Male',
+    female: 'Female',
+    other: 'Other',
+    select_gender: 'Select Gender',
+    activity_level: 'Activity Level',
+    sedentary: 'Sedentary',
+    light_activity: 'Light Activity',
+    moderate_activity: 'Moderate Activity',
+    active: 'Active',
+    very_active: 'Very Active',
+    select_activity_level: 'Select Activity Level',
+    save_changes: 'Save Changes',
+    privacy_settings_description: 'Manage your privacy preferences',
+    profile_visibility: 'Profile Visibility',
+    profile_visibility_description: 'Allow others to view your profile in the community',
+    data_collection: 'Data Collection',
+    data_collection_description: 'Allow us to collect anonymous usage data to improve the app',
+    third_party_sharing: 'Third Party Sharing',
+    third_party_sharing_description: 'Allow sharing your data with third-party services',
+    email_notifications: 'Email Notifications',
+    email_notifications_description: 'Receive important updates and newsletters via email',
+    app_notifications: 'App Notifications',
+    app_notifications_description: 'Receive notifications within the app',
+    daily_reminder: 'Daily Reminder',
+    daily_reminder_description: 'Get a daily reminder to log your meals and exercise',
+    weekly_report: 'Weekly Report',
+    weekly_report_description: 'Receive a weekly summary of your progress',
+    appearance_description: 'Customize the look and feel of the application',
+    current_password: 'Current Password',
+    new_password: 'New Password',
+    confirm_password: 'Confirm Password',
+    update_password: 'Update your account password',
+    change_password: 'Change Password',
+    update_personal_info: 'Update your personal information',
+    data_management: 'Data Management',
+    data_management_description: 'Manage your personal data',
+    export_your_data: 'Export Your Data',
+    export_data_description: 'Download all your data in a standard format',
+    download_data: 'Download Data',
+    delete_account: 'Delete Account',
+    delete_account_description: 'Permanently delete your account and all associated data',
+    phone: 'Phone',
+    country: 'Country',
+    nutrition_goals: 'Nutrition Goals',
+    nutrition_goals_description: 'Set your daily nutrition targets',
+    save_goals: 'Save Goals',
+    waterGoal: 'Water Goal',
+    unlocked: 'Unlocked',
+    view_all_achievements: 'View All Achievements',
+    add_habit: 'Add Habit',
+    complete_all: 'Complete All',
+    search_community: 'Search Community',
+    whats_on_your_mind: "What's on your mind?",
+    post: 'Post',
+    add_photo: 'Add Photo',
+    day: 'Day',
+    members: 'Members',
+    join_group: 'Join Group',
+    find_friends: 'Find Friends',
+    friends_description: 'Connect with people who share your health and fitness goals',
+    view_all_challenges: 'View All Challenges',
+    to: 'to',
+    transfer_data: 'Transfer Data',
+    delete_data: 'Delete Data',
+    get_premium: 'Get Premium',
+    learn_more: 'Learn More',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    unlock_features: 'Unlock all CaloriX features',
+    advanced_analytics: 'Advanced Analytics',
+    personalized_recommendations: 'Personalized Recommendations',
+    premium_recipes: 'Premium Recipes',
+    ad_free: 'Ad-Free Experience',
+    priority_support: 'Priority Support',
+    stats: 'Statistics',
+    active_days: 'Active Days',
+    tracked_calories: 'Tracked Calories',
+    goals_met: 'Goals Met',
+  },
+  ru: {
+    // Login and Registration
+    welcome: 'Добро пожаловать в CaloriX',
+    login: 'Вход',
+    register: 'Регистрация',
+    email: 'Email',
+    password: 'Пароль',
+    confirm_password: 'Подтвердите пароль',
+    name: 'Имя',
+    forgot_password: 'Забыли пароль?',
+    dont_have_account: 'Нет аккаунта?',
+    already_have_account: 'Уже есть аккаунт?',
+    sign_up: 'Зарегистрироваться',
+    sign_in: 'Войти',
+    
+    // Dashboard
+    dashboard: 'Панель управления',
+    analytics: 'Аналитика',
+    planner: 'Планировщик питания',
+    recipes: 'Рецепты',
+    progress: 'Прогресс',
+    community: 'Сообщество',
+    settings: 'Настройки',
+    profile: 'Профиль',
+    
+    // Dashboard Content
+    today_stats: 'Статистика за сегодня',
+    calories_consumed: 'Потреблено калорий',
+    remaining: 'Осталось',
+    water: 'Вода',
+    glasses: 'стаканов',
+    steps: 'Шаги',
+    macronutrients: 'Макронутриенты',
+    protein: 'Белки',
+    carbs: 'Углеводы',
+    fat: 'Жиры',
+    diary: 'Дневник питания',
+    breakfast: 'Завтрак',
+    lunch: 'Обед',
+    dinner: 'Ужин',
+    snack: 'Перекус',
+    add_food: 'Добавить продукт',
+    
+    // Food and Nutrition
+    food: 'Еда',
+    meal: 'Прием пищи',
+    portion: 'Порция',
+    calories: 'Калории',
+    kcal: 'ккал',
+    nutrition: 'Питание',
+    nutrients: 'Питательные вещества',
+    serving: 'Порция',
+    amount: 'Количество',
+    unit: 'Единица измерения',
+    grams: 'граммы',
+    milliliters: 'миллилитры',
+    
+    // Analytics
+    calorie_consumption: 'Потребление калорий',
+    meal_distribution: 'Распределение по приемам пищи',
+    top_foods: 'Топ продуктов',
+    calories_burned: 'Сожженные калории',
+    burned: 'Сожжено',
+    goals_comparison: 'Сравнение с целями',
+    below_goal: 'ниже цели',
+    above_goal: 'выше цели',
+    
+    // Meal Planning
+    meal_planner: 'Планировщик питания',
+    day: 'День',
+    week: 'Неделя',
+    month: 'Месяц',
+    select_template: 'Выбрать шаблон',
+    daily_nutrition: 'Ежедневное питание',
+    shopping_list: 'Список покупок',
+    add_item: 'Добавить позицию',
+    save_list: 'Сохранить список',
+    add_meal: 'Добавить прием пищи',
+    
+    // Recipe
+    recipe: 'Рецепт',
+    recipes: 'Рецепты',
+    recipe_calculator: 'Калькулятор рецептов',
+    ingredients: 'Ингредиенты',
+    instructions: 'Инструкции',
+    preparation_time: 'Время подготовки',
+    cooking_time: 'Время приготовления',
+    servings: 'Порции',
+    difficulty: 'Сложность',
+    tags: 'Теги',
+    save_recipe: 'Сохранить рецепт',
+    edit_recipe: 'Редактировать рецепт',
+    delete_recipe: 'Удалить рецепт',
+    add_ingredients: 'Добавить ингредиенты',
+    add_instructions: 'Добавить инструкции',
+    
+    // Progress
+    weight: 'Вес',
+    weight_dynamics: 'Динамика веса',
+    current_weight: 'Текущий вес',
+    target_weight: 'Целевой вес',
+    goals: 'Цели',
+    achievements: 'Достижения',
+    habits: 'Привычки',
+    streak: 'Серия',
+    days: 'дней',
+    
+    // Community
+    feed: 'Лента',
+    challenges: 'Челленджи',
+    groups: 'Группы',
+    friends: 'Друзья',
+    join_challenge: 'Присоединиться к челленджу',
+    create_post: 'Создать пост',
+    like: 'Лайк',
+    comment: 'Комментарий',
+    share: 'Поделиться',
+    
+    // Profile & Settings
+    account_settings: 'Настройки аккаунта',
+    personal_info: 'Личная информация',
+    notification_settings: 'Настройки уведомлений',
+    privacy_settings: 'Настройки приватности',
+    appearance: 'Внешний вид',
+    theme: 'Тема',
+    language: 'Язык',
+    light: 'Светлая',
+    dark: 'Темная',
+    system: 'Системная',
+    
+    // General
+    save: 'Сохранить',
+    cancel: 'Отменить',
+    delete: 'Удалить',
+    edit: 'Редактировать',
+    add: 'Добавить',
+    remove: 'Удалить',
+    search: 'Поиск',
+    filter: 'Фильтр',
+    sort: 'Сортировка',
+    view: 'Просмотр',
+    more: 'Больше',
+    less: 'Меньше',
+    
+    // Time periods
+    today: 'Сегодня',
+    yesterday: 'Вчера',
+    weekly: 'Еженедельно',
+    monthly: 'Ежемесячно',
+    yearly: 'Ежегодно',
+    
+    // Status messages
+    loading: 'Загрузка...',
+    error_occurred: 'Произошла ошибка',
+    no_data: 'Нет доступных данных',
+    coming_soon: 'Скоро',
+    
+    // Metrics
+    height: 'Рост',
+    weight: 'Вес',
+    age: 'Возраст',
+    gender: 'Пол',
+    
+    // Misc
+    getting_started: 'Начало работы',
+    tips: 'Советы',
+    explore: 'Исследовать',
+    premium: 'Премиум',
+    upgrade: 'Улучшить',
+    help: 'Помощь',
+    support: 'Поддержка',
+    feedback: 'Обратная связь',
+    share_app: 'Поделиться приложением',
+    rate_app: 'Оценить приложение',
+    visit_website: 'Посетить сайт',
+    follow_social: 'Подписаться в соцсетях',
+    your_name: 'Ваше имя',
+    your_email: 'Ваш email',
+    your_phone: 'Ваш телефон',
+    your_country: 'Ваша страна',
+    
+    // Additional keys
+    start: 'Начало',
+    left: 'Осталось',
+    active: 'Активный',
+    completed: 'Завершенный',
+    participants: 'Участники',
+    duplicate: 'Дублировать',
+    add_to_favorites: 'Добавить в избранное',
+    nutrition_analysis: 'Анализ питания',
+    per_100g: 'На 100г',
+    
+    // Notifications
+    food_added: 'Продукт добавлен',
+    added_to: 'добавлен в',
+    settings_saved: 'Настройки сохранены',
+    settings_saved_description: 'Ваши настройки были успешно обновлены.',
+    data_export: 'Экспорт данных',
+    data_export_started: 'Экспорт ваших данных начат. Вы получите уведомление, когда данные будут готовы для скачивания.',
+    profile_updated: 'Профиль обновлен',
+    profile_update_success: 'Информация вашего профиля была успешно обновлена.',
+    password_changed: 'Пароль изменен',
+    password_change_success: 'Ваш пароль был успешно изменен.',
+    
+    // User profile
+    body_metrics: 'Параметры тела',
+    body_metrics_description: 'Введите ваши физические данные для получения персональных рекомендаций',
+    birth_year: 'Год рождения',
+    gender: 'Пол',
+    male: 'Мужской',
+    female: 'Женский',
+    other: 'Другой',
+    select_gender: 'Выберите пол',
+    activity_level: 'Уровень активности',
+    sedentary: 'Малоподвижный',
+    light_activity: 'Легкая активность',
+    moderate_activity: 'Умеренная активность',
+    active: 'Активный',
+    very_active: 'Очень активный',
+    select_activity_level: 'Выберите уровень активности',
+    save_changes: 'Сохранить изменения',
+    privacy_settings_description: 'Управляйте настройками конфиденциальности',
+    profile_visibility: 'Видимость профиля',
+    profile_visibility_description: 'Разрешить другим пользователям видеть ваш профиль в сообществе',
+    data_collection: 'Сбор данных',
+    data_collection_description: 'Разрешить сбор анонимных данных об использовании для улучшения приложения',
+    third_party_sharing: 'Передача данных третьим сторонам',
+    third_party_sharing_description: 'Разрешить передачу ваших данных сторонним сервисам',
+    email_notifications: 'Уведомления по электронной почте',
+    email_notifications_description: 'Получать важные обновления и новости по электронной почте',
+    app_notifications: 'Уведомления в приложении',
+    app_notifications_description: 'Получать уведомления в приложении',
+    daily_reminder: 'Ежедневное напоминание',
+    daily_reminder_description: 'Получать ежедневное напоминание о записи приемов пищи и физической активности',
+    weekly_report: 'Еженедельный отчет',
+    weekly_report_description: 'Получать еженедельную сводку о вашем прогрессе',
+    appearance_description: 'Настройте внешний вид приложения',
+    current_password: 'Текущий пароль',
+    new_password: 'Новый пароль',
+    confirm_password: 'Подтвердите пароль',
+    update_password: 'Обновите пароль вашего аккаунта',
+    change_password: 'Изменить пароль',
+    update_personal_info: 'Обновите вашу личную информацию',
+    data_management: 'Управление данными',
+    data_management_description: 'Управляйте вашими персональными данными',
+    export_your_data: 'Экспорт ваших данных',
+    export_data_description: 'Скачайте все ваши данные в стандартном формате',
+    download_data: 'Скачать данные',
+    delete_account: 'Удалить аккаунт',
+    delete_account_description: 'Окончательно удалить ваш аккаунт и все связанные данные',
+    phone: 'Телефон',
+    country: 'Страна',
+    nutrition_goals: 'Цели по питанию',
+    nutrition_goals_description: 'Установите ваши ежедневные цели по питанию',
+    save_goals: 'Сохранить цели',
+    waterGoal: 'Цель по воде',
+    unlocked: 'Разблокировано',
+    view_all_achievements: 'Все достижения',
+    add_habit: 'Добавить привычку',
+    complete_all: 'Выполнить все',
+    search_community: 'Поиск в сообществе',
+    whats_on_your_mind: 'О чём вы думаете?',
+    post: 'Опубликовать',
+    add_photo: 'Добавить фото',
+    day: 'День',
+    members: 'Участники',
+    join_group: 'Вступить в группу',
+    find_friends: 'Найти друзей',
+    friends_description: 'Общайтесь с людьми, которые разделяют ваши цели в здоровье и фитнесе',
+    view_all_challenges: 'Все челленджи',
+    to: 'в',
+    transfer_data: 'Перенос данных',
+    delete_data: 'Удалить данные',
+    get_premium: 'Перейти на премиум',
+    learn_more: 'Подробнее',
+    monthly: 'Ежемесячно',
+    yearly: 'Ежегодно',
+    unlock_features: 'Откройте все возможности CaloriX',
+    advanced_analytics: 'Расширенная аналитика',
+    personalized_recommendations: 'Персональные рекомендации',
+    premium_recipes: 'Премиум-рецепты',
+    ad_free: 'Без рекламы',
+    priority_support: 'Приоритетная поддержка',
+    stats: 'Статистика',
+    active_days: 'Активных дней',
+    tracked_calories: 'Отслеженных калорий',
+    goals_met: 'Достигнутых целей',
+    items: 'позиций',
+    planned: 'запланировано',
+    print: 'Печать',
+    add_to_diary: 'Добавить в дневник',
+    olive_oil: 'Оливковое масло',
+    salt: 'Соль',
+    to_taste: 'по вкусу',
+    black_pepper: 'Чёрный перец',
+    garlic: 'Чеснок',
+    cloves: 'зубчиков',
+    lemon: 'Лимон',
+    rosemary: 'Розмарин',
+    sprigs: 'веточек',
+    recipe_step_1: 'Разогрейте духовку до 200°C.',
+    recipe_step_2: 'Смешайте оливковое масло, соль, перец и измельченный чеснок.',
+    recipe_step_3: 'Смажьте куриную грудку полученной смесью и выложите на противень.',
+    recipe_step_4: 'Положите сверху веточки розмарина и кусочки лимона.',
+    recipe_step_5: 'Запекайте в течение 25-30 минут до готовности.',
+    healthy: 'Здоровый',
+    chicken: 'Курица',
+    medium: 'Средняя',
+  }
+};
+
+// Provider component
+export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>('ru');
+  const [loading, setLoading] = useState(true);
+  
+  // Load language preference from local storage
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as Language;
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+      setLanguage(savedLanguage);
+    }
+    setLoading(false);
+  }, []);
+  
+  // Save language preference to local storage
   useEffect(() => {
     localStorage.setItem('language', language);
   }, [language]);
-
-  const translations = {
-    en: {
-      diary: "Diary",
-      analytics: "Analytics",
-      planner: "Planner",
-      recipes: "Recipes",
-      progress: "Progress",
-      community: "Community",
-      profile: "Profile",
-      settings: "Settings",
-      premium: "Premium",
-      my_account: "My Account",
-      logout: "Logout",
-      login: "Login",
-      edit: "Edit",
-      delete: "Delete",
-      item_duplicated: "Item duplicated!",
-      item_added_to_meal: "Item added to {meal}!",
-      add_to_favorites: "Add to favorites",
-      added_to_favorites: "Added to favorites!",
-      item_added_to_favorites: "Item added to favorites!",
-      edit_food: "Edit food",
-      edit_food_description: "You can edit this food in your profile settings.",
-      item_deleted: "Item deleted!",
-      item_removed_from_meal: "Item removed from {meal}!",
-      breakfast: "Breakfast",
-      lunch: "Lunch",
-      dinner: "Dinner",
-      snack: "Snack",
-      calories: "Calories",
-      protein: "Protein",
-      carbs: "Carbs",
-      fat: "Fat",
-      kcal: "kcal",
-      grams: "grams",
-      search_recipes: "Search recipes...",
-      all_recipes: "All Recipes",
-      vegetarian: "Vegetarian",
-      high_protein: "High Protein",
-      low_carb: "Low Carb",
-      quick_meal: "Quick Meal",
-      gluten_free: "Gluten-Free",
-      dairy_free: "Dairy-Free",
-      view_recipe: "View Recipe",
-      recipe_calculator: "Recipe Calculator",
-      enter_recipe_name: "Enter recipe name",
-      recipe_name: "Recipe Name",
-      servings: "Servings",
-      weight: "Weight",
-      ingredients: "Ingredients",
-      ingredient: "Ingredient",
-      amount: "Amount",
-      unit: "Unit",
-      select_ingredient: "Select ingredient",
-      no_ingredients_added: "No ingredients added",
-      nutritional_value: "Nutritional Value",
-      per_serving: "Per Serving",
-      per_100g: "Per 100g",
-      recipe_saved_successfully: "Recipe saved successfully!",
-      whats_on_your_mind: "What's on your mind?",
-      add_photo: "Add Photo",
-      post: "Post",
-      active: "Active",
-      completed: "Completed",
-      participants: "Participants",
-      days: "days",
-      left: "left",
-      view_all_challenges: "View All Challenges",
-      members: "Members",
-      day: "day",
-      join_group: "Join Group",
-      find_friends: "Find Friends",
-      friends_description: "Start following people to see their posts here.",
-      search_community: "Search community...",
-      current_weight: "Current Weight",
-      target_weight: "Target Weight",
-      start: "Start",
-      streak: "Streak",
-      best: "Best",
-      active_days: "Active Days",
-      tracked_calories: "Tracked Calories",
-      achievements: "Achievements",
-      goals_met: "Goals Met",
-      weight_dynamics: "Weight Dynamics",
-      target_calories: "Target Calories",
-      actual_calories: "Actual Calories",
-      unlocked: "Unlocked",
-      add_habit: "Add Habit",
-      complete_all: "Complete All",
-      upgrade_to_premium: "Upgrade to Premium",
-      premium_description: "Unlock exclusive features and remove ads.",
-      go_premium: "Go Premium",
-      monthly: "monthly",
-      search_food: "Search food",
-      below_goal: "below goal",
-      above_goal: "above goal",
-      recommended_macros_balance: "Recommended macros balance",
-      nutrition_analysis: "Nutrition analysis",
-      your_daily_goal: "Your daily goal",
-      these_calories_for: "These calories for",
-      maintaining_weight: "maintaining weight",
-      losing_weight: "losing weight",
-      consumed: "consumed",
-      remaining: "remaining",
-      burned: "burned",
-      goal: "goal",
-      duplicate: "Duplicate",
-      recipe_step_1: "Prepare all ingredients and preheat the oven to 350°F.",
-      recipe_step_2: "Mix the spices and rub them onto the meat. Let marinate for 15 minutes.",
-      recipe_step_3: "Heat a pan and sear the meat for 2 minutes per side until golden brown.",
-      recipe_step_4: "Place everything in a baking dish and add the remaining ingredients.",
-      recipe_step_5: "Bake in the oven for 25 minutes, then let rest for 5 minutes before serving.",
-      add_to_diary: "Add to diary",
-      remove_from_favorites: "Remove from favorites",
-      share: "Share",
-      print: "Print"
-    },
-    ru: {
-      diary: "Дневник",
-      analytics: "Аналитика",
-      planner: "Планировщик",
-      recipes: "Рецепты",
-      progress: "Прогресс",
-      community: "Сообщество",
-      profile: "Профиль",
-      settings: "Настройки",
-      premium: "Премиум",
-      my_account: "Мой аккаунт",
-      logout: "Выйти",
-      login: "Войти",
-      edit: "Редактировать",
-      delete: "Удалить",
-      item_duplicated: "Пункт дублирован!",
-      item_added_to_meal: "Пункт добавлен в {meal}!",
-      add_to_favorites: "Добавить в избранное",
-      added_to_favorites: "Добавлено в избранное!",
-      item_added_to_favorites: "Пункт добавлен в избранное!",
-      edit_food: "Редактировать продукт",
-      edit_food_description: "Вы можете редактировать этот продукт в настройках профиля.",
-      item_deleted: "Пункт удален!",
-      item_removed_from_meal: "Пункт удален из {meal}!",
-      breakfast: "Завтрак",
-      lunch: "Обед",
-      dinner: "Ужин",
-      snack: "Перекус",
-      calories: "Калории",
-      protein: "Белки",
-      carbs: "Углеводы",
-      fat: "Жиры",
-      kcal: "ккал",
-      grams: "граммы",
-      search_recipes: "Поиск рецептов...",
-      all_recipes: "Все рецепты",
-      vegetarian: "Вегетарианское",
-      high_protein: "Высокобелковое",
-      low_carb: "Низкоуглеводное",
-      quick_meal: "Быстрое блюдо",
-      gluten_free: "Без глютена",
-      dairy_free: "Без молочных продуктов",
-      view_recipe: "Посмотреть рецепт",
-      recipe_calculator: "Калькулятор рецептов",
-      enter_recipe_name: "Введите название рецепта",
-      recipe_name: "Название рецепта",
-      servings: "Порции",
-      weight: "Вес",
-      ingredients: "Ингредиенты",
-      ingredient: "Ингредиент",
-      amount: "Количество",
-      unit: "Ед. изм.",
-      select_ingredient: "Выберите ингредиент",
-      no_ingredients_added: "Нет добавленных ингредиентов",
-      nutritional_value: "Пищевая ценность",
-      per_serving: "На порцию",
-      per_100g: "На 100г",
-      recipe_saved_successfully: "Рецепт успешно сохранен!",
-      whats_on_your_mind: "Что у вас на уме?",
-      add_photo: "Добавить фото",
-      post: "Опубликовать",
-      active: "Активно",
-      completed: "Завершено",
-      participants: "Участники",
-      days: "дней",
-      left: "осталось",
-      view_all_challenges: "Посмотреть все челленджи",
-      members: "Участников",
-      day: "день",
-      join_group: "Присоединиться к группе",
-      find_friends: "Найти друзей",
-      friends_description: "Начните подписываться на людей, чтобы видеть их публикации здесь.",
-      search_community: "Поиск в сообществе...",
-      current_weight: "Текущий вес",
-      target_weight: "Целевой вес",
-      start: "Старт",
-      streak: "Серия",
-      best: "Лучшая",
-      active_days: "Активные дни",
-      tracked_calories: "Отслежено калорий",
-      achievements: "Достижения",
-      goals_met: "Цели достигнуты",
-      weight_dynamics: "Динамика веса",
-      target_calories: "Целевые калории",
-      actual_calories: "Фактические калории",
-      unlocked: "Разблокировано",
-      add_habit: "Добавить привычку",
-      complete_all: "Завершить все",
-      upgrade_to_premium: "Перейти на Премиум",
-      premium_description: "Разблокируйте эксклюзивные функции и уберите рекламу.",
-      go_premium: "Перейти на Премиум",
-      monthly: "в месяц",
-      search_food: "Поиск продуктов",
-      below_goal: "ниже цели",
-      above_goal: "выше цели",
-      recommended_macros_balance: "Рекомендуемый баланс макронутриентов",
-      nutrition_analysis: "Анализ питания",
-      your_daily_goal: "Ваша цель на день",
-      these_calories_for: "Это калории для",
-      maintaining_weight: "поддержания веса",
-      losing_weight: "снижения веса",
-      consumed: "потреблено",
-      remaining: "осталось",
-      burned: "сожжено",
-      goal: "цель",
-      duplicate: "Дублировать",
-      recipe_step_1: "Подготовьте все ингредиенты и разогрейте духовку до 180°C.",
-      recipe_step_2: "Смешайте специи и натрите ими мясо. Оставьте мариноваться на 15 минут.",
-      recipe_step_3: "Разогрейте сковороду и обжарьте мясо по 2 минуты с каждой стороны до золотистой корочки.",
-      recipe_step_4: "Выложите все в форму для запекания и добавьте оставшиеся ингредиенты.",
-      recipe_step_5: "Запекайте в духовке 25 минут, затем дайте отдохнуть 5 минут перед подачей.",
-      added_to_favorites: "Добавлено в избранное",
-      removed_from_favorites: "Удалено из избранных",
-      recipe_added_to_favorites: "Рецепт добавлен в избранное",
-      recipe_removed_from_favorites: "Рецепт удален из избранного",
-      share_recipe: "Поделиться рецептом",
-      recipe_share_success: "Ссылка на рецепт скопирована в буфер обмена",
-      print_recipe: "Печать рецепта",
-      recipe_print_started: "Подготовка к печати...",
-      added_to_diary: "Добавлено в дневник",
-      recipe_added_to_diary: "Рецепт добавлен в ваш дневник питания",
-      olive_oil: "Оливковое масло",
-      salt: "Соль",
-      black_pepper: "Черный перец",
-      garlic: "Чеснок",
-      lemon: "Лимон",
-      rosemary: "Розмарин",
-      tbsp: "ст.л",
-      cloves: "зубчика",
-      sprigs: "веточки",
-      to_taste: "по вкусу",
-      medium: "Средний",
-      instructions: "Инструкции",
-      healthy: "Полезное",
-      chicken: "Куриное",
-      print: "Распечатать",
-      share: "Поделиться",
-      add_to_diary: "Добавить в дневник",
-      remove_from_favorites: "Удалить из избранного",
-      min: "мин",
-      chicken_breast: "Куриная грудка",
-      body_metrics: "Параметры тела",
-      body_metrics_description: "Обновите свои параметры тела для более точных расчетов",
-      height: "Рост",
-      gender: "Пол",
-      birth_year: "Год рождения",
-      activity_level: "Уровень активности",
-      select_gender: "Выберите пол",
-      select_activity_level: "Выберите уровень активности",
-      male: "Мужской",
-      female: "Женский",
-      other: "Другой",
-      sedentary: "Сидячий образ жизни",
-      light_activity: "Легкая активность",
-      moderate_activity: "Умеренная активность",
-      active: "Активный образ жизни",
-      very_active: "Очень активный образ жизни",
-      save_changes: "Сохранить изменения"
+  
+  // Translation function
+  const translate = (key: string): string => {
+    if (!translations[language]) {
+      return key;
     }
-  };
-
-  const translate = useCallback((key: string, params: { [key: string]: string } = {}) => {
-    let translatedText = translations[language][key] || key;
     
-    Object.keys(params).forEach(paramKey => {
-      translatedText = translatedText.replace(`{${paramKey}}`, params[paramKey]);
-    });
-
-    return translatedText;
-  }, [language]);
-
-  const availableLanguages = [
-    { code: 'ru', label: 'Русский' },
-    { code: 'en', label: 'English' },
-  ];
-
-  const contextValue: LanguageContextProps = {
+    return translations[language][key] || key;
+  };
+  
+  const value: LanguageContextProps = {
     language,
     setLanguage,
     translate,
-    availableLanguages,
-  };
-
-  const isEnglish = language === 'en';
-
-  const translateCost = (cost: number) => {
-    return isEnglish ? `$${cost}` : `${cost * 90}₽`;
+    loading,
   };
   
-  const translateMacro = (text: string) => {
-    // Simple capitalization for macro names or just returns the text
-    return text.charAt(0).toUpperCase() + text.slice(1);
-  };
-
-  const enhancedContextValue: EnhancedLanguageContextProps = {
-    isEnglish,
-    translateCost,
-    translateMacro
-  };
-
   return (
-    <LanguageContext.Provider value={contextValue}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-// Create and export EnhancedLanguageProvider
-export const EnhancedLanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const { language } = useLanguage();
-  const isEnglish = language === 'en';
-
-  const translateCost = (cost: number) => {
-    return isEnglish ? `$${cost}` : `${cost * 90}₽`;
+// Enhanced Language Provider with additional functionality
+export const EnhancedLanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const { language } = useContext(LanguageContext);
+  
+  // Function to translate text with embedded translation keys using macros like {{key}}
+  const translateMacro = (text: string): string => {
+    if (!text) return '';
+    
+    // Look for patterns like {{key}} and replace with translations
+    return text.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+      return translations[language]?.[key] || key;
+    });
   };
   
-  const translateMacro = (text: string) => {
-    // Simple capitalization for macro names or just returns the text
-    return text.charAt(0).toUpperCase() + text.slice(1);
+  const value: EnhancedLanguageContextProps = {
+    translateMacro,
   };
-
-  const enhancedContextValue: EnhancedLanguageContextProps = {
-    isEnglish,
-    translateCost,
-    translateMacro
-  };
-
+  
   return (
-    <EnhancedLanguageContext.Provider value={enhancedContextValue}>
+    <EnhancedLanguageContext.Provider value={value}>
       {children}
     </EnhancedLanguageContext.Provider>
   );
 };
 
+// Custom hooks for easy access to the context
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
@@ -385,7 +715,7 @@ export const useLanguage = () => {
 
 export const useEnhancedLanguage = () => {
   const context = useContext(EnhancedLanguageContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useEnhancedLanguage must be used within an EnhancedLanguageProvider');
   }
   return context;

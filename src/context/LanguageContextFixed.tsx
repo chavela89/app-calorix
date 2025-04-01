@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 interface LanguageContextProps {
@@ -10,6 +11,7 @@ interface LanguageContextProps {
 interface EnhancedLanguageContextProps {
   isEnglish: boolean;
   translateCost: (cost: number) => string;
+  translateMacro: (text: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
@@ -115,7 +117,29 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       premium_description: "Unlock exclusive features and remove ads.",
       go_premium: "Go Premium",
       monthly: "monthly",
-      search_food: "Search food"
+      search_food: "Search food",
+      below_goal: "below goal",
+      above_goal: "above goal",
+      recommended_macros_balance: "Recommended macros balance",
+      nutrition_analysis: "Nutrition analysis",
+      your_daily_goal: "Your daily goal",
+      these_calories_for: "These calories for",
+      maintaining_weight: "maintaining weight",
+      losing_weight: "losing weight",
+      consumed: "consumed",
+      remaining: "remaining",
+      burned: "burned",
+      goal: "goal",
+      duplicate: "Duplicate",
+      recipe_step_1: "Prepare all ingredients and preheat the oven to 350°F.",
+      recipe_step_2: "Mix the spices and rub them onto the meat. Let marinate for 15 minutes.",
+      recipe_step_3: "Heat a pan and sear the meat for 2 minutes per side until golden brown.",
+      recipe_step_4: "Place everything in a baking dish and add the remaining ingredients.",
+      recipe_step_5: "Bake in the oven for 25 minutes, then let rest for 5 minutes before serving.",
+      add_to_diary: "Add to diary",
+      remove_from_favorites: "Remove from favorites",
+      share: "Share",
+      print: "Print"
     },
     ru: {
       diary: "Дневник",
@@ -209,60 +233,77 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       premium_description: "Разблокируйте эксклюзивные функции и уберите рекламу.",
       go_premium: "Перейти на Премиум",
       monthly: "в месяц",
-        
-    // Additional translations
-    below_goal: "ниже цели",
-    above_goal: "выше цели",
-    recommended_macros_balance: "Рекомендуемый баланс макронутриентов",
-    nutrition_analysis: "Анализ питания",
-    your_daily_goal: "Ваша цель на день",
-    these_calories_for: "Это калории для",
-    maintaining_weight: "поддержания веса",
-    losing_weight: "снижения веса",
-    consumed: "потреблено",
-    remaining: "осталось",
-    burned: "сожжено",
-    goal: "цель",
-    duplicate: "Дублировать",
-    add_to_favorites: "Добавить в избранное",
-    recipe_step_1: "Подготовьте все ингредиенты и разогрейте духовку до 180°C.",
-    recipe_step_2: "Смешайте специи и натрите ими мясо. Оставьте мариноваться на 15 минут.",
-    recipe_step_3: "Разогрейте сковороду и обжарьте мясо по 2 минуты с каждой стороны до золотистой корочки.",
-    recipe_step_4: "Выложите все в форму для запекания и добавьте оставшиеся ингредиенты.",
-    recipe_step_5: "Запекайте в духовке 25 минут, затем дайте отдохнуть 5 минут перед подачей.",
-    added_to_favorites: "Добавлено в избранное",
-    removed_from_favorites: "Удалено из избранных",
-    recipe_added_to_favorites: "Рецепт добавлен в избранное",
-    recipe_removed_from_favorites: "Рецепт удален из избранного",
-    share_recipe: "Поделиться рецептом",
-    recipe_share_success: "Ссылка на рецепт скопирована в буфер обмена",
-    print_recipe: "Печать рецепта",
-    recipe_print_started: "Подготовка к печати...",
-    added_to_diary: "Добавлено в дневник",
-    recipe_added_to_diary: "Рецепт добавлен в ваш дневник питания",
-    olive_oil: "Оливковое масло",
-    salt: "Соль",
-    black_pepper: "Черный перец",
-    garlic: "Чеснок",
-    lemon: "Лимон",
-    rosemary: "Розмарин",
-    tbsp: "ст.л",
-    cloves: "зубчика",
-    sprigs: "веточки",
-    to_taste: "по вкусу",
-    medium: "Средний",
-    servings: "порции",
-    instructions: "Инструкции",
-    healthy: "Полезное",
-    chicken: "Куриное",
-    print: "Распечатать",
-    share: "Поделиться",
-    search_food: "Поиск продуктов"
+      search_food: "Поиск продуктов",
+      below_goal: "ниже цели",
+      above_goal: "выше цели",
+      recommended_macros_balance: "Рекомендуемый баланс макронутриентов",
+      nutrition_analysis: "Анализ питания",
+      your_daily_goal: "Ваша цель на день",
+      these_calories_for: "Это калории для",
+      maintaining_weight: "поддержания веса",
+      losing_weight: "снижения веса",
+      consumed: "потреблено",
+      remaining: "осталось",
+      burned: "сожжено",
+      goal: "цель",
+      duplicate: "Дублировать",
+      recipe_step_1: "Подготовьте все ингредиенты и разогрейте духовку до 180°C.",
+      recipe_step_2: "Смешайте специи и натрите ими мясо. Оставьте мариноваться на 15 минут.",
+      recipe_step_3: "Разогрейте сковороду и обжарьте мясо по 2 минуты с каждой стороны до золотистой корочки.",
+      recipe_step_4: "Выложите все в форму для запекания и добавьте оставшиеся ингредиенты.",
+      recipe_step_5: "Запекайте в духовке 25 минут, затем дайте отдохнуть 5 минут перед подачей.",
+      added_to_favorites: "Добавлено в избранное",
+      removed_from_favorites: "Удалено из избранных",
+      recipe_added_to_favorites: "Рецепт добавлен в избранное",
+      recipe_removed_from_favorites: "Рецепт удален из избранного",
+      share_recipe: "Поделиться рецептом",
+      recipe_share_success: "Ссылка на рецепт скопирована в буфер обмена",
+      print_recipe: "Печать рецепта",
+      recipe_print_started: "Подготовка к печати...",
+      added_to_diary: "Добавлено в дневник",
+      recipe_added_to_diary: "Рецепт добавлен в ваш дневник питания",
+      olive_oil: "Оливковое масло",
+      salt: "Соль",
+      black_pepper: "Черный перец",
+      garlic: "Чеснок",
+      lemon: "Лимон",
+      rosemary: "Розмарин",
+      tbsp: "ст.л",
+      cloves: "зубчика",
+      sprigs: "веточки",
+      to_taste: "по вкусу",
+      medium: "Средний",
+      instructions: "Инструкции",
+      healthy: "Полезное",
+      chicken: "Куриное",
+      print: "Распечатать",
+      share: "Поделиться",
+      add_to_diary: "Добавить в дневник",
+      remove_from_favorites: "Удалить из избранного",
+      min: "мин",
+      chicken_breast: "Куриная грудка",
+      body_metrics: "Параметры тела",
+      body_metrics_description: "Обновите свои параметры тела для более точных расчетов",
+      height: "Рост",
+      gender: "Пол",
+      birth_year: "Год рождения",
+      activity_level: "Уровень активности",
+      select_gender: "Выберите пол",
+      select_activity_level: "Выберите уровень активности",
+      male: "Мужской",
+      female: "Женский",
+      other: "Другой",
+      sedentary: "Сидячий образ жизни",
+      light_activity: "Легкая активность",
+      moderate_activity: "Умеренная активность",
+      active: "Активный образ жизни",
+      very_active: "Очень активный образ жизни",
+      save_changes: "Сохранить изменения"
     }
   };
 
   const translate = useCallback((key: string, params: { [key: string]: string } = {}) => {
-    let translatedText = translations[language as 'en' | 'ru'][key] || key;
+    let translatedText = translations[language][key] || key;
     
     Object.keys(params).forEach(paramKey => {
       translatedText = translatedText.replace(`{${paramKey}}`, params[paramKey]);
@@ -288,18 +329,49 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const translateCost = (cost: number) => {
     return isEnglish ? `$${cost}` : `${cost * 90}₽`;
   };
+  
+  const translateMacro = (text: string) => {
+    // Simple capitalization for macro names or just returns the text
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  };
 
   const enhancedContextValue: EnhancedLanguageContextProps = {
     isEnglish,
     translateCost,
+    translateMacro
   };
 
   return (
     <LanguageContext.Provider value={contextValue}>
-      <EnhancedLanguageContext.Provider value={enhancedContextValue}>
-        {children}
-      </EnhancedLanguageContext.Provider>
+      {children}
     </LanguageContext.Provider>
+  );
+};
+
+// Create and export EnhancedLanguageProvider
+export const EnhancedLanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const { language } = useLanguage();
+  const isEnglish = language === 'en';
+
+  const translateCost = (cost: number) => {
+    return isEnglish ? `$${cost}` : `${cost * 90}₽`;
+  };
+  
+  const translateMacro = (text: string) => {
+    // Simple capitalization for macro names or just returns the text
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  };
+
+  const enhancedContextValue: EnhancedLanguageContextProps = {
+    isEnglish,
+    translateCost,
+    translateMacro
+  };
+
+  return (
+    <EnhancedLanguageContext.Provider value={enhancedContextValue}>
+      {children}
+    </EnhancedLanguageContext.Provider>
   );
 };
 
@@ -314,7 +386,7 @@ export const useLanguage = () => {
 export const useEnhancedLanguage = () => {
   const context = useContext(EnhancedLanguageContext);
   if (!context) {
-    throw new Error('useEnhancedLanguage must be used within a LanguageProvider');
+    throw new Error('useEnhancedLanguage must be used within an EnhancedLanguageProvider');
   }
   return context;
 };

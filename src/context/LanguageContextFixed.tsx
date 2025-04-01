@@ -166,7 +166,7 @@ const ruTranslations: Translation = {
   complete_all: "Выполнить все",
   view_all_achievements: "Все достижения",
   
-  // Community page
+  // Community
   feed: "Лента",
   friends: "Друзья",
   groups: "Группы",
@@ -371,7 +371,7 @@ const ruTranslations: Translation = {
   healthy: "Полезное",
   chicken: "Куриное",
   burned: "cожжено",
-  profile_visibility: "Видимость профиля",
+  profile_visibility: "Видимость профиля"
 };
 
 // English translations
@@ -615,7 +615,7 @@ const enTranslations: Translation = {
   your_phone: "Your phone",
   your_country: "Your country",
   
-  // Privacy settings
+  // Profile visibility
   profile_visibility: "Profile Visibility",
   
   // Premium features
@@ -733,8 +733,7 @@ const enTranslations: Translation = {
   medium: "Medium",
   healthy: "Healthy",
   chicken: "Chicken",
-  burned: "burned",
-  profile_visibility: "Profile Visibility",
+  burned: "burned"
 };
 
 // Create language context

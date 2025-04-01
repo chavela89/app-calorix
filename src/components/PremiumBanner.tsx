@@ -31,6 +31,7 @@ export function PremiumBanner() {
       <button
         className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
         onClick={() => setDismissed(true)}
+        aria-label={isEnglish ? "Close" : "Закрыть"}
       >
         <XIcon className="h-4 w-4" />
       </button>
@@ -42,12 +43,10 @@ export function PremiumBanner() {
         
         <div className="flex-grow text-center md:text-left">
           <h3 className="font-semibold text-lg mb-1">
-            {isEnglish ? "Unlock all CaloriX features" : "Откройте все возможности CaloriX"}
+            {translate("upgrade_to_premium")}
           </h3>
           <p className="text-sm text-muted-foreground mb-2">
-            {isEnglish 
-              ? "Get access to advanced analytics, personalized recommendations and more!" 
-              : "Получите доступ к расширенной аналитике, персональным рекомендациям и многому другому!"}
+            {translate("premium_description")}
           </p>
           <div className="flex gap-2 justify-center md:justify-start">
             <Button 

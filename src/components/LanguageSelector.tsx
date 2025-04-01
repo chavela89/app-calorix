@@ -8,21 +8,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
 import { GlobeIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useCallback } from "react";
 
 export function LanguageSelector() {
-  const { language, setLanguage, availableLanguages, translate, refreshTranslations } = useLanguage();
+  const { language, setLanguage, availableLanguages, translate } = useLanguage();
   const { isEnglish } = useEnhancedLanguage();
   
-  // Ensure translations are refreshed when language changes
-  useEffect(() => {
-    refreshTranslations();
-  }, [language, refreshTranslations]);
-
-  const handleLanguageChange = (langCode: string) => {
+  // Memoize the language change handler for better performance
+  const handleLanguageChange = useCallback((langCode: string) => {
     setLanguage(langCode as "ru" | "en");
-    // No need to force reload, just refresh translations
-  };
+  }, [setLanguage]);
 
   return (
     <DropdownMenu>

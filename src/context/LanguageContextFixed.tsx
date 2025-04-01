@@ -370,8 +370,9 @@ const ruTranslations: Translation = {
   medium: "Средне",
   healthy: "Полезное",
   chicken: "Куриное",
-  burned: "cожжено",
-  profile_visibility: "Видимость профиля"
+  burned: "сожжено",
+  profile_visibility: "Видимость профиля",
+  // Add additional translations here if needed
 };
 
 // English translations
@@ -734,6 +735,7 @@ const enTranslations: Translation = {
   healthy: "Healthy",
   chicken: "Chicken",
   burned: "burned"
+  // No duplicates here
 };
 
 // Create language context

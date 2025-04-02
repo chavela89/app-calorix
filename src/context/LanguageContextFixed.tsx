@@ -219,7 +219,6 @@ const translations: Translations = {
     tips: 'Tips',
     explore: 'Explore',
     premium: 'Premium',
-    upgrade: 'Upgrade',
     help: 'Help',
     support: 'Support',
     feedback: 'Feedback',
@@ -406,6 +405,7 @@ const translations: Translations = {
     consumed: 'Consumed',
     goal: 'Goal',
     recommended_macros_balance: 'Recommended macros balance',
+    upgrade: 'Upgrade',
   },
   ru: {
     // Login and Registration
@@ -574,7 +574,6 @@ const translations: Translations = {
     tips: 'Советы',
     explore: 'Исследовать',
     premium: 'Премиум',
-    upgrade: 'Улучшить',
     help: 'Помощь',
     support: 'Поддержка',
     feedback: 'Обратная связь',
@@ -761,6 +760,7 @@ const translations: Translations = {
     consumed: 'Потреблено',
     goal: 'Цель',
     recommended_macros_balance: 'Рекомендуемый баланс макронутриентов',
+    upgrade: 'Улучшить',
   }
 };
 

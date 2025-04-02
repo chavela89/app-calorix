@@ -353,4 +353,10 @@ export const ruTranslations = {
   goal: 'Цель',
   recommended_macros_balance: 'Рекомендуемый баланс макронутриентов',
   upgrade: 'Улучшить',
+  search_food: 'Поиск продуктов',
+  voice_search_not_supported: 'Голосовой поиск не поддерживается',
+  voice_search_not_supported_description: 'Ваш браузер не поддерживает голосовой поиск',
+  voice_search_error: 'Ошибка голосового поиска',
+  listening: 'Слушаю',
+  speak_now: 'Говорите сейчас',
 };

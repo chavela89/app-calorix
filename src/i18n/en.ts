@@ -353,4 +353,10 @@ export const enTranslations = {
   goal: 'Goal',
   recommended_macros_balance: 'Recommended macros balance',
   upgrade: 'Upgrade',
+  search_food: 'Search food',
+  voice_search_not_supported: 'Voice search not supported',
+  voice_search_not_supported_description: 'Your browser does not support voice search',
+  voice_search_error: 'Voice search error',
+  listening: 'Listening',
+  speak_now: 'Speak now',
 };

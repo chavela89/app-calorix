@@ -11,18 +11,32 @@ interface Translations {
   };
 }
 
+// Language details type
+export interface LanguageOption {
+  code: Language;
+  label: string;
+}
+
 // Define the context properties
 export interface LanguageContextProps {
   language: Language;
   setLanguage: (language: Language) => void;
   translate: (key: string) => string;
   loading: boolean;
+  availableLanguages: LanguageOption[];
 }
 
 // Enhanced language context with additional functions
 export interface EnhancedLanguageContextProps {
+  isEnglish: boolean;
   translateMacro: (text: string) => string;
 }
+
+// Available languages array
+const availableLanguages: LanguageOption[] = [
+  { code: 'en', label: 'English' },
+  { code: 'ru', label: 'Русский' }
+];
 
 // Create the context with default values
 const LanguageContext = createContext<LanguageContextProps>({
@@ -30,9 +44,11 @@ const LanguageContext = createContext<LanguageContextProps>({
   setLanguage: () => {},
   translate: (key: string) => key,
   loading: true,
+  availableLanguages: availableLanguages,
 });
 
 const EnhancedLanguageContext = createContext<EnhancedLanguageContextProps>({
+  isEnglish: true,
   translateMacro: (text: string) => text,
 });
 
@@ -325,6 +341,16 @@ const translations: Translations = {
     active_days: 'Active Days',
     tracked_calories: 'Tracked Calories',
     goals_met: 'Goals Met',
+    logout: 'Logout',
+    my_account: 'My Account',
+    calories_per_day: '{{amount}} calories/day',
+    billed_monthly: 'Billed monthly',
+    billed_yearly: 'Billed yearly, {{amount}} total',
+    days_free: '{{days}} days free',
+    save_percentage: 'Save {{percent}}%',
+    premium_member: 'Premium Member',
+    get_started: 'Get Started',
+    best_value: 'Best Value',
   },
   ru: {
     // Login and Registration
@@ -613,27 +639,16 @@ const translations: Translations = {
     active_days: 'Активных дней',
     tracked_calories: 'Отслеженных калорий',
     goals_met: 'Достигнутых целей',
-    items: 'позиций',
-    planned: 'запланировано',
-    print: 'Печать',
-    add_to_diary: 'Добавить в дневник',
-    olive_oil: 'Оливковое масло',
-    salt: 'Соль',
-    to_taste: 'по вкусу',
-    black_pepper: 'Чёрный перец',
-    garlic: 'Чеснок',
-    cloves: 'зубчиков',
-    lemon: 'Лимон',
-    rosemary: 'Розмарин',
-    sprigs: 'веточек',
-    recipe_step_1: 'Разогрейте духовку до 200°C.',
-    recipe_step_2: 'Смешайте оливковое масло, соль, перец и измельченный чеснок.',
-    recipe_step_3: 'Смажьте куриную грудку полученной смесью и выложите на противень.',
-    recipe_step_4: 'Положите сверху веточки розмарина и кусочки лимона.',
-    recipe_step_5: 'Запекайте в течение 25-30 минут до готовности.',
-    healthy: 'Здоровый',
-    chicken: 'Курица',
-    medium: 'Средняя',
+    logout: 'Выйти',
+    my_account: 'Мой аккаунт',
+    calories_per_day: '{{amount}} калорий/день',
+    billed_monthly: 'Ежемесячный платеж',
+    billed_yearly: 'Ежегодный платеж, всего {{amount}}',
+    days_free: '{{days}} дней бесплатно',
+    save_percentage: 'Экономия {{percent}}%',
+    premium_member: 'Премиум-участник',
+    get_started: 'Начать',
+    best_value: 'Выгодное предложение',
   }
 };
 
@@ -670,6 +685,7 @@ export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) 
     setLanguage,
     translate,
     loading,
+    availableLanguages,
   };
   
   return (
@@ -694,6 +710,7 @@ export const EnhancedLanguageProvider: React.FC<{children: ReactNode}> = ({ chil
   };
   
   const value: EnhancedLanguageContextProps = {
+    isEnglish: language === 'en',
     translateMacro,
   };
   

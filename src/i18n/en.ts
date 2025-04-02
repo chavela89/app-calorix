@@ -265,9 +265,10 @@ export const enTranslations = {
   delete_data: 'Delete Data',
   get_premium: 'Get Premium',
   learn_more: 'Learn More',
+  
   // Payment plans
-  monthly_plan: 'Monthly',  // Changed from monthly_subscription
-  yearly_plan: 'Yearly',    // Changed from yearly
+  monthly_plan: 'Monthly',
+  yearly_plan: 'Yearly',
   unlock_features: 'Unlock all CaloriX features',
   advanced_analytics: 'Advanced Analytics',
   personalized_recommendations: 'Personalized Recommendations',
@@ -340,8 +341,8 @@ export const enTranslations = {
   money_back_guarantee_description: 'If you\'re not satisfied within 30 days, we\'ll refund your payment',
   upgrade_to_premium: 'Upgrade to Premium',
   premium_description: 'Unlock powerful features to supercharge your nutrition tracking',
-  plan_monthly: 'Monthly Subscription',  // Changed from monthly_subscription
-  plan_yearly: 'Yearly Subscription',    // Changed from yearly_subscription
+  plan_monthly: 'Monthly Subscription',
+  plan_yearly: 'Yearly Subscription',
   billed_annually: 'Billed annually',
   save_30: 'Save 30%',
   month: 'month',

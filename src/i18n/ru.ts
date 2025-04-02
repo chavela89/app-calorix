@@ -265,9 +265,10 @@ export const ruTranslations = {
   delete_data: 'Удалить данные',
   get_premium: 'Перейти на премиум',
   learn_more: 'Подробнее',
+  
   // Payment plans
-  monthly_plan: 'Ежемесячно',   // Changed from monthly_subscription
-  yearly_plan: 'Ежегодно',      // Changed from yearly
+  monthly_plan: 'Ежемесячно',
+  yearly_plan: 'Ежегодно',
   unlock_features: 'Откройте все возможности CaloriX',
   advanced_analytics: 'Расширенная аналитика',
   personalized_recommendations: 'Персональные рекомендации',
@@ -340,8 +341,8 @@ export const ruTranslations = {
   money_back_guarantee_description: 'Если вы не удовлетворены в течение 30 дней, мы вернем ваш платеж',
   upgrade_to_premium: 'Перейти на премиум',
   premium_description: 'Разблокируйте мощные функции для улучшения отслеживания питания',
-  plan_monthly: 'Месячная подписка',  // Changed from monthly_subscription
-  plan_yearly: 'Годовая подписка',    // Changed from yearly_subscription
+  plan_monthly: 'Месячная подписка',
+  plan_yearly: 'Годовая подписка',
   billed_annually: 'Списание раз в год',
   save_30: 'Экономия 30%',
   month: 'месяц',

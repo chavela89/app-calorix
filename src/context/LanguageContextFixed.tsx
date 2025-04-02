@@ -133,7 +133,7 @@ const translations: Translations = {
     
     // Recipe
     recipe: 'Recipe',
-    recipes: 'Recipes',
+    recipes_label: 'Recipes',
     recipe_calculator: 'Recipe Calculator',
     ingredients: 'Ingredients',
     instructions: 'Instructions',
@@ -149,7 +149,7 @@ const translations: Translations = {
     add_instructions: 'Add Instructions',
     
     // Progress
-    weight: 'Weight',
+    weight_label: 'Weight',
     weight_dynamics: 'Weight Dynamics',
     current_weight: 'Current Weight',
     target_weight: 'Target Weight',
@@ -359,7 +359,7 @@ const translations: Translations = {
     male: 'Male',
     female: 'Female',
     other: 'Other',
-    weight: 'Weight',
+    weight_value: 'Weight',
     premium_activated: 'Premium activated',
     premium_activated_description: 'You now have access to all premium features',
     testimonial_1: 'CaloriX Premium has completely changed the way I track my nutrition. The photo recognition feature saves me so much time!',
@@ -398,6 +398,7 @@ const translations: Translations = {
     billed_annually: 'Billed annually',
     save_30: 'Save 30%',
     month: 'month',
+    go_premium: 'Go Premium',
   },
   ru: {
     // Login and Registration
@@ -480,7 +481,7 @@ const translations: Translations = {
     
     // Recipe
     recipe: 'Рецепт',
-    recipes: 'Рецепты',
+    recipes_label: 'Рецепты',
     recipe_calculator: 'Калькулятор рецептов',
     ingredients: 'Ингредиенты',
     instructions: 'Инструкции',
@@ -496,7 +497,7 @@ const translations: Translations = {
     add_instructions: 'Добавить инструкции',
     
     // Progress
-    weight: 'Вес',
+    weight_label: 'Вес',
     weight_dynamics: 'Динамика веса',
     current_weight: 'Текущий вес',
     target_weight: 'Целевой вес',
@@ -706,7 +707,7 @@ const translations: Translations = {
     male: 'Мужской',
     female: 'Женский',
     other: 'Другой',
-    weight: 'Вес',
+    weight_value: 'Вес',
     premium_activated: 'Премиум активирован',
     premium_activated_description: 'Теперь у вас есть доступ ко всем премиум-функциям',
     testimonial_1: 'Премиум-версия CaloriX полностью изменила способ учета моего питания. Функция распознавания фотографий экономит мне столько времени!',
@@ -745,6 +746,7 @@ const translations: Translations = {
     billed_annually: 'Списание раз в год',
     save_30: 'Экономия 30%',
     month: 'месяц',
+    go_premium: 'Перейти на премиум',
   }
 };
 

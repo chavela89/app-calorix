@@ -1,4 +1,3 @@
-
 export const ruTranslations = {
   // Login and Registration
   welcome: 'Добро пожаловать в CaloriX',
@@ -341,8 +340,8 @@ export const ruTranslations = {
   money_back_guarantee_description: 'Если вы не удовлетворены в течение 30 дней, мы вернем ваш платеж',
   upgrade_to_premium: 'Перейти на премиум',
   premium_description: 'Разблокируйте мощные функции для улучшения отслеживания питания',
-  monthly_subscription: 'Месячная подписка',
-  yearly_subscription: 'Годовая подписка',
+  subscription_monthly: 'Месячная подписка',
+  subscription_yearly: 'Годовая подписка',
   billed_annually: 'Списание раз в год',
   save_30: 'Экономия 30%',
   month: 'месяц',

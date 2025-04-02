@@ -1,4 +1,3 @@
-
 export const enTranslations = {
   // Login and Registration
   welcome: 'Welcome to CaloriX',
@@ -341,8 +340,8 @@ export const enTranslations = {
   money_back_guarantee_description: 'If you\'re not satisfied within 30 days, we\'ll refund your payment',
   upgrade_to_premium: 'Upgrade to Premium',
   premium_description: 'Unlock powerful features to supercharge your nutrition tracking',
-  monthly_subscription: 'Monthly Subscription',
-  yearly_subscription: 'Yearly Subscription',
+  subscription_monthly: 'Monthly Subscription',
+  subscription_yearly: 'Yearly Subscription',
   billed_annually: 'Billed annually',
   save_30: 'Save 30%',
   month: 'month',

@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { SparklesIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
+import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 
 export function PremiumBanner() {

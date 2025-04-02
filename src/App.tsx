@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { LanguageProvider, EnhancedLanguageProvider } from "@/context/LanguageContextFixed";
+import { LanguageProvider, EnhancedLanguageProvider } from "@/context/LanguageContext";
 import { UserProvider } from "@/context/UserContext";
 import { NutritionProvider } from "@/context/NutritionContext";
 import AppRoutes from "./AppRoutes";

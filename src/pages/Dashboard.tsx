@@ -186,11 +186,6 @@ export default function Dashboard() {
               goal: carbGoal,
             }}
           />
-          <div className="mt-4">
-            <Button onClick={handleNutritionAnalysis} variant="outline" className="w-full">
-              {translate("nutrition_analysis")}
-            </Button>
-          </div>
         </Card>
       </div>
 

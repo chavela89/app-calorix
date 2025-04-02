@@ -61,7 +61,7 @@ export function PremiumBanner() {
               variant="outline"
               onClick={handleLearnMoreClick}
             >
-              {isEnglish ? "Learn more" : "Подробнее"}
+              {translate("learn_more")}
             </Button>
           </div>
         </div>

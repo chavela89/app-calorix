@@ -399,6 +399,13 @@ const translations: Translations = {
     save_30: 'Save 30%',
     month: 'month',
     go_premium: 'Go Premium',
+    your_daily_goal: 'Your daily goal',
+    maintaining_weight: 'maintaining weight',
+    losing_weight: 'losing weight',
+    these_calories_for: 'These calories are for',
+    consumed: 'Consumed',
+    goal: 'Goal',
+    recommended_macros_balance: 'Recommended macros balance',
   },
   ru: {
     // Login and Registration
@@ -747,6 +754,13 @@ const translations: Translations = {
     save_30: 'Экономия 30%',
     month: 'месяц',
     go_premium: 'Перейти на премиум',
+    your_daily_goal: 'Ваша дневная цель',
+    maintaining_weight: 'поддержания веса',
+    losing_weight: 'снижения веса',
+    these_calories_for: 'Эти калории для',
+    consumed: 'Потреблено',
+    goal: 'Цель',
+    recommended_macros_balance: 'Рекомендуемый баланс макронутриентов',
   }
 };
 
@@ -824,4 +838,3 @@ export const useEnhancedLanguage = () => {
   }
   return context;
 };
-

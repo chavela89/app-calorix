@@ -1,4 +1,3 @@
-
 import { MoreVertical } from "lucide-react";
 import { 
   DropdownMenu, 
@@ -22,21 +21,21 @@ export function MoreFoodOptionsMenu({ foodId, mealType, onDelete }: MoreFoodOpti
   const handleDuplicate = () => {
     toast({
       title: translate("item_duplicated"),
-      description: translate("item_added_to_meal", { meal: translate(mealType) }),
+      description: translate("item_added_to_meal")
     });
   };
 
   const handleAddToFavorites = () => {
     toast({
       title: translate("added_to_favorites"),
-      description: translate("item_added_to_favorites"),
+      description: translate("item_added_to_favorites")
     });
   };
 
   const handleEdit = () => {
     toast({
       title: translate("edit_food"),
-      description: translate("edit_food_description"),
+      description: translate("edit_food_description")
     });
   };
 
@@ -44,7 +43,7 @@ export function MoreFoodOptionsMenu({ foodId, mealType, onDelete }: MoreFoodOpti
     onDelete(foodId);
     toast({
       title: translate("item_deleted"),
-      description: translate("item_removed_from_meal", { meal: translate(mealType) }),
+      description: translate("item_removed_from_meal")
     });
   };
 

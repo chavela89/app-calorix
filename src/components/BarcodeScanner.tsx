@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Camera, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -58,7 +57,7 @@ export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
         
         toast({
           title: translate("barcode_scanned"),
-          description: translate("product_found", { barcode: mockBarcode })
+          description: translate("product_found")
         });
       }, 3000);
       

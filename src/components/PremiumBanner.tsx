@@ -11,7 +11,7 @@ export function PremiumBanner() {
   const { user } = useUser();
   const [dismissed, setDismissed] = useState(false);
   const { translate } = useLanguage();
-  const { translateCost, isEnglish } = useEnhancedLanguage();
+  const { isEnglish } = useEnhancedLanguage();
   const navigate = useNavigate();
 
   if (user?.isPremium || dismissed) {

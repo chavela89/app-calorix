@@ -29,7 +29,6 @@ export interface LanguageContextProps {
 // Enhanced language context with additional functions
 export interface EnhancedLanguageContextProps {
   isEnglish: boolean;
-  translateMacro: (text: string) => string;
 }
 
 // Available languages array
@@ -49,7 +48,6 @@ const LanguageContext = createContext<LanguageContextProps>({
 
 const EnhancedLanguageContext = createContext<EnhancedLanguageContextProps>({
   isEnglish: true,
-  translateMacro: (text: string) => text,
 });
 
 // Define the translations
@@ -213,7 +211,6 @@ const translations: Translations = {
     
     // Metrics
     height: 'Height',
-    weight: 'Weight',
     age: 'Age',
     gender: 'Gender',
     
@@ -262,16 +259,11 @@ const translations: Translations = {
     body_metrics: 'Body Metrics',
     body_metrics_description: 'Enter your physical details to get personalized recommendations',
     birth_year: 'Birth Year',
-    gender: 'Gender',
-    male: 'Male',
-    female: 'Female',
-    other: 'Other',
     select_gender: 'Select Gender',
     activity_level: 'Activity Level',
     sedentary: 'Sedentary',
     light_activity: 'Light Activity',
     moderate_activity: 'Moderate Activity',
-    active: 'Active',
     very_active: 'Very Active',
     select_activity_level: 'Select Activity Level',
     save_changes: 'Save Changes',
@@ -293,7 +285,6 @@ const translations: Translations = {
     appearance_description: 'Customize the look and feel of the application',
     current_password: 'Current Password',
     new_password: 'New Password',
-    confirm_password: 'Confirm Password',
     update_password: 'Update your account password',
     change_password: 'Change Password',
     update_personal_info: 'Update your personal information',
@@ -318,7 +309,6 @@ const translations: Translations = {
     whats_on_your_mind: "What's on your mind?",
     post: 'Post',
     add_photo: 'Add Photo',
-    day: 'Day',
     members: 'Members',
     join_group: 'Join Group',
     find_friends: 'Find Friends',
@@ -351,6 +341,63 @@ const translations: Translations = {
     premium_member: 'Premium Member',
     get_started: 'Get Started',
     best_value: 'Best Value',
+    product_found: 'Product found',
+    barcode_scanned: 'Barcode scanned',
+    camera_error: 'Camera Error',
+    camera_permission_denied: 'Camera permission denied',
+    camera_not_supported: 'Camera not supported',
+    camera_not_supported_description: 'Your device does not support camera access',
+    item_duplicated: 'Item duplicated',
+    item_added_to_meal: 'Item added to meal',
+    added_to_favorites: 'Added to favorites',
+    item_added_to_favorites: 'Item added to favorites',
+    edit_food: 'Edit food',
+    edit_food_description: 'Edit food information',
+    item_deleted: 'Item deleted',
+    item_removed_from_meal: 'Item removed from meal',
+    scan_barcode: 'Scan barcode',
+    male: 'Male',
+    female: 'Female',
+    other: 'Other',
+    weight: 'Weight',
+    premium_activated: 'Premium activated',
+    premium_activated_description: 'You now have access to all premium features',
+    testimonial_1: 'CaloriX Premium has completely changed the way I track my nutrition. The photo recognition feature saves me so much time!',
+    testimonial_2: 'The advanced analytics helped me understand my eating patterns and finally reach my goals.',
+    photo_recognition: 'Photo Recognition',
+    photo_recognition_description: 'Instantly identify foods and track calories with your camera',
+    advanced_analytics_description: 'Get detailed insights about your nutrition habits',
+    ad_free_description: 'Enjoy the app without any advertisements',
+    voice_input: 'Voice Input',
+    voice_input_description: 'Add foods to your diary using voice commands',
+    custom_themes: 'Custom Themes',
+    custom_themes_description: 'Personalize the app with exclusive themes and colors',
+    nutritionist_consultation: 'Nutritionist Consultation',
+    nutritionist_consultation_description: 'Get professional advice from certified nutritionists',
+    calorie_tracking: 'Calorie Tracking',
+    calorie_tracking_description: 'Track your daily calorie intake',
+    meal_planning_description: 'Plan your meals ahead of time',
+    progress_tracking_description: 'Monitor your progress towards your goals',
+    basic_recipes: 'Basic Recipes',
+    basic_recipes_description: 'Access to a library of basic recipes',
+    water_tracking_description: 'Track your daily water intake',
+    premium_features: 'Premium Features',
+    basic_features: 'Basic Features',
+    basic_features_included: 'All basic features are included with premium',
+    testimonials: 'Testimonials',
+    popular: 'Popular',
+    subscribe_now: 'Subscribe Now',
+    cancel_anytime: 'Cancel anytime. No commitment required.',
+    payment_processed_by: 'Payment processed by Stripe',
+    money_back_guarantee: '30-Day Money Back Guarantee',
+    money_back_guarantee_description: 'If you\'re not satisfied within 30 days, we\'ll refund your payment',
+    upgrade_to_premium: 'Upgrade to Premium',
+    premium_description: 'Unlock powerful features to supercharge your nutrition tracking',
+    monthly_subscription: 'Monthly Subscription',
+    yearly_subscription: 'Yearly Subscription',
+    billed_annually: 'Billed annually',
+    save_30: 'Save 30%',
+    month: 'month',
   },
   ru: {
     // Login and Registration
@@ -511,7 +558,6 @@ const translations: Translations = {
     
     // Metrics
     height: 'Рост',
-    weight: 'Вес',
     age: 'Возраст',
     gender: 'Пол',
     
@@ -560,16 +606,11 @@ const translations: Translations = {
     body_metrics: 'Параметры тела',
     body_metrics_description: 'Введите ваши физические данные для получения персональных рекомендаций',
     birth_year: 'Год рождения',
-    gender: 'Пол',
-    male: 'Мужской',
-    female: 'Женский',
-    other: 'Другой',
     select_gender: 'Выберите пол',
     activity_level: 'Уровень активности',
     sedentary: 'Малоподвижный',
     light_activity: 'Легкая активность',
     moderate_activity: 'Умеренная активность',
-    active: 'Активный',
     very_active: 'Очень активный',
     select_activity_level: 'Выберите уровень активности',
     save_changes: 'Сохранить изменения',
@@ -591,7 +632,6 @@ const translations: Translations = {
     appearance_description: 'Настройте внешний вид приложения',
     current_password: 'Текущий пароль',
     new_password: 'Новый пароль',
-    confirm_password: 'Подтвердите пароль',
     update_password: 'Обновите пароль вашего аккаунта',
     change_password: 'Изменить пароль',
     update_personal_info: 'Обновите вашу личную информацию',
@@ -616,7 +656,6 @@ const translations: Translations = {
     whats_on_your_mind: 'О чём вы думаете?',
     post: 'Опубликовать',
     add_photo: 'Добавить фото',
-    day: 'День',
     members: 'Участники',
     join_group: 'Вступить в группу',
     find_friends: 'Найти друзей',
@@ -649,6 +688,63 @@ const translations: Translations = {
     premium_member: 'Премиум-участник',
     get_started: 'Начать',
     best_value: 'Выгодное предложение',
+    product_found: 'Продукт найден',
+    barcode_scanned: 'Штрихкод отсканирован',
+    camera_error: 'Ошибка камеры',
+    camera_permission_denied: 'Доступ к камере запрещен',
+    camera_not_supported: 'Камера не поддерживается',
+    camera_not_supported_description: 'Ваше устройство не поддерживает доступ к камере',
+    item_duplicated: 'Элемент дублирован',
+    item_added_to_meal: 'Элемент добавлен в прием пищи',
+    added_to_favorites: 'Добавлено в избранное',
+    item_added_to_favorites: 'Элемент добавлен в избранное',
+    edit_food: 'Редактировать продукт',
+    edit_food_description: 'Редактировать информацию о продукте',
+    item_deleted: 'Элемент удален',
+    item_removed_from_meal: 'Элемент удален из приема пищи',
+    scan_barcode: 'Сканировать штрихкод',
+    male: 'Мужской',
+    female: 'Женский',
+    other: 'Другой',
+    weight: 'Вес',
+    premium_activated: 'Премиум активирован',
+    premium_activated_description: 'Теперь у вас есть доступ ко всем премиум-функциям',
+    testimonial_1: 'Премиум-версия CaloriX полностью изменила способ учета моего питания. Функция распознавания фотографий экономит мне столько времени!',
+    testimonial_2: 'Расширенная аналитика помогла мне понять мои привычки в еде и наконец-то достичь своих целей.',
+    photo_recognition: 'Распознавание фото',
+    photo_recognition_description: 'Мгновенно идентифицируйте продукты и отслеживайте калории с помощью камеры',
+    advanced_analytics_description: 'Получайте подробные сведения о ваших привычках питания',
+    ad_free_description: 'Используйте приложение без рекламы',
+    voice_input: 'Голосовой ввод',
+    voice_input_description: 'Добавляйте продукты в свой дневник с помощью голосовых команд',
+    custom_themes: 'Пользовательские темы',
+    custom_themes_description: 'Персонализируйте приложение с эксклюзивными темами и цветами',
+    nutritionist_consultation: 'Консультация диетолога',
+    nutritionist_consultation_description: 'Получайте профессиональные советы от сертифицированных диетологов',
+    calorie_tracking: 'Отслеживание калорий',
+    calorie_tracking_description: 'Отслеживайте ежедневное потребление калорий',
+    meal_planning_description: 'Планируйте приемы пищи заранее',
+    progress_tracking_description: 'Следите за своим прогрессом к целям',
+    basic_recipes: 'Базовые рецепты',
+    basic_recipes_description: 'Доступ к библиотеке базовых рецептов',
+    water_tracking_description: 'Отслеживайте ежедневное потребление воды',
+    premium_features: 'Премиум-функции',
+    basic_features: 'Базовые функции',
+    basic_features_included: 'Все базовые функции включены в премиум',
+    testimonials: 'Отзывы',
+    popular: 'Популярное',
+    subscribe_now: 'Подписаться сейчас',
+    cancel_anytime: 'Отменить в любое время. Без обязательств.',
+    payment_processed_by: 'Платеж обрабатывается Stripe',
+    money_back_guarantee: 'Гарантия возврата денег в течение 30 дней',
+    money_back_guarantee_description: 'Если вы не удовлетворены в течение 30 дней, мы вернем ваш платеж',
+    upgrade_to_premium: 'Перейти на премиум',
+    premium_description: 'Разблокируйте мощные функции для улучшения отслеживания питания',
+    monthly_subscription: 'Месячная подписка',
+    yearly_subscription: 'Годовая подписка',
+    billed_annually: 'Списание раз в год',
+    save_30: 'Экономия 30%',
+    month: 'месяц',
   }
 };
 
@@ -699,19 +795,8 @@ export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) 
 export const EnhancedLanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const { language } = useContext(LanguageContext);
   
-  // Function to translate text with embedded translation keys using macros like {{key}}
-  const translateMacro = (text: string): string => {
-    if (!text) return '';
-    
-    // Look for patterns like {{key}} and replace with translations
-    return text.replace(/\{\{(\w+)\}\}/g, (_, key) => {
-      return translations[language]?.[key] || key;
-    });
-  };
-  
   const value: EnhancedLanguageContextProps = {
     isEnglish: language === 'en',
-    translateMacro,
   };
   
   return (

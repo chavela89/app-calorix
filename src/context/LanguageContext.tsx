@@ -1,67 +1,71 @@
 
-import React, { createContext, useContext, useState, useCallback, useMemo, useEffect, ReactNode } from 'react';
-import { Language } from '../i18n/types';
-import { translations } from '../i18n/translations';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { translations, availableLanguages } from "../i18n/translations";
+import { Language } from "../i18n/types";
 
-const LanguageContext = createContext<{
+interface LanguageContextType {
   language: Language;
-  translate: (key: string) => string;
-  loading: boolean;
-  availableLanguages: { code: Language; label: string; }[];
-}>({
-  language: 'ru',
-  translate: (key: string) => key,
-  loading: true,
-  availableLanguages: [{ code: 'ru', label: 'Русский' }],
-});
+  setLanguage: (language: Language) => void;
+  translate: (key: string, params?: Record<string, string | number>) => string;
+  availableLanguages: { code: Language; label: string }[];
+}
 
-const translationCache: Record<string, string> = {};
+const defaultLanguage: Language = 'ru';
 
-export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [language, setLanguageState] = useState<Language>(() => {
+    const savedLanguage = localStorage.getItem('app_language') as Language;
+    return savedLanguage || defaultLanguage;
+  });
+
   useEffect(() => {
-    document.documentElement.lang = 'ru';
-    setLoading(false);
-  }, []);
-  
-  const translate = useCallback((key: string): string => {
-    if (translationCache[key]) {
-      return translationCache[key];
+    document.documentElement.lang = language;
+    localStorage.setItem('app_language', language);
+  }, [language]);
+
+  const setLanguage = (newLanguage: Language) => {
+    setLanguageState(newLanguage);
+  };
+
+  const translate = (key: string, params?: Record<string, string | number>): string => {
+    const translation = translations[language]?.[key];
+    
+    if (!translation) {
+      console.warn(`Translation not found: ${key}`);
+      return key;
     }
     
-    const translation = translations['ru'][key] || key;
-    translationCache[key] = translation;
+    if (!params) return translation;
     
-    return translation;
-  }, []);
-  
-  const value = useMemo(() => ({
-    language: 'ru' as Language,
-    translate,
-    loading,
-    availableLanguages: [{ code: 'ru', label: 'Русский' }],
-  }), [translate, loading]);
-  
+    return Object.entries(params).reduce(
+      (acc, [paramKey, paramValue]) => acc.replace(new RegExp(`\\{\\{${paramKey}\\}\\}`, 'g'), String(paramValue)),
+      translation
+    );
+  };
+
   return (
-    <LanguageContext.Provider value={value}>
+    <LanguageContext.Provider value={{ language, setLanguage, translate, availableLanguages }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-export const useLanguage = () => {
+export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 };
 
-export const EnhancedLanguageProvider = ({ children }: { children: ReactNode }) => {
-  return <>{children}</>;
-};
-
-export const useEnhancedLanguage = () => {
-  return { isEnglish: false };
+// Enhanced hook for components that use many translations
+export const useEnhancedLanguage = (keys: string[]): { [key: string]: string } => {
+  const { translate } = useLanguage();
+  
+  return keys.reduce((acc, key) => {
+    acc[key] = translate(key);
+    return acc;
+  }, {} as { [key: string]: string });
 };

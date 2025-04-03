@@ -1,7 +1,7 @@
 
-import { ruTranslations } from './ru';
-import { enTranslations } from './en';
-import { Language } from './types';
+import { ruTranslations } from './i18n/modules/ru';
+import { enTranslations } from './i18n/modules/en';
+import { Language } from './i18n/types';
 
 interface Translations {
   [key: string]: {

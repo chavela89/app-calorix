@@ -24,5 +24,9 @@ export const mealPlanner = {
   added_to: 'добавлен в',
   protein: 'Белки',
   fat: 'Жиры',
-  carbs: 'Углеводы'
+  carbs: 'Углеводы',
+  calories: 'Калории',
+  nutrition: 'Питание',
+  nutrients: 'Нутриенты',
+  daily_nutrition: 'Дневное питание'
 };

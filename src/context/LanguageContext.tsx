@@ -1,79 +1,69 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect, ReactNode } from 'react';
-import { Language, LanguageContextProps, EnhancedLanguageContextProps, LanguageOption } from '../i18n/types';
-import { translations, availableLanguages } from '../i18n/translations';
+import { Language, LanguageContextProps, EnhancedLanguageContextProps } from '../i18n/types';
+import { translations } from '../i18n/translations';
 
 // Create the context with default values
 const LanguageContext = createContext<LanguageContextProps>({
-  language: 'en',
+  language: 'ru',
   setLanguage: () => {},
   translate: (key: string) => key,
   loading: true,
-  availableLanguages: availableLanguages,
+  availableLanguages: [{ code: 'ru' as Language, label: 'Русский' }],
 });
 
 const EnhancedLanguageContext = createContext<EnhancedLanguageContextProps>({
-  isEnglish: true,
+  isEnglish: false,
 });
 
 // Cache для переводов для улучшения производительности
 const translationCache: Record<string, Record<string, string>> = {
-  en: {},
   ru: {}
 };
 
 // Provider component
 export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>('ru');
+  const [language] = useState<Language>('ru');
   const [loading, setLoading] = useState(true);
   
-  // Загружаем языковые настройки из localStorage
+  // Устанавливаем русский язык по умолчанию
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
-      setLanguageState(savedLanguage);
-    }
+    document.documentElement.lang = language;
     setLoading(false);
+  }, [language]);
+  
+  // Функция установки языка (всегда русский)
+  const setLanguage = useCallback(() => {
+    // В данной версии приложения используем только русский язык
+    document.documentElement.lang = 'ru';
   }, []);
-  
-  // Сохраняем языковые настройки в localStorage
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-  
-  // Оптимизированная функция установки языка
-  const setLanguage = useCallback((newLanguage: Language) => {
-    if (newLanguage === language) return;
-    setLanguageState(newLanguage);
-    document.documentElement.lang = newLanguage;
-  }, [language]);
   
   // Мемоизированная функция перевода с кэшированием
   const translate = useCallback((key: string): string => {
-    if (!translations[language]) {
+    if (!translations['ru']) {
       return key;
     }
     
     // Проверяем кэш сначала
-    if (translationCache[language][key]) {
-      return translationCache[language][key];
+    if (translationCache['ru'][key]) {
+      return translationCache['ru'][key];
     }
     
     // Если перевода нет в кэше, получаем его
-    const translation = translations[language][key] || key;
+    const translation = translations['ru'][key] || key;
     
     // Сохраняем в кэш
-    translationCache[language][key] = translation;
+    translationCache['ru'][key] = translation;
     
     return translation;
-  }, [language]);
+  }, []);
   
   const value = useMemo(() => ({
     language,
     setLanguage,
     translate,
     loading,
-    availableLanguages,
+    availableLanguages: [{ code: 'ru' as Language, label: 'Русский' }],
   }), [language, setLanguage, translate, loading]);
   
   return (
@@ -85,11 +75,9 @@ export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) 
 
 // Enhanced Language Provider с дополнительной функциональностью
 export const EnhancedLanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const { language } = useContext(LanguageContext);
-  
   const value = useMemo(() => ({
-    isEnglish: language === 'en',
-  }), [language]);
+    isEnglish: false,
+  }), []);
   
   return (
     <EnhancedLanguageContext.Provider value={value}>

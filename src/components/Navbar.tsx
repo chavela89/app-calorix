@@ -4,10 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { useLanguage } from "@/context/LanguageContextFixed";
 import { useUser } from "@/context/UserContext";
 import {
-  LayoutDashboardIcon,
+  UtensilsCrossedIcon,
   LineChartIcon,
   CalendarIcon,
   BookOpenIcon,
@@ -21,45 +20,45 @@ import {
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
-  const { translate } = useLanguage();
   const { user } = useUser();
   const location = useLocation();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
+  // Русскоязычные лейблы для меню
   const routes = [
     {
       href: "/",
-      label: translate("dashboard"),
-      icon: <LayoutDashboardIcon className="h-4 w-4 md:h-5 md:w-5 text-blue-500" />,
+      label: "Дневник питания",
+      icon: <UtensilsCrossedIcon className="h-4 w-4 md:h-5 md:w-5 text-blue-500" />,
       activeColor: "text-blue-600",
     },
     {
       href: "/analytics",
-      label: translate("analytics"),
+      label: "Аналитика",
       icon: <LineChartIcon className="h-4 w-4 md:h-5 md:w-5 text-green-500" />,
       activeColor: "text-green-600",
     },
     {
       href: "/planner",
-      label: translate("planner"),
+      label: "Планировщик питания",
       icon: <CalendarIcon className="h-4 w-4 md:h-5 md:w-5 text-purple-500" />,
       activeColor: "text-purple-600",
     },
     {
       href: "/recipes",
-      label: translate("recipes"),
+      label: "Рецепты",
       icon: <BookOpenIcon className="h-4 w-4 md:h-5 md:w-5 text-orange-500" />,
       activeColor: "text-orange-600",
     },
     {
       href: "/progress",
-      label: translate("progress"),
+      label: "Прогресс",
       icon: <BarChart2Icon className="h-4 w-4 md:h-5 md:w-5 text-pink-500" />,
       activeColor: "text-pink-600",
     },
     {
       href: "/community",
-      label: translate("community"),
+      label: "Сообщество",
       icon: <UsersIcon className="h-4 w-4 md:h-5 md:w-5 text-cyan-500" />,
       activeColor: "text-cyan-600",
     },
@@ -76,17 +75,22 @@ export function Navbar() {
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="hidden font-bold sm:inline-block">CaloriX</span>
+        <div className="mr-4 flex items-center">
+          <Link to="/" className="mr-8 flex items-center space-x-2">
+            <svg viewBox="0 0 24 24" className="h-6 w-6 text-orange-500" fill="currentColor">
+              <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity="0.4"></path>
+              <path d="M13,12.41l2.12,2.12a1,1,0,1,0,1.42-1.42l-2.83-2.83a1,1,0,0,0-1.42,0L9.46,13.12a1,1,0,0,0,1.42,1.42Z"></path>
+            </svg>
+            <span className="font-bold hidden sm:inline-block">CaloriX</span>
           </Link>
-          <nav className="flex items-center gap-6 text-sm">
+          
+          <nav className="hidden md:flex items-center space-x-8">
             {routes.map((route, index) => (
               <Link
                 key={index}
                 to={route.href}
                 className={cn(
-                  "flex items-center gap-2 transition-colors hover:text-foreground/80",
+                  "flex items-center gap-2 text-sm transition-colors hover:text-foreground/80",
                   isActive(route.href)
                     ? `font-medium ${route.activeColor}`
                     : "text-foreground/60"
@@ -105,11 +109,15 @@ export function Navbar() {
           onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
         >
           {isMobileNavOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-          <span className="sr-only">Toggle Menu</span>
+          <span className="sr-only">Переключение меню</span>
         </Button>
         
         <div className="flex items-center md:hidden">
-          <Link to="/" className="font-bold">
+          <Link to="/" className="font-bold flex items-center">
+            <svg viewBox="0 0 24 24" className="h-6 w-6 text-orange-500 mr-2" fill="currentColor">
+              <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity="0.4"></path>
+              <path d="M13,12.41l2.12,2.12a1,1,0,1,0,1.42-1.42l-2.83-2.83a1,1,0,0,0-1.42,0L9.46,13.12a1,1,0,0,0,1.42,1.42Z"></path>
+            </svg>
             CaloriX
           </Link>
         </div>
@@ -117,12 +125,11 @@ export function Navbar() {
         <div className="flex flex-1 items-center justify-end space-x-2">
           <div className="hidden items-center gap-2 md:flex">
             <ThemeSelector />
-            <LanguageSelector />
           </div>
           <Button
             variant="ghost"
             size="icon"
-            aria-label={translate("my_account")}
+            aria-label="Мой аккаунт"
             className="rounded-full"
             asChild
           >
@@ -175,12 +182,11 @@ export function Navbar() {
             >
               <Link to="/settings">
                 <SettingsIcon className="mr-2 h-4 w-4" />
-                {translate("settings")}
+                Настройки
               </Link>
             </Button>
             <div className="flex items-center gap-2">
               <ThemeSelector />
-              <LanguageSelector />
             </div>
           </div>
         </div>

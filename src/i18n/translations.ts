@@ -1,5 +1,4 @@
 
-import { enTranslations } from './en';
 import { ruTranslations } from './ru';
 import { Language } from './types';
 
@@ -10,14 +9,12 @@ interface Translations {
   };
 }
 
-// Create the translations object
+// Create the translations object with only Russian
 export const translations: Translations = {
-  en: enTranslations,
   ru: ruTranslations
 };
 
-// Available languages array
+// Available languages array (only Russian)
 export const availableLanguages = [
-  { code: 'en' as Language, label: 'English' },
   { code: 'ru' as Language, label: 'Русский' }
 ];

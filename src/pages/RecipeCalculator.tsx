@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { useLanguage } from "@/context/LanguageContextFixed";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +24,6 @@ const FOOD_DATABASE = [
 ];
 
 export default function RecipeCalculator() {
-  const { translate } = useLanguage();
   const navigate = useNavigate();
   
   // Recipe form state
@@ -39,7 +37,7 @@ export default function RecipeCalculator() {
   // Save recipe handler
   const saveRecipe = () => {
     // Save recipe logic would go here
-    alert(translate("recipe_saved_successfully"));
+    alert("Рецепт успешно сохранен");
     navigate("/recipes");
   };
 
@@ -53,7 +51,7 @@ export default function RecipeCalculator() {
         >
           <ChevronLeftIcon className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">{translate("recipe_calculator")}</h1>
+        <h1 className="text-2xl font-bold">Калькулятор рецептов</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

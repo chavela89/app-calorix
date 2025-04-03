@@ -34,4 +34,6 @@ export const dashboard = {
   ml_of_water: 'мл воды',
   daily_nutrition: 'Ежедневное питание',
   recent_foods: 'Недавние продукты',
+  my_account: 'Мой аккаунт',
+  logout: 'Выйти',
 };

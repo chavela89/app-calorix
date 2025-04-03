@@ -11,7 +11,7 @@ import { useLanguage } from "@/context/LanguageContextFixed";
 import { GlobeIcon } from "lucide-react";
 
 export const LanguageSelector = memo(() => {
-  const { language, availableLanguages } = useLanguage();
+  const { availableLanguages } = useLanguage();
   
   return (
     <DropdownMenu>
@@ -25,7 +25,7 @@ export const LanguageSelector = memo(() => {
         {availableLanguages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            className={`flex items-center gap-2 ${language === lang.code ? "font-medium" : ""}`}
+            className="flex items-center gap-2 font-medium"
           >
             {lang.label}
           </DropdownMenuItem>

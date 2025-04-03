@@ -1,7 +1,8 @@
 
 import { useUser } from "@/context/UserContext";
 import { Navbar } from "@/components/Navbar";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 // Pages
 import Login from "./pages/Auth/Login";
@@ -23,7 +24,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useUser();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">Загрузка...</div>;
   }
 
   if (!user) {
@@ -35,6 +36,12 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 const AppRoutes = () => {
   const { user } = useUser();
+  const location = useLocation();
+  
+  // Прокрутка страницы вверх при переходе по маршрутам
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   
   return (
     <>

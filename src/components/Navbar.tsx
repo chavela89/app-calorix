@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeSelector } from "@/components/ThemeSelector";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import { useUser } from "@/context/UserContext";
 import {
   UtensilsCrossedIcon,
@@ -12,19 +11,27 @@ import {
   BookOpenIcon,
   BarChart2Icon,
   UsersIcon,
-  SettingsIcon,
   MenuIcon,
   XIcon,
+  LogOutIcon,
   UserIcon,
+  SettingsIcon,
+  SparklesIcon,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
-  const { user } = useUser();
+  const { user, logout } = useUser();
   const location = useLocation();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  // Русскоязычные лейблы для меню
   const routes = [
     {
       href: "/",
@@ -64,7 +71,6 @@ export function Navbar() {
     },
   ];
 
-  // Проверяем, активен ли текущий маршрут
   const isActive = (href: string) => {
     if (href === "/") {
       return location.pathname === "/";
@@ -75,19 +81,23 @@ export function Navbar() {
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <div className="mr-4 flex items-center">
+        <div className="mr-4 hidden md:flex items-center">
           <Link to="/" className="mr-8 flex items-center space-x-2">
-            <svg viewBox="0 0 24 24" className="h-6 w-6 text-orange-500" fill="currentColor">
-              <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity="0.4"></path>
-              <path d="M13,12.41l2.12,2.12a1,1,0,1,0,1.42-1.42l-2.83-2.83a1,1,0,0,0-1.42,0L9.46,13.12a1,1,0,0,0,1.42,1.42Z"></path>
+            <svg 
+              viewBox="0 0 24 24" 
+              className="h-6 w-6 text-orange-500" 
+              fill="currentColor"
+            >
+              <path d="M11.9999 2C6.47774 2 2 6.47774 2 12.0001C2 17.5223 6.47774 22 11.9999 22C17.5222 22 22 17.5223 22 12.0001C22 6.47774 17.5222 2 11.9999 2ZM11.9999 20.0001C7.58883 20.0001 4 16.4112 4 12.0001C4 7.58883 7.58883 4 11.9999 4C16.4111 4 20 7.58883 20 12.0001C20 16.4112 16.4111 20.0001 11.9999 20.0001Z" opacity="0.4"/>
+              <path d="M12 6.94922C9.93 6.94922 8.25 8.62922 8.25 10.6992C8.25 12.7142 9.84 14.3592 11.95 14.4192C11.98 14.4192 12.02 14.4192 12.04 14.4192C12.06 14.4192 12.09 14.4192 12.11 14.4192C12.12 14.4192 12.13 14.4192 12.13 14.4192C14.15 14.3492 15.74 12.7142 15.75 10.6992C15.75 8.62922 14.07 6.94922 12 6.94922Z"/>
+              <path d="M17.8794 16.0603C16.1694 14.7203 13.6194 13.9903 11.9994 13.9903C10.3794 13.9903 7.83941 14.7203 6.11941 16.0603C5.30941 16.6803 4.86941 17.4803 4.86941 18.3303C4.86941 19.1803 5.30941 19.9703 6.11941 20.5803C7.83941 21.9203 10.3894 22.6503 12.0094 22.6503C13.6294 22.6503 16.1694 21.9203 17.8894 20.5803C18.6994 19.9603 19.1394 19.1703 19.1394 18.3103C19.1294 17.4603 18.6894 16.6803 17.8794 16.0603Z"/>
             </svg>
-            <span className="font-bold hidden sm:inline-block">CaloriX</span>
+            <span className="font-bold">CaloriX</span>
           </Link>
-          
-          <nav className="hidden md:flex items-center space-x-8">
-            {routes.map((route, index) => (
+          <nav className="flex items-center space-x-8">
+            {routes.map((route) => (
               <Link
-                key={index}
+                key={route.href}
                 to={route.href}
                 className={cn(
                   "flex items-center gap-2 text-sm transition-colors hover:text-foreground/80",
@@ -102,7 +112,7 @@ export function Navbar() {
             ))}
           </nav>
         </div>
-        
+
         <Button
           variant="ghost"
           className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
@@ -111,84 +121,76 @@ export function Navbar() {
           {isMobileNavOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
           <span className="sr-only">Переключение меню</span>
         </Button>
-        
-        <div className="flex items-center md:hidden">
-          <Link to="/" className="font-bold flex items-center">
-            <svg viewBox="0 0 24 24" className="h-6 w-6 text-orange-500 mr-2" fill="currentColor">
-              <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity="0.4"></path>
-              <path d="M13,12.41l2.12,2.12a1,1,0,1,0,1.42-1.42l-2.83-2.83a1,1,0,0,0-1.42,0L9.46,13.12a1,1,0,0,0,1.42,1.42Z"></path>
-            </svg>
-            CaloriX
-          </Link>
-        </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <div className="hidden items-center gap-2 md:flex">
-            <ThemeSelector />
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Мой аккаунт"
-            className="rounded-full"
-            asChild
-          >
-            <Link to="/profile">
-              {user?.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <UserIcon className="h-4 w-4" />
-                </div>
-              )}
-            </Link>
-          </Button>
+          <ThemeSelector />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative rounded-full"
+              >
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="h-8 w-8 rounded-full"
+                  />
+                ) : (
+                  <UserIcon className="h-5 w-5" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="flex items-center">
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  <span>Профиль</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/settings" className="flex items-center">
+                  <SettingsIcon className="mr-2 h-4 w-4" />
+                  <span>Настройки</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/premium" className="flex items-center">
+                  <SparklesIcon className="mr-2 h-4 w-4" />
+                  <span>Премиум</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logout} className="flex items-center">
+                <LogOutIcon className="mr-2 h-4 w-4" />
+                <span>Выйти</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      {/* Мобильное меню */}
       {isMobileNavOpen && (
-        <div className="container pb-3 pt-1 md:hidden">
-          <nav className="grid grid-cols-3 gap-2">
-            {routes.map((route, index) => (
+        <div className="md:hidden">
+          <nav className="grid grid-cols-2 gap-2 p-4">
+            {routes.map((route) => (
               <Link
-                key={index}
+                key={route.href}
                 to={route.href}
                 onClick={() => setIsMobileNavOpen(false)}
                 className={cn(
-                  "flex flex-col items-center rounded-md p-3 text-center text-xs transition-colors hover:bg-muted",
+                  "flex flex-col items-center rounded-lg p-3 text-center hover:bg-accent",
                   isActive(route.href)
-                    ? `font-medium ${route.activeColor} bg-muted`
-                    : "text-foreground/60"
+                    ? `font-medium ${route.activeColor} bg-accent`
+                    : "text-muted-foreground"
                 )}
               >
                 {route.icon}
-                <span className="mt-1">{route.label}</span>
+                <span className="mt-1 text-xs">{route.label}</span>
               </Link>
             ))}
           </nav>
-          <div className="mt-3 flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setIsMobileNavOpen(false);
-              }}
-              asChild
-            >
-              <Link to="/settings">
-                <SettingsIcon className="mr-2 h-4 w-4" />
-                Настройки
-              </Link>
-            </Button>
-            <div className="flex items-center gap-2">
-              <ThemeSelector />
-            </div>
-          </div>
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Define BodyMetrics interface
@@ -24,6 +25,7 @@ export interface User {
     waterGoal: number;
   };
   bodyMetrics?: BodyMetrics;
+  avatar?: string;
 }
 
 type UserContextType = {
@@ -75,9 +77,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         setUser(JSON.parse(savedUser));
       } catch (err) {
-        console.error("Failed to parse saved user:", err);
+        console.error("Ошибка при чтении данных пользователя:", err);
         localStorage.removeItem("calorix_user");
       }
+    } else {
+      // Для демо можем добавить автоматический вход
+      setUser(MOCK_USER);
+      localStorage.setItem("calorix_user", JSON.stringify(MOCK_USER));
     }
     
     setLoading(false);
@@ -135,6 +141,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("calorix_user");
+    window.location.href = "/login";
   };
 
   const updateUser = (updates: Partial<User>) => {

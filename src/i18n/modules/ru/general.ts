@@ -67,4 +67,10 @@ export const general = {
   ingredient: 'Ингредиент',
   feature_coming_soon: 'Эта функция скоро появится',
   search_food_or_scan: 'Поиск продуктов или сканирование штрихкода',
+  month: 'Месяц',
+  day: 'День',
+  week: 'Неделя',
+  year: 'Год',
+  loading: 'Загрузка...',
+  no_data: 'Нет данных',
 };

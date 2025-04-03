@@ -67,4 +67,6 @@ export const profile = {
   male: 'Male',
   female: 'Female',
   other: 'Other',
+  confirm_password: 'Confirm Password',
+  notification_settings_description: 'Manage your notification preferences',
 };

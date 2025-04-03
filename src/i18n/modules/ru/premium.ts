@@ -58,4 +58,7 @@ export const premium = {
   premium_features: 'Премиум-функции',
   basic_features: 'Базовые функции',
   basic_features_included: 'Все базовые функции включены в премиум',
+  monthly_price: '399₽/мес',
+  yearly_price: '3999₽/год',
+  yearly_price_monthly: '333₽/мес',
 };

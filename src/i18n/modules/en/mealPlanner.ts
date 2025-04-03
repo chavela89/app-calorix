@@ -12,4 +12,5 @@ export const mealPlanner = {
   save_list: 'Save List',
   add_meal: 'Add Meal',
   meal_planning_description: 'Plan your meals ahead of time',
+  planned: 'Planned',
 };

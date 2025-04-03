@@ -58,4 +58,7 @@ export const premium = {
   premium_features: 'Premium Features',
   basic_features: 'Basic Features',
   basic_features_included: 'All basic features are included with premium',
+  monthly_price: '$3.99/mo',
+  yearly_price: '$39.99/yr',
+  yearly_price_monthly: '$3.33/mo',
 };

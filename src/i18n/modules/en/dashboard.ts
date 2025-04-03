@@ -27,4 +27,11 @@ export const dashboard = {
   dinner: 'Dinner',
   snack: 'Snack',
   add_food: 'Add Food',
+  no_results: 'No results found',
+  water_tracking: 'Water Tracking',
+  add_glass: 'Add Glass',
+  remove_glass: 'Remove Glass',
+  ml_of_water: 'ml of water',
+  daily_nutrition: 'Daily Nutrition',
+  recent_foods: 'Recent Foods',
 };

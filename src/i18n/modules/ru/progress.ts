@@ -17,4 +17,8 @@ export const progress = {
   complete_all: 'Выполнить все',
   goals_met: 'Достигнутых целей',
   weight_value: 'Вес',
+  statistics: 'Статистика',
+  weekly: 'Еженедельно',
+  target: 'Цель',
+  start: 'Начало',
 };

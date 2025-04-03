@@ -1,195 +1,190 @@
 
 import { useState } from "react";
-import { useUser } from "@/context/UserContext";
-import { useTheme } from "@/context/ThemeContext";
-import { useLanguage } from "@/context/LanguageContextFixed";
-import { ThemeSelector } from "./ThemeSelector";
-import { LanguageSelector } from "./LanguageSelector";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  Apple,
-  LineChartIcon,
-  ListChecksIcon,
-  PieChartIcon,
-  Settings2Icon,
-  UtensilsIcon,
-  UserIcon,
-  UsersIcon,
-  BookOpenIcon,
-  Menu,
-} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ThemeSelector } from "@/components/ThemeSelector";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/context/LanguageContextFixed";
+import { useUser } from "@/context/UserContext";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
+  LayoutDashboardIcon,
+  LineChartIcon,
+  CalendarIcon,
+  BookOpenIcon,
+  BarChart2Icon,
+  UsersIcon,
+  SettingsIcon,
+  MenuIcon,
+  XIcon,
+  UserIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
-  const { user, logout } = useUser();
   const { translate } = useLanguage();
+  const { user } = useUser();
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  const navItems = [
-    { path: "/", label: translate("diary"), icon: <UtensilsIcon className="h-5 w-5 text-orange-500" /> },
-    { path: "/analytics", label: translate("analytics"), icon: <LineChartIcon className="h-5 w-5 text-blue-500" /> },
-    { path: "/planner", label: translate("planner"), icon: <ListChecksIcon className="h-5 w-5 text-green-500" /> },
-    { path: "/recipes", label: translate("recipes"), icon: <BookOpenIcon className="h-5 w-5 text-amber-500" /> },
-    { path: "/progress", label: translate("progress"), icon: <PieChartIcon className="h-5 w-5 text-purple-500" /> },
-    { path: "/community", label: translate("community"), icon: <UsersIcon className="h-5 w-5 text-pink-500" /> },
+  const routes = [
+    {
+      href: "/",
+      label: translate("dashboard"),
+      icon: <LayoutDashboardIcon className="h-4 w-4 md:h-5 md:w-5 text-blue-500" />,
+      activeColor: "text-blue-600",
+    },
+    {
+      href: "/analytics",
+      label: translate("analytics"),
+      icon: <LineChartIcon className="h-4 w-4 md:h-5 md:w-5 text-green-500" />,
+      activeColor: "text-green-600",
+    },
+    {
+      href: "/planner",
+      label: translate("planner"),
+      icon: <CalendarIcon className="h-4 w-4 md:h-5 md:w-5 text-purple-500" />,
+      activeColor: "text-purple-600",
+    },
+    {
+      href: "/recipes",
+      label: translate("recipes"),
+      icon: <BookOpenIcon className="h-4 w-4 md:h-5 md:w-5 text-orange-500" />,
+      activeColor: "text-orange-600",
+    },
+    {
+      href: "/progress",
+      label: translate("progress"),
+      icon: <BarChart2Icon className="h-4 w-4 md:h-5 md:w-5 text-pink-500" />,
+      activeColor: "text-pink-600",
+    },
+    {
+      href: "/community",
+      label: translate("community"),
+      icon: <UsersIcon className="h-4 w-4 md:h-5 md:w-5 text-cyan-500" />,
+      activeColor: "text-cyan-600",
+    },
   ];
 
+  // Проверяем, активен ли текущий маршрут
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(href);
+  };
+
   return (
-    <header className="bg-background border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4 flex justify-between items-center h-16">
-        {/* Logo and brand */}
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-            <Apple className="h-6 w-6 text-orange-500" />
-            <span>CaloriX</span>
+    <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 hidden md:flex">
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <span className="hidden font-bold sm:inline-block">CaloriX</span>
+          </Link>
+          <nav className="flex items-center gap-6 text-sm">
+            {routes.map((route, index) => (
+              <Link
+                key={index}
+                to={route.href}
+                className={cn(
+                  "flex items-center gap-2 transition-colors hover:text-foreground/80",
+                  isActive(route.href)
+                    ? `font-medium ${route.activeColor}`
+                    : "text-foreground/60"
+                )}
+              >
+                {route.icon}
+                {route.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        
+        <Button
+          variant="ghost"
+          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+          onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+        >
+          {isMobileNavOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+        
+        <div className="flex items-center md:hidden">
+          <Link to="/" className="font-bold">
+            CaloriX
           </Link>
         </div>
 
-        {/* Desktop navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === item.path
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
-            >
-              <div className="flex flex-col items-center">
-                {item.icon}
-                <span className="mt-1">{item.label}</span>
-              </div>
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="hidden items-center gap-2 md:flex">
+            <ThemeSelector />
+            <LanguageSelector />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={translate("my_account")}
+            className="rounded-full"
+            asChild
+          >
+            <Link to="/profile">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <UserIcon className="h-4 w-4" />
+                </div>
+              )}
             </Link>
-          ))}
-        </nav>
-
-        {/* Mobile navigation */}
-        {isMobile && (
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left">
-              <div className="flex flex-col h-full py-4">
-                <div className="flex items-center mb-6">
-                  <Apple className="h-6 w-6 text-orange-500 mr-2" />
-                  <span className="font-bold text-xl">CaloriX</span>
-                </div>
-                
-                <nav className="space-y-2 flex-1">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        location.pathname === item.path
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                      }`}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </Link>
-                  ))}
-                </nav>
-                
-                <div className="pt-4 border-t mt-auto">
-                  <div className="flex items-center gap-2 mb-4">
-                    <ThemeSelector />
-                    <LanguageSelector />
-                  </div>
-                  
-                  {user ? (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Avatar className="h-8 w-8 mr-2">
-                          <AvatarImage src="/avatar.png" alt={user.name} />
-                          <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium">{user.name}</span>
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={logout}>
-                        {translate("logout")}
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button asChild size="sm" variant="default" className="w-full">
-                      <Link to="/login">{translate("login")}</Link>
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-        )}
-
-        {/* User menu, theme, language */}
-        <div className="flex items-center gap-2">
-          <ThemeSelector />
-          <LanguageSelector />
-          
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/avatar.png" alt={user.name} />
-                    <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{translate("my_account")}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link to="/profile" className="flex w-full items-center">
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>{translate("profile")}</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/settings" className="flex w-full items-center">
-                    <Settings2Icon className="mr-2 h-4 w-4" />
-                    <span>{translate("settings")}</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/premium" className="flex w-full items-center">
-                    <span className="mr-2 text-amber-500">✨</span>
-                    <span>{translate("premium")}</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
-                  {translate("logout")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button asChild size="sm" variant="default">
-              <Link to="/login">{translate("login")}</Link>
-            </Button>
-          )}
+          </Button>
         </div>
       </div>
-    </header>
+
+      {/* Мобильное меню */}
+      {isMobileNavOpen && (
+        <div className="container pb-3 pt-1 md:hidden">
+          <nav className="grid grid-cols-3 gap-2">
+            {routes.map((route, index) => (
+              <Link
+                key={index}
+                to={route.href}
+                onClick={() => setIsMobileNavOpen(false)}
+                className={cn(
+                  "flex flex-col items-center rounded-md p-3 text-center text-xs transition-colors hover:bg-muted",
+                  isActive(route.href)
+                    ? `font-medium ${route.activeColor} bg-muted`
+                    : "text-foreground/60"
+                )}
+              >
+                {route.icon}
+                <span className="mt-1">{route.label}</span>
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setIsMobileNavOpen(false);
+              }}
+              asChild
+            >
+              <Link to="/settings">
+                <SettingsIcon className="mr-2 h-4 w-4" />
+                {translate("settings")}
+              </Link>
+            </Button>
+            <div className="flex items-center gap-2">
+              <ThemeSelector />
+              <LanguageSelector />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

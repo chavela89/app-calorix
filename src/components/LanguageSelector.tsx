@@ -1,4 +1,5 @@
 
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,26 +7,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContext";
+import { useLanguage, useEnhancedLanguage } from "@/context/LanguageContextFixed";
 import { GlobeIcon } from "lucide-react";
-import { useCallback } from "react";
 
-export function LanguageSelector() {
-  const { language, setLanguage, availableLanguages, translate } = useLanguage();
+export const LanguageSelector = memo(() => {
+  const { language, setLanguage, availableLanguages } = useLanguage();
   const { isEnglish } = useEnhancedLanguage();
   
-  // Мемоизируем обработчик смены языка для лучшей производительности
-  const handleLanguageChange = useCallback((langCode: string) => {
-    // Предотвращаем повторную установку того же языка
+  // Оптимизированный обработчик переключения языка
+  const handleLanguageChange = (langCode: string) => {
+    // Предотвращаем переключение на тот же язык
     if (language === langCode) return;
     
     // Устанавливаем новый язык
     setLanguage(langCode as "ru" | "en");
     
-    // Сразу выполняем ключевые действия для ускорения обновления интерфейса
+    // Устанавливаем атрибуты документа
     document.documentElement.lang = langCode;
-    document.documentElement.dir = 'ltr';
-  }, [setLanguage, language]);
+  };
 
   return (
     <DropdownMenu>
@@ -48,4 +47,6 @@ export function LanguageSelector() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+});
+
+LanguageSelector.displayName = "LanguageSelector";

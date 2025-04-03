@@ -1,15 +1,14 @@
 
 import { useState } from "react";
-import { PlusIcon, TrashIcon } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContextFixed";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PlusIcon, Trash2Icon } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
-// Ingredient type definition
 export interface Ingredient {
   id: number;
   name: string;
@@ -21,60 +20,74 @@ export interface Ingredient {
   carbs: number;
 }
 
-// Food database item definition
-interface FoodItem {
-  id: number;
-  name: string;
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-}
-
 interface IngredientSelectorProps {
-  foodDatabase: FoodItem[];
+  foodDatabase: Array<{ id: number; name: string; calories: number; protein: number; fat: number; carbs: number }>;
   ingredients: Ingredient[];
-  setIngredients: (ingredients: Ingredient[]) => void;
+  setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
 }
 
 export function IngredientSelector({ 
-  foodDatabase,
-  ingredients,
-  setIngredients
+  foodDatabase, 
+  ingredients, 
+  setIngredients 
 }: IngredientSelectorProps) {
-  const { translate } = useLanguage();
-  const [selectedIngredient, setSelectedIngredient] = useState("");
-  const [amount, setAmount] = useState("100");
-  const [unit, setUnit] = useState("г");
+  const { translate, language } = useLanguage();
+  const [selectedFoodId, setSelectedFoodId] = useState<string>('');
+  const [amount, setAmount] = useState<string>('100');
+  const [unit, setUnit] = useState<string>('g');
 
-  // Add ingredient function
-  const addIngredient = () => {
-    if (selectedIngredient && amount) {
-      const ingredient = foodDatabase.find(food => food.name === selectedIngredient);
-      if (ingredient) {
-        const amountValue = parseFloat(amount);
-        const newIngredient = {
-          id: Date.now(),
-          name: ingredient.name,
-          amount: amountValue,
-          unit,
-          calories: Math.round(ingredient.calories * amountValue / 100),
-          protein: Math.round(ingredient.protein * amountValue / 100 * 10) / 10,
-          fat: Math.round(ingredient.fat * amountValue / 100 * 10) / 10,
-          carbs: Math.round(ingredient.carbs * amountValue / 100 * 10) / 10,
-        };
-        
-        setIngredients([...ingredients, newIngredient]);
-        setSelectedIngredient("");
-        setAmount("100");
-      }
+  const handleAddIngredient = () => {
+    const foodId = parseInt(selectedFoodId);
+    if (!foodId) {
+      toast({
+        title: translate("error"),
+        description: translate("select_ingredient"),
+        variant: "destructive"
+      });
+      return;
     }
+
+    const foodItem = foodDatabase.find((food) => food.id === foodId);
+    if (!foodItem) return;
+
+    const amountValue = parseInt(amount);
+    if (!amountValue || amountValue <= 0) {
+      toast({
+        title: translate("error"),
+        description: translate("enter_valid_amount"),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newIngredient: Ingredient = {
+      id: Date.now(), // уникальный id для ингредиента
+      name: foodItem.name,
+      amount: amountValue,
+      unit: unit,
+      calories: foodItem.calories,
+      protein: foodItem.protein,
+      fat: foodItem.fat,
+      carbs: foodItem.carbs
+    };
+
+    setIngredients([...ingredients, newIngredient]);
+    setSelectedFoodId('');
+    setAmount('100');
   };
 
-  // Remove ingredient function
   const removeIngredient = (id: number) => {
-    setIngredients(ingredients.filter(item => item.id !== id));
+    setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
   };
+
+  // Список единиц измерения
+  const units = [
+    { value: "g", label: { en: "grams", ru: "грамм" } },
+    { value: "ml", label: { en: "milliliters", ru: "миллилитров" } },
+    { value: "tbsp", label: { en: "tbsp", ru: "ст.л" } },
+    { value: "tsp", label: { en: "tsp", ru: "ч.л" } },
+    { value: "piece", label: { en: "piece", ru: "штука" } },
+  ];
 
   return (
     <Card>
@@ -82,82 +95,92 @@ export function IngredientSelector({
         <CardTitle>{translate("ingredients")}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-12 gap-2">
-            <div className="col-span-5">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div>
               <Label htmlFor="ingredient">{translate("ingredient")}</Label>
-              <Select value={selectedIngredient} onValueChange={setSelectedIngredient}>
+              <Select 
+                value={selectedFoodId} 
+                onValueChange={setSelectedFoodId}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={translate("select_ingredient")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {foodDatabase.map(food => (
-                    <SelectItem key={food.id} value={food.name}>{food.name}</SelectItem>
+                  {foodDatabase.map((food) => (
+                    <SelectItem key={food.id} value={food.id.toString()}>
+                      {food.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="col-span-3">
-              <Label htmlFor="amount">{translate("amount")}</Label>
+            
+            <div>
+              <Label htmlFor="amount">{translate("quantity")}</Label>
               <Input 
                 id="amount" 
                 type="number" 
                 value={amount} 
-                onChange={(e) => setAmount(e.target.value)} 
+                onChange={(e) => setAmount(e.target.value)}
               />
             </div>
-            <div className="col-span-2">
+            
+            <div>
               <Label htmlFor="unit">{translate("unit")}</Label>
               <Select value={unit} onValueChange={setUnit}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="г">г</SelectItem>
-                  <SelectItem value="мл">мл</SelectItem>
-                  <SelectItem value="шт">шт</SelectItem>
-                  <SelectItem value="ст.л">ст.л</SelectItem>
-                  <SelectItem value="ч.л">ч.л</SelectItem>
+                  {units.map((unit) => (
+                    <SelectItem key={unit.value} value={unit.value}>
+                      {language === 'en' ? unit.label.en : unit.label.ru}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="col-span-2 flex items-end">
-              <Button onClick={addIngredient} className="w-full">
-                <PlusIcon className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
 
-          {ingredients.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{translate("ingredient")}</TableHead>
-                  <TableHead>{translate("quantity")}</TableHead>
-                  <TableHead className="text-right">{translate("calories")}</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {ingredients.map(ingredient => (
-                  <TableRow key={ingredient.id}>
-                    <TableCell>{ingredient.name}</TableCell>
-                    <TableCell>{ingredient.amount} {ingredient.unit}</TableCell>
-                    <TableCell className="text-right">{ingredient.calories}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => removeIngredient(ingredient.id)}>
-                        <TrashIcon className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="text-center py-6 text-muted-foreground">
-              {translate("no_ingredients_added")}
-            </div>
-          )}
+          <Button 
+            type="button" 
+            onClick={handleAddIngredient}
+            className="w-full flex items-center gap-2"
+          >
+            <PlusIcon className="h-4 w-4" />
+            {translate("add_ingredients")}
+          </Button>
+
+          <div className="space-y-2">
+            {ingredients.length === 0 && (
+              <p className="text-center text-muted-foreground py-4">
+                {translate("no_ingredients_added")}
+              </p>
+            )}
+
+            {ingredients.map((ingredient) => (
+              <div 
+                key={ingredient.id}
+                className="flex justify-between items-center p-3 bg-muted rounded-md"
+              >
+                <div>
+                  <p className="font-medium">{ingredient.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {ingredient.amount} {ingredient.unit} • {ingredient.calories * (ingredient.amount / 100)} {translate("kcal")}
+                  </p>
+                </div>
+                <Button 
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeIngredient(ingredient.id)}
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2Icon className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

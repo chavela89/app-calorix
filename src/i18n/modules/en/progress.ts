@@ -17,4 +17,8 @@ export const progress = {
   complete_all: 'Complete All',
   goals_met: 'Goals Met',
   weight_value: 'Weight',
+  statistics: 'Statistics',
+  weekly: 'Weekly',
+  target: 'Target',
+  start: 'Start',
 };

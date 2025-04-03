@@ -12,4 +12,5 @@ export const mealPlanner = {
   save_list: 'Сохранить список',
   add_meal: 'Добавить прием пищи',
   meal_planning_description: 'Планируйте приемы пищи заранее',
+  planned: 'Запланировано',
 };

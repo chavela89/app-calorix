@@ -27,4 +27,11 @@ export const dashboard = {
   dinner: 'Ужин',
   snack: 'Перекус',
   add_food: 'Добавить продукт',
+  no_results: 'Результаты не найдены',
+  water_tracking: 'Водный баланс',
+  add_glass: 'Добавить стакан',
+  remove_glass: 'Убрать стакан',
+  ml_of_water: 'мл воды',
+  daily_nutrition: 'Ежедневное питание',
+  recent_foods: 'Недавние продукты',
 };

@@ -17,6 +17,14 @@ export default function Planner() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState("day");
   const { addFoodToMeal } = useNutrition();
+  const [shoppingItems, setShoppingItems] = useState([
+    { id: 1, name: language === "ru" ? "Куриная грудка (500г)" : "Chicken breast (500g)", checked: true },
+    { id: 2, name: language === "ru" ? "Овощи для салата" : "Vegetables for salad", checked: false },
+    { id: 3, name: language === "ru" ? "Рис бурый (1кг)" : "Brown rice (1kg)", checked: false },
+    { id: 4, name: language === "ru" ? "Йогурт греческий (4 шт)" : "Greek yogurt (4 pcs)", checked: false },
+    { id: 5, name: language === "ru" ? "Бананы (6 шт)" : "Bananas (6 pcs)", checked: false }
+  ]);
+  const [newShoppingItem, setNewShoppingItem] = useState("");
 
   // Демо-данные для планировщика
   const mealPlan = [
@@ -101,7 +109,6 @@ export default function Planner() {
 
   // Function to handle adding a food item to a meal plan
   const handleAddFood = (mealType) => {
-    // Show a dialog or navigate to add food page
     toast({
       title: translate("add_food"),
       description: `${translate("to")} ${translate(mealType)}`,
@@ -127,6 +134,74 @@ export default function Planner() {
       title: translate("food_added"),
       description: `${food.name} ${translate("added_to")} ${translate(mealType)}`,
     });
+  };
+
+  // Handler for removing a food item
+  const handleRemoveFood = (mealType, itemIndex) => {
+    // In a real app, you would remove the item from the state/database
+    toast({
+      title: translate("item_deleted"),
+      description: `${translate("item_removed_from_meal")}`,
+    });
+  };
+
+  // Shopping list handlers
+  const handleAddShoppingItem = () => {
+    if (newShoppingItem.trim()) {
+      setShoppingItems([
+        ...shoppingItems,
+        { id: Date.now(), name: newShoppingItem, checked: false }
+      ]);
+      setNewShoppingItem("");
+      
+      toast({
+        title: translate("add_item"),
+        description: `${newShoppingItem} ${language === "ru" ? "добавлен в список" : "added to list"}`,
+      });
+    }
+  };
+
+  const toggleShoppingItemCheck = (id) => {
+    setShoppingItems(
+      shoppingItems.map(item => 
+        item.id === id ? {...item, checked: !item.checked} : item
+      )
+    );
+  };
+
+  const handleSaveList = () => {
+    toast({
+      title: translate("save_list"),
+      description: language === "ru" ? "Список покупок сохранен" : "Shopping list saved",
+    });
+  };
+
+  const handleAddNewMeal = () => {
+    toast({
+      title: translate("add_meal"),
+      description: language === "ru" ? "Добавлен новый прием пищи" : "New meal added",
+    });
+  };
+
+  // Handler for week view meal plan
+  const handleWeekdayMealClick = (day, mealType) => {
+    toast({
+      title: `${translate(mealType)} - ${day}`,
+      description: language === "ru" ? "Редактирование питания" : "Editing meal plan",
+    });
+  };
+
+  // Handler for month view day selection
+  const handleMonthDayClick = (day) => {
+    if (day > 0 && day <= 30) {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+      setActiveTab("day");
+      
+      toast({
+        description: language === "ru" ? `Выбрано: ${day} ${formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day)).split(' ')[1]}` : 
+          `Selected: ${formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day))}`,
+      });
+    }
   };
 
   return (
@@ -194,7 +269,11 @@ export default function Planner() {
                             </p>
                           </div>
                           <div className="flex gap-2">
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleRemoveFood(meal.mealType, itemIndex)}
+                            >
                               <Trash2Icon className="h-4 w-4 text-muted-foreground" />
                             </Button>
                           </div>
@@ -224,7 +303,7 @@ export default function Planner() {
                 </Card>
               ))}
               
-              <Button className="w-full">
+              <Button className="w-full" onClick={handleAddNewMeal}>
                 <PlusIcon className="h-4 w-4 mr-2" />
                 {translate("add_meal")}
               </Button>
@@ -299,37 +378,36 @@ export default function Planner() {
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Input placeholder={translate("add_item")} />
-                      <Button size="sm" variant="secondary">
+                      <Input 
+                        placeholder={translate("add_item")} 
+                        value={newShoppingItem} 
+                        onChange={(e) => setNewShoppingItem(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddShoppingItem()}
+                      />
+                      <Button size="sm" variant="secondary" onClick={handleAddShoppingItem}>
                         <PlusIcon className="h-4 w-4" />
                       </Button>
                     </div>
                     
                     <div className="space-y-2 mt-4">
-                      <div className="flex items-center gap-2">
-                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                        <span>{language === "ru" ? "Куриная грудка (500г)" : "Chicken breast (500g)"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">{language === "ru" ? "Овощи для салата" : "Vegetables for salad"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">{language === "ru" ? "Рис бурый (1кг)" : "Brown rice (1kg)"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">{language === "ru" ? "Йогурт греческий (4 шт)" : "Greek yogurt (4 pcs)"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircleIcon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-muted-foreground">{language === "ru" ? "Бананы (6 шт)" : "Bananas (6 pcs)"}</span>
-                      </div>
+                      {shoppingItems.map((item) => (
+                        <div 
+                          key={item.id} 
+                          className="flex items-center gap-2 cursor-pointer"
+                          onClick={() => toggleShoppingItemCheck(item.id)}
+                        >
+                          <CheckCircleIcon className={`h-5 w-5 ${item.checked ? 'text-green-500' : 'text-muted-foreground'}`} />
+                          <span className={item.checked ? 'text-muted-foreground line-through' : ''}>{item.name}</span>
+                        </div>
+                      ))}
                     </div>
                     
                     <div className="pt-4">
-                      <Button variant="outline" className="w-full gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full gap-2"
+                        onClick={handleSaveList}
+                      >
                         <SaveIcon className="h-4 w-4" />
                         {translate("save_list")}
                       </Button>
@@ -354,6 +432,7 @@ export default function Planner() {
                         <div 
                           key={mealIndex} 
                           className="bg-muted/50 p-3 rounded-md text-xs cursor-pointer hover:bg-muted transition"
+                          onClick={() => handleWeekdayMealClick(day, meal.mealType)}
                         >
                           <div className="font-medium">{meal.label}</div>
                           <div className="text-muted-foreground mt-1">
@@ -362,7 +441,12 @@ export default function Planner() {
                         </div>
                       ))}
                       
-                      <Button variant="ghost" size="sm" className="w-full">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full"
+                        onClick={() => handleAddNewMeal()}
+                      >
                         <PlusIcon className="h-3 w-3" />
                       </Button>
                     </div>
@@ -387,6 +471,7 @@ export default function Planner() {
                     className={`h-24 border rounded-md p-2 ${
                       day < 1 || day > 30 ? 'text-muted-foreground bg-muted/20' : 'cursor-pointer hover:bg-muted/50'
                     } ${day === 15 ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => handleMonthDayClick(day)}
                   >
                     <div className="flex justify-between">
                       <span>{day > 0 && day <= 30 ? day : ''}</span>

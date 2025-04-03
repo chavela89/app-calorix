@@ -13,4 +13,16 @@ export const mealPlanner = {
   add_meal: 'Добавить прием пищи',
   meal_planning_description: 'Планируйте приемы пищи заранее',
   planned: 'Запланировано',
+  items: 'позиций',
+  breakfast: 'Завтрак',
+  lunch: 'Обед',
+  dinner: 'Ужин',
+  snack: 'Перекус',
+  add_food: 'Добавить продукт',
+  to: 'в',
+  food_added: 'Продукт добавлен',
+  added_to: 'добавлен в',
+  protein: 'Белки',
+  fat: 'Жиры',
+  carbs: 'Углеводы'
 };

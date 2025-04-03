@@ -26,4 +26,10 @@ export const food = {
   planned: 'Planned',
   add_food: 'Add Food',
   save_list: 'Save List',
+  to: 'to',
+  protein: 'Protein',
+  fat: 'Fat',
+  carbs: 'Carbs',
+  no_results: 'No results found',
+  items: 'items',
 };

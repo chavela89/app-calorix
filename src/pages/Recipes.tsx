@@ -91,7 +91,7 @@ export default function Recipes() {
     },
     {
       id: 5,
-      name: "Лосось с картофельным пюре и спаржей",
+      name: "Лосось с карт��фельным пюре и спаржей",
       description: "Изысканный ужин, богатый Омега-3 жирными кислотами.",
       image: "https://images.unsplash.com/photo-1551248429-40975aa4de74?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=690&q=80",
       prepTime: 40,
@@ -250,63 +250,305 @@ export default function Recipes() {
             </Badge>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRecipes.map((recipe) => (
-              <Card key={recipe.id} className="overflow-hidden">
-                <div className="aspect-video w-full overflow-hidden">
-                  <img 
-                    src={recipe.image} 
-                    alt={recipe.name} 
-                    className="h-full w-full object-cover transition-transform hover:scale-105"
-                  />
-                </div>
-                <CardHeader className="p-4">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                    <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
+          <TabsContent value="all">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRecipes.map((recipe) => (
+                <Card key={recipe.id} className="overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img 
+                      src={recipe.image} 
+                      alt={recipe.name} 
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
+                    />
                   </div>
-                  <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
-                    <div className="flex items-center">
-                      <ClockIcon className="h-4 w-4 mr-1" />
-                      {recipe.prepTime} {translate("min")}
+                  <CardHeader className="p-4">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
                     </div>
-                    <div className="flex items-center">
-                      <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                      {recipe.rating} ({recipe.reviews})
+                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
+                      <div className="flex items-center">
+                        <ClockIcon className="h-4 w-4 mr-1" />
+                        {recipe.prepTime} {translate("min")}
+                      </div>
+                      <div className="flex items-center">
+                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
+                        {recipe.rating} ({recipe.reviews})
+                      </div>
                     </div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.calories}</div>
+                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.protein}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.carbs}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                    <Button 
+                      variant="secondary" 
+                      className="w-full gap-2"
+                      onClick={() => openRecipeDetail(recipe)}
+                    >
+                      {translate("view_recipe")}
+                      <ChevronRightIcon className="h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="breakfast">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRecipes.map((recipe) => (
+                <Card key={recipe.id} className="overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img 
+                      src={recipe.image} 
+                      alt={recipe.name} 
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
+                    />
                   </div>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
-                  
-                  <div className="grid grid-cols-3 gap-2 mt-4">
-                    <div className="text-center p-2 bg-muted/50 rounded-md">
-                      <div className="text-sm font-medium">{recipe.calories}</div>
-                      <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+                  <CardHeader className="p-4">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
                     </div>
-                    <div className="text-center p-2 bg-muted/50 rounded-md">
-                      <div className="text-sm font-medium">{recipe.protein}g</div>
-                      <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
+                      <div className="flex items-center">
+                        <ClockIcon className="h-4 w-4 mr-1" />
+                        {recipe.prepTime} {translate("min")}
+                      </div>
+                      <div className="flex items-center">
+                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
+                        {recipe.rating} ({recipe.reviews})
+                      </div>
                     </div>
-                    <div className="text-center p-2 bg-muted/50 rounded-md">
-                      <div className="text-sm font-medium">{recipe.carbs}g</div>
-                      <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.calories}</div>
+                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.protein}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.carbs}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+                      </div>
                     </div>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                    <Button 
+                      variant="secondary" 
+                      className="w-full gap-2"
+                      onClick={() => openRecipeDetail(recipe)}
+                    >
+                      {translate("view_recipe")}
+                      <ChevronRightIcon className="h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="lunch">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRecipes.map((recipe) => (
+                <Card key={recipe.id} className="overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img 
+                      src={recipe.image} 
+                      alt={recipe.name} 
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
+                    />
                   </div>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  <Button 
-                    variant="secondary" 
-                    className="w-full gap-2"
-                    onClick={() => openRecipeDetail(recipe)}
-                  >
-                    {translate("view_recipe")}
-                    <ChevronRightIcon className="h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                  <CardHeader className="p-4">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
+                    </div>
+                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
+                      <div className="flex items-center">
+                        <ClockIcon className="h-4 w-4 mr-1" />
+                        {recipe.prepTime} {translate("min")}
+                      </div>
+                      <div className="flex items-center">
+                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
+                        {recipe.rating} ({recipe.reviews})
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.calories}</div>
+                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.protein}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.carbs}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                    <Button 
+                      variant="secondary" 
+                      className="w-full gap-2"
+                      onClick={() => openRecipeDetail(recipe)}
+                    >
+                      {translate("view_recipe")}
+                      <ChevronRightIcon className="h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="dinner">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRecipes.map((recipe) => (
+                <Card key={recipe.id} className="overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img 
+                      src={recipe.image} 
+                      alt={recipe.name} 
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
+                    />
+                  </div>
+                  <CardHeader className="p-4">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
+                    </div>
+                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
+                      <div className="flex items-center">
+                        <ClockIcon className="h-4 w-4 mr-1" />
+                        {recipe.prepTime} {translate("min")}
+                      </div>
+                      <div className="flex items-center">
+                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
+                        {recipe.rating} ({recipe.reviews})
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.calories}</div>
+                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.protein}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.carbs}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                    <Button 
+                      variant="secondary" 
+                      className="w-full gap-2"
+                      onClick={() => openRecipeDetail(recipe)}
+                    >
+                      {translate("view_recipe")}
+                      <ChevronRightIcon className="h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="snack">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRecipes.map((recipe) => (
+                <Card key={recipe.id} className="overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img 
+                      src={recipe.image} 
+                      alt={recipe.name} 
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
+                    />
+                  </div>
+                  <CardHeader className="p-4">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
+                    </div>
+                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
+                      <div className="flex items-center">
+                        <ClockIcon className="h-4 w-4 mr-1" />
+                        {recipe.prepTime} {translate("min")}
+                      </div>
+                      <div className="flex items-center">
+                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
+                        {recipe.rating} ({recipe.reviews})
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.calories}</div>
+                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.protein}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded-md">
+                        <div className="text-sm font-medium">{recipe.carbs}g</div>
+                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                    <Button 
+                      variant="secondary" 
+                      className="w-full gap-2"
+                      onClick={() => openRecipeDetail(recipe)}
+                    >
+                      {translate("view_recipe")}
+                      <ChevronRightIcon className="h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
       

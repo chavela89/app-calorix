@@ -136,6 +136,7 @@ export default function Settings() {
         
         {/* Content */}
         <div className="lg:col-span-3 space-y-6">
+          {/* Instead of using TabsContent independently, we need to wrap in Tabs */}
           {activeTab === "account" && (
             <div className="space-y-6">
               <Card>

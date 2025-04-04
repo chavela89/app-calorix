@@ -16,7 +16,7 @@ import {
   HeartIcon 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { FoodSearch } from "@/components/FoodSearch";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Recipes() {
   const { translate } = useLanguage();
@@ -26,8 +26,15 @@ export default function Recipes() {
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [isRecipeDetailOpen, setIsRecipeDetailOpen] = useState(false);
+  const [favoriteRecipes, setFavoriteRecipes] = useState<any[]>([]);
   
-  // Демо-данные для рецептов
+  useEffect(() => {
+    const favoritesStr = localStorage.getItem('favoriteRecipes');
+    if (favoritesStr) {
+      setFavoriteRecipes(JSON.parse(favoritesStr));
+    }
+  }, [isRecipeDetailOpen]);
+  
   const recipes = [
     {
       id: 1,
@@ -121,7 +128,10 @@ export default function Recipes() {
     }
   ];
 
-  // Tags mapping
+  const isInFavorites = (recipeId: number) => {
+    return favoriteRecipes.some(recipe => recipe.id === recipeId);
+  };
+
   const tagsMappings: Record<string, string[]> = {
     "vegetarian": ["vegetarian", "vegan"],
     "high_protein": ["protein"],
@@ -131,7 +141,6 @@ export default function Recipes() {
     "dairy_free": ["dairy-free"],
   };
 
-  // Toggle tag filter
   const toggleTag = (tag: string) => {
     if (activeTag === tag) {
       setActiveTag(null);
@@ -140,8 +149,15 @@ export default function Recipes() {
     }
   };
 
-  // Фильтрация рецептов по активной вкладке, тегу и поисковому запросу
   const filteredRecipes = recipes.filter(recipe => {
+    if (activeTab === "favorites") {
+      return isInFavorites(recipe.id) && 
+        (!searchQuery || 
+          recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          recipe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())));
+    }
+    
     const matchesTab = activeTab === "all" || recipe.category === activeTab;
     
     const matchesTag = !activeTag || 
@@ -156,26 +172,112 @@ export default function Recipes() {
     return matchesTab && matchesTag && matchesSearch;
   });
 
-  // Функция для открытия рецепта
   const openRecipeDetail = (recipe: any) => {
     setSelectedRecipe(recipe);
     setIsRecipeDetailOpen(true);
   };
 
-  // Функция для перехода на страницу калькулятора рецептов
   const goToRecipeCalculator = () => {
     navigate("/recipe-calculator");
   };
-  
-  // Обработка поиска через компонент FoodSearch
-  const handleFoodSelection = (food: any) => {
-    setSearchQuery(food.name);
+
+  const toggleFavorite = (recipe: any, event: React.MouseEvent) => {
+    event.stopPropagation();
+    
+    const favoritesStr = localStorage.getItem('favoriteRecipes');
+    const favorites = favoritesStr ? JSON.parse(favoritesStr) : [];
+    
+    if (isInFavorites(recipe.id)) {
+      const updatedFavorites = favorites.filter((favRecipe: any) => favRecipe.id !== recipe.id);
+      localStorage.setItem('favoriteRecipes', JSON.stringify(updatedFavorites));
+      setFavoriteRecipes(updatedFavorites);
+      
+      toast({
+        title: translate("removed_from_favorites"),
+        description: recipe.name
+      });
+    } else {
+      const updatedFavorites = [...favorites, recipe];
+      localStorage.setItem('favoriteRecipes', JSON.stringify(updatedFavorites));
+      setFavoriteRecipes(updatedFavorites);
+      
+      toast({
+        title: translate("added_to_favorites"),
+        description: recipe.name
+      });
+    }
+  };
+
+  const RecipeCard = ({ recipe }: { recipe: any }) => {
+    const isFavorite = isInFavorites(recipe.id);
+    
+    return (
+      <Card key={recipe.id} className="overflow-hidden">
+        <div className="aspect-video w-full overflow-hidden cursor-pointer" onClick={() => openRecipeDetail(recipe)}>
+          <img 
+            src={recipe.image} 
+            alt={recipe.name} 
+            className="h-full w-full object-cover transition-transform hover:scale-105"
+          />
+        </div>
+        <CardHeader className="p-4">
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-lg cursor-pointer" onClick={() => openRecipeDetail(recipe)}>
+              {recipe.name}
+            </CardTitle>
+            <HeartIcon 
+              className={`h-5 w-5 cursor-pointer ${isFavorite ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'} transition-colors`} 
+              onClick={(e) => toggleFavorite(recipe, e)}
+              fill={isFavorite ? "currentColor" : "none"}
+            />
+          </div>
+          <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
+            <div className="flex items-center">
+              <ClockIcon className="h-4 w-4 mr-1" />
+              {recipe.prepTime} {translate("min")}
+            </div>
+            <div className="flex items-center">
+              <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
+              {recipe.rating} ({recipe.reviews})
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
+          
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            <div className="text-center p-2 bg-muted/50 rounded-md">
+              <div className="text-sm font-medium">{recipe.calories}</div>
+              <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
+            </div>
+            <div className="text-center p-2 bg-muted/50 rounded-md">
+              <div className="text-sm font-medium">{recipe.protein}g</div>
+              <div className="text-xs text-muted-foreground">{translate("protein")}</div>
+            </div>
+            <div className="text-center p-2 bg-muted/50 rounded-md">
+              <div className="text-sm font-medium">{recipe.carbs}g</div>
+              <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="p-4 pt-0">
+          <Button 
+            variant="secondary" 
+            className="w-full gap-2"
+            onClick={() => openRecipeDetail(recipe)}
+          >
+            {translate("view_recipe")}
+            <ChevronRightIcon className="h-4 w-4" />
+          </Button>
+        </CardFooter>
+      </Card>
+    );
   };
 
   return (
     <div className="container mx-auto py-6 px-4">
       <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:items-center md:space-y-0 mb-6">
-        <h1 className="text-3xl font-bold">{translate("recipes")}</h1>
+        <h1 className="text-3xl font-bold">{translate("recipes_label")}</h1>
         
         <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
           <div className="relative">
@@ -203,6 +305,7 @@ export default function Recipes() {
             <TabsTrigger value="lunch">{translate("lunch")}</TabsTrigger>
             <TabsTrigger value="dinner">{translate("dinner")}</TabsTrigger>
             <TabsTrigger value="snack">{translate("snack")}</TabsTrigger>
+            <TabsTrigger value="favorites">{translate("favorite_recipes")}</TabsTrigger>
           </TabsList>
           
           <div className="flex flex-wrap gap-2 mb-4">
@@ -250,305 +353,19 @@ export default function Recipes() {
             </Badge>
           </div>
           
-          <TabsContent value="all">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map((recipe) => (
-                <Card key={recipe.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden">
-                    <img 
-                      src={recipe.image} 
-                      alt={recipe.name} 
-                      className="h-full w-full object-cover transition-transform hover:scale-105"
-                    />
-                  </div>
-                  <CardHeader className="p-4">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
-                      <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 mr-1" />
-                        {recipe.prepTime} {translate("min")}
-                      </div>
-                      <div className="flex items-center">
-                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                        {recipe.rating} ({recipe.reviews})
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
-                    
-                    <div className="grid grid-cols-3 gap-2 mt-4">
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.calories}</div>
-                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.protein}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.carbs}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button 
-                      variant="secondary" 
-                      className="w-full gap-2"
-                      onClick={() => openRecipeDetail(recipe)}
-                    >
-                      {translate("view_recipe")}
-                      <ChevronRightIcon className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="breakfast">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map((recipe) => (
-                <Card key={recipe.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden">
-                    <img 
-                      src={recipe.image} 
-                      alt={recipe.name} 
-                      className="h-full w-full object-cover transition-transform hover:scale-105"
-                    />
-                  </div>
-                  <CardHeader className="p-4">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
-                      <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 mr-1" />
-                        {recipe.prepTime} {translate("min")}
-                      </div>
-                      <div className="flex items-center">
-                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                        {recipe.rating} ({recipe.reviews})
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
-                    
-                    <div className="grid grid-cols-3 gap-2 mt-4">
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.calories}</div>
-                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.protein}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.carbs}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button 
-                      variant="secondary" 
-                      className="w-full gap-2"
-                      onClick={() => openRecipeDetail(recipe)}
-                    >
-                      {translate("view_recipe")}
-                      <ChevronRightIcon className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="lunch">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map((recipe) => (
-                <Card key={recipe.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden">
-                    <img 
-                      src={recipe.image} 
-                      alt={recipe.name} 
-                      className="h-full w-full object-cover transition-transform hover:scale-105"
-                    />
-                  </div>
-                  <CardHeader className="p-4">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
-                      <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 mr-1" />
-                        {recipe.prepTime} {translate("min")}
-                      </div>
-                      <div className="flex items-center">
-                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                        {recipe.rating} ({recipe.reviews})
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
-                    
-                    <div className="grid grid-cols-3 gap-2 mt-4">
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.calories}</div>
-                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.protein}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.carbs}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button 
-                      variant="secondary" 
-                      className="w-full gap-2"
-                      onClick={() => openRecipeDetail(recipe)}
-                    >
-                      {translate("view_recipe")}
-                      <ChevronRightIcon className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="dinner">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map((recipe) => (
-                <Card key={recipe.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden">
-                    <img 
-                      src={recipe.image} 
-                      alt={recipe.name} 
-                      className="h-full w-full object-cover transition-transform hover:scale-105"
-                    />
-                  </div>
-                  <CardHeader className="p-4">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
-                      <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 mr-1" />
-                        {recipe.prepTime} {translate("min")}
-                      </div>
-                      <div className="flex items-center">
-                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                        {recipe.rating} ({recipe.reviews})
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
-                    
-                    <div className="grid grid-cols-3 gap-2 mt-4">
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.calories}</div>
-                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.protein}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.carbs}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button 
-                      variant="secondary" 
-                      className="w-full gap-2"
-                      onClick={() => openRecipeDetail(recipe)}
-                    >
-                      {translate("view_recipe")}
-                      <ChevronRightIcon className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="snack">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map((recipe) => (
-                <Card key={recipe.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden">
-                    <img 
-                      src={recipe.image} 
-                      alt={recipe.name} 
-                      className="h-full w-full object-cover transition-transform hover:scale-105"
-                    />
-                  </div>
-                  <CardHeader className="p-4">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                      <HeartIcon className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" />
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground gap-4 mt-2">
-                      <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 mr-1" />
-                        {recipe.prepTime} {translate("min")}
-                      </div>
-                      <div className="flex items-center">
-                        <StarIcon className="h-4 w-4 mr-1 text-yellow-500" />
-                        {recipe.rating} ({recipe.reviews})
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{recipe.description}</p>
-                    
-                    <div className="grid grid-cols-3 gap-2 mt-4">
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.calories}</div>
-                        <div className="text-xs text-muted-foreground">{translate("kcal")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.protein}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("protein")}</div>
-                      </div>
-                      <div className="text-center p-2 bg-muted/50 rounded-md">
-                        <div className="text-sm font-medium">{recipe.carbs}g</div>
-                        <div className="text-xs text-muted-foreground">{translate("carbs")}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button 
-                      variant="secondary" 
-                      className="w-full gap-2"
-                      onClick={() => openRecipeDetail(recipe)}
-                    >
-                      {translate("view_recipe")}
-                      <ChevronRightIcon className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRecipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+            
+            {filteredRecipes.length === 0 && (
+              <div className="col-span-3 py-20 text-center text-muted-foreground">
+                {activeTab === "favorites" ? 
+                  translate("no_favorite_recipes") : 
+                  translate("no_recipes_found")}
+              </div>
+            )}
+          </div>
         </Tabs>
       </div>
       

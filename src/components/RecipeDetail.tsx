@@ -1,11 +1,12 @@
 
-import { Fragment } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/context/LanguageContextFixed";
 import { toast } from "@/components/ui/use-toast";
+import { useNutrition } from "@/context/NutritionContext";
 import { 
   ClockIcon, 
   FlameIcon, 
@@ -23,39 +24,127 @@ interface RecipeDetailProps {
 }
 
 const RecipeDetail = ({ recipe, isOpen, onClose }: RecipeDetailProps) => {
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
+  const { addFoodToMeal } = useNutrition();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
+  
+  // Загружаем избранные рецепты при монтировании
+  useEffect(() => {
+    if (recipe && isOpen) {
+      const favoritesStr = localStorage.getItem('favoriteRecipes');
+      const favorites = favoritesStr ? JSON.parse(favoritesStr) : [];
+      setIsFavorite(favorites.some((favRecipe: any) => favRecipe.id === recipe.id));
+    }
+  }, [recipe, isOpen]);
 
   // Если рецепт не выбран, не показываем диалог
   if (!recipe) {
     return null;
   }
 
-  // Обработчики действий
+  // Обработчик добавления/удаления из избранного
   const handleAddToFavorites = () => {
-    toast({
-      title: translate("added_to_favorites"),
-      description: recipe.name
-    });
+    const favoritesStr = localStorage.getItem('favoriteRecipes');
+    const favorites = favoritesStr ? JSON.parse(favoritesStr) : [];
+    
+    if (isFavorite) {
+      // Удаляем из избранного
+      const updatedFavorites = favorites.filter((favRecipe: any) => favRecipe.id !== recipe.id);
+      localStorage.setItem('favoriteRecipes', JSON.stringify(updatedFavorites));
+      setIsFavorite(false);
+      toast({
+        title: translate("removed_from_favorites"),
+        description: recipe.name
+      });
+    } else {
+      // Добавляем в избранное
+      const updatedFavorites = [...favorites, recipe];
+      localStorage.setItem('favoriteRecipes', JSON.stringify(updatedFavorites));
+      setIsFavorite(true);
+      toast({
+        title: translate("added_to_favorites"),
+        description: recipe.name
+      });
+    }
   };
 
+  // Обработчик функции поделиться
   const handleShare = () => {
-    toast({
-      title: translate("share"),
-      description: translate("feature_coming_soon")
+    if (navigator.share) {
+      navigator.share({
+        title: recipe.name,
+        text: `${recipe.name} - ${recipe.description}`,
+        url: window.location.href
+      }).then(() => {
+        toast({
+          title: translate("recipe_shared"),
+          description: recipe.name
+        });
+      }).catch(error => {
+        console.error('Error sharing:', error);
+        // Запасной вариант, если navigator.share не сработал
+        copyToClipboard();
+      });
+    } else {
+      // Запасной вариант для браузеров, не поддерживающих Web Share API
+      copyToClipboard();
+    }
+  };
+
+  // Вспомогательная функция для копирования ссылки в буфер обмена
+  const copyToClipboard = () => {
+    const recipeUrl = window.location.href;
+    navigator.clipboard.writeText(recipeUrl).then(() => {
+      toast({
+        title: translate("recipe_shared"),
+        description: translate("link_copied_to_clipboard")
+      });
+    }).catch(err => {
+      console.error('Failed to copy URL: ', err);
     });
   };
 
+  // Обработчик функции печати
   const handlePrint = () => {
     toast({
-      title: translate("print"),
-      description: translate("feature_coming_soon")
+      title: translate("preparing_for_print"),
+      description: recipe.name
     });
+    
+    setTimeout(() => {
+      const content = document.getElementById('recipe-for-print');
+      const originalContents = document.body.innerHTML;
+      
+      if (content) {
+        document.body.innerHTML = content.innerHTML;
+        window.print();
+        document.body.innerHTML = originalContents;
+        window.location.reload(); // Перезагружаем страницу после печати
+      }
+    }, 500);
   };
 
+  // Обработчик добавления в дневник
   const handleAddToDiary = () => {
+    // Создаем объект пищи из рецепта
+    const foodItem = {
+      id: `recipe-${recipe.id}`,
+      name: recipe.name,
+      calories: recipe.calories || 0,
+      proteins: recipe.protein || 0,
+      carbs: recipe.carbs || 0,
+      fats: recipe.fat || 0,
+      amount: 1,
+      unit: translate("serving")
+    };
+    
+    // Добавляем в прием пищи (по умолчанию обед)
+    addFoodToMeal('lunch', foodItem);
+    
     toast({
-      title: translate("add_to_diary"),
-      description: translate("feature_coming_soon")
+      title: translate("added_to_diary"),
+      description: recipe.name
     });
   };
 
@@ -71,7 +160,7 @@ const RecipeDetail = ({ recipe, isOpen, onClose }: RecipeDetailProps) => {
           </div>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6" id="recipe-for-print" ref={printRef}>
           {/* Изображение рецепта */}
           <div className="aspect-video w-full overflow-hidden rounded-md">
             <img 
@@ -168,9 +257,9 @@ const RecipeDetail = ({ recipe, isOpen, onClose }: RecipeDetailProps) => {
               variant="outline"
               size="icon"
               onClick={handleAddToFavorites}
-              className="rounded-full"
+              className={`rounded-full ${isFavorite ? 'bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600' : ''}`}
             >
-              <HeartIcon className="h-4 w-4" />
+              <HeartIcon className="h-4 w-4" fill={isFavorite ? "currentColor" : "none"} />
               <span className="sr-only">{translate("add_to_favorites")}</span>
             </Button>
             <Button

@@ -68,4 +68,11 @@ export const recipes = {
   print: 'Print',
   add_to_diary: 'Add to Diary',
   unit: 'Unit',
+  added_to_favorites: 'Added to favorites',
+  removed_from_favorites: 'Removed from favorites',
+  recipe_shared: 'Recipe shared',
+  preparing_for_print: 'Preparing for print',
+  added_to_diary: 'Added to diary',
+  recipe_loaded: 'Recipe loaded',
+  favorite_recipes: 'Favorite Recipes',
 };

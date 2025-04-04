@@ -68,4 +68,11 @@ export const recipes = {
   print: 'Печать',
   add_to_diary: 'Добавить в дневник',
   unit: 'Единица измерения',
+  added_to_favorites: 'Добавлено в избранное',
+  removed_from_favorites: 'Удалено из избранного',
+  recipe_shared: 'Рецептом поделились',
+  preparing_for_print: 'Подготовка к печати',
+  added_to_diary: 'Добавлено в дневник',
+  recipe_loaded: 'Рецепт загружен',
+  favorite_recipes: 'Избранные рецепты',
 };

@@ -1,84 +1,209 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
-// Import custom components
-import { RecipeForm } from "@/components/recipe-calculator/RecipeForm";
-import { IngredientSelector, Ingredient } from "@/components/recipe-calculator/IngredientSelector";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { 
+  BookIcon, 
+  ChevronLeftIcon, 
+  CalculatorIcon, 
+  UtensilsIcon,
+  PercentIcon,
+  ClockIcon,
+  UsersIcon
+} from "lucide-react";
+import { IngredientSelector } from "@/components/recipe-calculator/IngredientSelector";
 import { NutritionInfo } from "@/components/recipe-calculator/NutritionInfo";
+import { RecipeForm } from "@/components/recipe-calculator/RecipeForm";
+import { useLanguage } from "@/context/LanguageContextFixed";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
-// Demo food database
-const FOOD_DATABASE = [
-  { id: 1, name: "Куриная грудка", calories: 165, protein: 31, fat: 3.6, carbs: 0 },
-  { id: 2, name: "Рис бурый", calories: 110, protein: 2.5, fat: 0.9, carbs: 23 },
-  { id: 3, name: "Овсянка", calories: 150, protein: 5, fat: 3, carbs: 27 },
-  { id: 4, name: "Яйцо", calories: 70, protein: 6, fat: 5, carbs: 0 },
-  { id: 5, name: "Лосось", calories: 180, protein: 22, fat: 10, carbs: 0 },
-  { id: 6, name: "Брокколи", calories: 55, protein: 2.6, fat: 0.4, carbs: 11 },
-  { id: 7, name: "Говядина", calories: 185, protein: 26, fat: 9, carbs: 0 },
-  { id: 8, name: "Творог", calories: 98, protein: 18, fat: 1.1, carbs: 3 },
-  { id: 9, name: "Картофель", calories: 77, protein: 2, fat: 0.1, carbs: 17 },
-  { id: 10, name: "Помидор", calories: 22, protein: 1, fat: 0.2, carbs: 4.8 },
-];
+interface Ingredient {
+  id: number;
+  name: string;
+  amount: number;
+  unit: string;
+  calories: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+}
 
 export default function RecipeCalculator() {
+  const { translate, language } = useLanguage();
   const navigate = useNavigate();
   
-  // Recipe form state
   const [recipeName, setRecipeName] = useState("");
-  const [servings, setServings] = useState("4");
-  const [totalWeight, setTotalWeight] = useState("1000");
-  
-  // Ingredients state
+  const [recipeDescription, setRecipeDescription] = useState("");
+  const [activeTab, setActiveTab] = useState("ingredients");
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [instructions, setInstructions] = useState<string[]>([]);
+  const [servings, setServings] = useState("4");
+  const [prepTime, setPrepTime] = useState("30");
+  const [cookingTime, setCookingTime] = useState("45");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [totalWeight, setTotalWeight] = useState("1000");
 
-  // Save recipe handler
-  const saveRecipe = () => {
-    // Save recipe logic would go here
-    alert("Рецепт успешно сохранен");
+  // Обработчик добавления ингредиента
+  const handleAddIngredient = (ingredient: Ingredient) => {
+    setIngredients(prev => [...prev, ingredient]);
+  };
+
+  // Обработчик удаления ингредиента
+  const handleRemoveIngredient = (id: number) => {
+    setIngredients(prev => prev.filter(i => i.id !== id));
+  };
+
+  // Обработчик сохранения рецепта
+  const handleSaveRecipe = () => {
     navigate("/recipes");
   };
 
+  // Обработчик загрузки сохраненного рецепта
+  const handleLoadRecipe = (recipe: any) => {
+    if (recipe) {
+      setRecipeName(recipe.name);
+      if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
+        setIngredients(recipe.ingredients);
+      }
+      setServings(recipe.servings.toString());
+      setTotalWeight(recipe.totalWeight.toString());
+      
+      // Показываем уведомление об успешной загрузке
+      toast({
+        title: translate("recipe_loaded"),
+        description: recipe.name
+      });
+    }
+  };
+
+  // Функция для обновления веса
+  const handleUpdateTotalWeight = () => {
+    // Расчет общего веса ингредиентов
+    const total = ingredients.reduce((sum, ing) => sum + ing.amount, 0);
+    setTotalWeight(total.toString());
+  };
+
+  // Обновляем общий вес при изменении ингредиентов
+  useEffect(() => {
+    handleUpdateTotalWeight();
+  }, [ingredients]);
+
   return (
     <div className="container mx-auto py-6 px-4">
-      <div className="flex items-center gap-2 mb-6">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => navigate("/recipes")}
-        >
-          <ChevronLeftIcon className="h-5 w-5" />
-        </Button>
-        <h1 className="text-2xl font-bold">Калькулятор рецептов</h1>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="mr-2"
+            onClick={() => navigate("/recipes")}
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold">{translate("recipe_calculator")}</h1>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <RecipeForm
-            recipeName={recipeName}
-            setRecipeName={setRecipeName}
-            servings={servings}
-            setServings={setServings}
-            totalWeight={totalWeight}
-            setTotalWeight={setTotalWeight}
-          />
-          
-          <IngredientSelector
-            foodDatabase={FOOD_DATABASE}
-            ingredients={ingredients}
-            setIngredients={setIngredients}
-          />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{translate("recipe_name")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Input 
+                placeholder={translate("enter_recipe_name")}
+                value={recipeName}
+                onChange={(e) => setRecipeName(e.target.value)}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <UsersIcon className="h-4 w-4" />
+                    {translate("servings")}
+                  </Label>
+                  <Input 
+                    type="number" 
+                    min="1" 
+                    value={servings}
+                    onChange={(e) => setServings(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <ClockIcon className="h-4 w-4" />
+                    {translate("preparation_time")} ({translate("min")})
+                  </Label>
+                  <Input 
+                    type="number" 
+                    min="0" 
+                    value={prepTime}
+                    onChange={(e) => setPrepTime(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <UtensilsIcon className="h-4 w-4" />
+                    {translate("cooking_time")} ({translate("min")})
+                  </Label>
+                  <Input 
+                    type="number" 
+                    min="0" 
+                    value={cookingTime}
+                    onChange={(e) => setCookingTime(e.target.value)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        <div className="space-y-6">
-          <NutritionInfo
-            ingredients={ingredients}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="ingredients" className="flex items-center gap-2">
+                <BookIcon className="h-4 w-4" />
+                {translate("ingredients")}
+              </TabsTrigger>
+              <TabsTrigger value="recipe" className="flex items-center gap-2">
+                <CalculatorIcon className="h-4 w-4" />
+                {translate("recipe")}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="ingredients" className="space-y-6 mt-6">
+              <IngredientSelector 
+                onAddIngredient={handleAddIngredient}
+                ingredients={ingredients}
+                onRemoveIngredient={handleRemoveIngredient}
+              />
+            </TabsContent>
+
+            <TabsContent value="recipe" className="space-y-6 mt-6">
+              <RecipeForm 
+                instructions={instructions} 
+                setInstructions={setInstructions}
+                selectedTags={selectedTags}
+                setSelectedTags={setSelectedTags}
+                recipeDescription={recipeDescription}
+                setRecipeDescription={setRecipeDescription}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+        
+        <div>
+          <NutritionInfo 
+            ingredients={ingredients} 
             recipeName={recipeName}
             servings={servings}
             totalWeight={totalWeight}
-            onSaveRecipe={saveRecipe}
+            onSaveRecipe={handleSaveRecipe}
+            onLoadRecipe={handleLoadRecipe}
           />
         </div>
       </div>

@@ -13,60 +13,54 @@ export interface FoodItem {
   unit: string;
 }
 
-export interface DailyLog {
+interface Meal {
+  type: string;
+  foods: FoodItem[];
+}
+
+interface NutritionDay {
   date: string;
-  meals: {
-    breakfast: FoodItem[];
-    lunch: FoodItem[];
-    dinner: FoodItem[];
-    snack: FoodItem[];
-    [key: string]: FoodItem[];
-  };
+  meals: Meal[];
   water: number;
 }
 
-interface NutritionContextType {
-  dailyLogs: Record<string, DailyLog>;
-  currentDayLog: DailyLog;
-  meals: {
-    breakfast: FoodItem[];
-    lunch: FoodItem[];
-    dinner: FoodItem[];
-    snack: FoodItem[];
-    [key: string]: FoodItem[];
+export interface NutritionContextType {
+  dailyLogs: Record<string, NutritionDay>;
+  currentDayLog: NutritionDay;
+  todayNutrition: {
+    meals: Meal[];
+    water: number;
   };
-  waterIntake: number;
   selectedDate: Date;
   recentlyAddedFoods: FoodItem[];
   addFoodToMeal: (mealType: string, food: FoodItem) => void;
   removeFoodFromMeal: (mealType: string, foodId: string) => void;
   updateFoodInMeal: (mealType: string, foodId: string, updatedFood: Partial<FoodItem>) => void;
+  updateWaterIntake: (amount: number) => void;
   setWaterIntake: (amount: number) => void;
   setSelectedDate: (date: Date) => void;
-  dailyCalories: number;
-  dailyProtein: number;
-  dailyFat: number;
-  dailyCarbs: number;
   favoriteFoods: FoodItem[];
   addToFavorites: (food: FoodItem) => void;
   removeFromFavorites: (foodId: string) => void;
+  getTotalCalories: () => number;
+  getTotalProteins: () => number;
+  getTotalFats: () => number;
+  getTotalCarbs: () => number;
 }
-
-const defaultMeals = {
-  breakfast: [],
-  lunch: [],
-  dinner: [],
-  snack: []
-};
 
 const getFormattedDate = (date: Date): string => {
   return date.toISOString().split('T')[0];
 };
 
-const createEmptyDayLog = (date: Date): DailyLog => {
+const createEmptyDayLog = (date: Date): NutritionDay => {
   return {
     date: getFormattedDate(date),
-    meals: { ...defaultMeals },
+    meals: [
+      { type: 'breakfast', foods: [] },
+      { type: 'lunch', foods: [] },
+      { type: 'dinner', foods: [] },
+      { type: 'snack', foods: [] }
+    ],
     water: 0
   };
 };
@@ -75,7 +69,7 @@ const NutritionContext = createContext<NutritionContextType | null>(null);
 
 export const NutritionProvider = ({ children }: { children: ReactNode }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [dailyLogs, setDailyLogs] = useState<Record<string, DailyLog>>({});
+  const [dailyLogs, setDailyLogs] = useState<Record<string, NutritionDay>>({});
   const [recentlyAddedFoods, setRecentlyAddedFoods] = useState<FoodItem[]>([]);
   const [favoriteFoods, setFavoriteFoods] = useState<FoodItem[]>([]);
 
@@ -92,30 +86,82 @@ export const NutritionProvider = ({ children }: { children: ReactNode }) => {
 
   const currentDayLog = dailyLogs[getFormattedDate(selectedDate)] || createEmptyDayLog(selectedDate);
 
+  // Calculate total nutrition values
+  const getTotalCalories = () => {
+    return currentDayLog.meals.reduce((total, meal) => {
+      return total + meal.foods.reduce((mealTotal, food) => mealTotal + food.calories, 0);
+    }, 0);
+  };
+
+  const getTotalProteins = () => {
+    return currentDayLog.meals.reduce((total, meal) => {
+      return total + meal.foods.reduce((mealTotal, food) => mealTotal + food.proteins, 0);
+    }, 0);
+  };
+
+  const getTotalFats = () => {
+    return currentDayLog.meals.reduce((total, meal) => {
+      return total + meal.foods.reduce((mealTotal, food) => mealTotal + food.fats, 0);
+    }, 0);
+  };
+
+  const getTotalCarbs = () => {
+    return currentDayLog.meals.reduce((total, meal) => {
+      return total + meal.foods.reduce((mealTotal, food) => mealTotal + food.carbs, 0);
+    }, 0);
+  };
+
+  // Today's nutrition data formatted for easy consumption by components
+  const todayNutrition = {
+    meals: currentDayLog.meals,
+    water: currentDayLog.water
+  };
+
   // Function to add a food item to a specific meal
   const addFoodToMeal = (mealType: string, food: FoodItem) => {
     const dateKey = getFormattedDate(selectedDate);
     
-    // Ensure the food has an ID
+    // Ensure the food has an ID and unit
     const foodWithId = {
       ...food,
-      id: food.id || uuidv4()
+      id: food.id || uuidv4(),
+      unit: food.unit || 'г'
     };
     
     setDailyLogs(prev => {
       const dayLog = prev[dateKey] || createEmptyDayLog(selectedDate);
-      const updatedMeals = {
-        ...dayLog.meals,
-        [mealType]: [...(dayLog.meals[mealType] || []), foodWithId]
-      };
+      const mealIndex = dayLog.meals.findIndex(meal => meal.type === mealType);
       
-      return {
-        ...prev,
-        [dateKey]: {
-          ...dayLog,
-          meals: updatedMeals
-        }
-      };
+      if (mealIndex === -1) {
+        // If meal type doesn't exist, create it
+        const updatedMeals = [
+          ...dayLog.meals,
+          { type: mealType, foods: [foodWithId] }
+        ];
+        
+        return {
+          ...prev,
+          [dateKey]: {
+            ...dayLog,
+            meals: updatedMeals
+          }
+        };
+      } else {
+        // If meal type exists, add food to it
+        const updatedMeals = [...dayLog.meals];
+        updatedMeals[mealIndex] = {
+          ...updatedMeals[mealIndex],
+          foods: [...updatedMeals[mealIndex].foods, foodWithId]
+        };
+        
+        return {
+          ...prev,
+          [dateKey]: {
+            ...dayLog,
+            meals: updatedMeals
+          }
+        };
+      }
     });
     
     // Add to recently added foods if not already there
@@ -135,9 +181,13 @@ export const NutritionProvider = ({ children }: { children: ReactNode }) => {
       const dayLog = prev[dateKey];
       if (!dayLog) return prev;
       
-      const updatedMeals = {
-        ...dayLog.meals,
-        [mealType]: dayLog.meals[mealType].filter(food => food.id !== foodId)
+      const mealIndex = dayLog.meals.findIndex(meal => meal.type === mealType);
+      if (mealIndex === -1) return prev;
+      
+      const updatedMeals = [...dayLog.meals];
+      updatedMeals[mealIndex] = {
+        ...updatedMeals[mealIndex],
+        foods: updatedMeals[mealIndex].foods.filter(food => food.id !== foodId)
       };
       
       return {
@@ -158,9 +208,13 @@ export const NutritionProvider = ({ children }: { children: ReactNode }) => {
       const dayLog = prev[dateKey];
       if (!dayLog) return prev;
       
-      const updatedMeals = {
-        ...dayLog.meals,
-        [mealType]: dayLog.meals[mealType].map(food => 
+      const mealIndex = dayLog.meals.findIndex(meal => meal.type === mealType);
+      if (mealIndex === -1) return prev;
+      
+      const updatedMeals = [...dayLog.meals];
+      updatedMeals[mealIndex] = {
+        ...updatedMeals[mealIndex],
+        foods: updatedMeals[mealIndex].foods.map(food => 
           food.id === foodId ? { ...food, ...updatedFood } : food
         )
       };
@@ -192,6 +246,24 @@ export const NutritionProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // Function to update water intake (increment/decrement)
+  const updateWaterIntake = (amount: number) => {
+    const dateKey = getFormattedDate(selectedDate);
+    
+    setDailyLogs(prev => {
+      const dayLog = prev[dateKey] || createEmptyDayLog(selectedDate);
+      const newWaterAmount = Math.max(0, dayLog.water + amount);
+      
+      return {
+        ...prev,
+        [dateKey]: {
+          ...dayLog,
+          water: newWaterAmount
+        }
+      };
+    });
+  };
+
   // Function to add a food to favorites
   const addToFavorites = (food: FoodItem) => {
     setFavoriteFoods(prev => {
@@ -207,35 +279,27 @@ export const NutritionProvider = ({ children }: { children: ReactNode }) => {
     setFavoriteFoods(prev => prev.filter(food => food.id !== foodId));
   };
 
-  // Calculate daily nutritional totals
-  const allMeals = Object.values(currentDayLog.meals).flat();
-  const dailyCalories = allMeals.reduce((sum, food) => sum + food.calories, 0);
-  const dailyProtein = allMeals.reduce((sum, food) => sum + food.proteins, 0);
-  const dailyFat = allMeals.reduce((sum, food) => sum + food.fats, 0);
-  const dailyCarbs = allMeals.reduce((sum, food) => sum + food.carbs, 0);
-  const waterIntake = currentDayLog.water;
-
   return (
     <NutritionContext.Provider
       value={{
         dailyLogs,
         currentDayLog,
-        meals: currentDayLog.meals,
-        waterIntake,
+        todayNutrition,
         selectedDate,
         recentlyAddedFoods,
         addFoodToMeal,
         removeFoodFromMeal,
         updateFoodInMeal,
         setWaterIntake,
+        updateWaterIntake,
         setSelectedDate,
-        dailyCalories,
-        dailyProtein,
-        dailyFat,
-        dailyCarbs,
         favoriteFoods,
         addToFavorites,
-        removeFromFavorites
+        removeFromFavorites,
+        getTotalCalories,
+        getTotalProteins,
+        getTotalFats,
+        getTotalCarbs
       }}
     >
       {children}

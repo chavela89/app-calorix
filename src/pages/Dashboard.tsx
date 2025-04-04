@@ -75,10 +75,11 @@ export default function Dashboard() {
       id: food.id,
       name: food.name,
       calories: food.calories,
-      proteins: food.protein,
-      fats: food.fat,
-      carbs: food.carbs,
-      amount: 100
+      proteins: food.protein || 0,
+      fats: food.fat || 0,
+      carbs: food.carbs || 0,
+      amount: 100,
+      unit: "г"
     });
     toast({
       title: translate("food_added"),

@@ -64,5 +64,25 @@ export const dashboard = {
   confirm_delete_description: 'Вы уверены, что хотите удалить этот элемент?',
   yes_delete: 'Да, удалить',
   cancel: 'Отмена',
-  total: 'Всего'
+  total: 'Всего',
+  // Additional translations for MacrosSummary
+  macronutrients: 'Макроэлементы',
+  protein: 'Белки',
+  carbs: 'Углеводы',
+  fat: 'Жиры',
+  calories: 'Калории',
+  recommended_macros_balance: 'Рекомендуемый баланс макроэлементов',
+  nutrition_analysis: 'Анализ питания',
+  your_daily_goal: 'Ваша дневная цель',
+  these_calories_for: 'Эти калории для',
+  maintaining_weight: 'поддержания веса',
+  losing_weight: 'снижения веса',
+  analytics: 'Аналитика',
+  planner: 'Планировщик питания',
+  recipes: 'Рецепты',
+  progress: 'Прогресс',
+  community: 'Сообщество',
+  settings: 'Настройки',
+  profile: 'Профиль',
+  logout: 'Выйти'
 };

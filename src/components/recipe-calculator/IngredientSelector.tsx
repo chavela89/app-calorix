@@ -15,7 +15,7 @@ import { FoodItem } from "@/context/NutritionContext";
 
 export interface Ingredient {
   id: number;
-  foodId: number;
+  foodId: string;
   name: string;
   amount: number;
   unit: string;
@@ -37,7 +37,7 @@ export function IngredientSelector({
   setIngredients 
 }: IngredientSelectorProps) {
   const { translate, language } = useLanguage();
-  const [selectedFood, setSelectedFood] = useState<number | null>(null);
+  const [selectedFood, setSelectedFood] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>("100");
   const [unit, setUnit] = useState<string>(language === "ru" ? "г" : "g");
   
@@ -92,15 +92,15 @@ export function IngredientSelector({
             {translate("select_ingredient")}
           </label>
           <Select 
-            value={selectedFood?.toString()} 
-            onValueChange={(value) => setSelectedFood(parseInt(value))}
+            value={selectedFood || ''} 
+            onValueChange={(value) => setSelectedFood(value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={translate("select_ingredient")} />
             </SelectTrigger>
             <SelectContent>
               {foodDatabase.map(food => (
-                <SelectItem key={food.id} value={food.id.toString()}>
+                <SelectItem key={food.id} value={food.id}>
                   {food.name}
                 </SelectItem>
               ))}
@@ -158,7 +158,7 @@ export function IngredientSelector({
               <div>
                 <p className="font-medium">{ingredient.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {ingredient.amount} {ingredient.unit} • {ingredient.calories} {language === "ru" ? "ккал" : "kcal"}
+                  {ingredient.amount} {ingredient.unit} • {ingredient.calories} {translate("kcal")}
                 </p>
               </div>
               <Button 
@@ -172,8 +172,8 @@ export function IngredientSelector({
           ))}
           
           <div className="flex justify-between font-medium p-2">
-            <span>{language === "ru" ? "Всего" : "Total"}</span>
-            <span>{totalCalories} {language === "ru" ? "ккал" : "kcal"}</span>
+            <span>{translate("total")}</span>
+            <span>{totalCalories} {translate("kcal")}</span>
           </div>
         </div>
       ) : (

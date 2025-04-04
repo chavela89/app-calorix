@@ -16,6 +16,12 @@ interface RecipeFormProps {
   setServings: (servings: string) => void;
   totalWeight: string;
   setTotalWeight: (weight: string) => void;
+  recipeDescription: string;
+  setRecipeDescription: (description: string) => void;
+  instructions: string[];
+  setInstructions: (instructions: string[]) => void;
+  selectedTags: string[];
+  setSelectedTags: (tags: string[]) => void;
 }
 
 export function RecipeForm({
@@ -24,13 +30,16 @@ export function RecipeForm({
   servings,
   setServings,
   totalWeight,
-  setTotalWeight
+  setTotalWeight,
+  recipeDescription,
+  setRecipeDescription,
+  instructions,
+  setInstructions,
+  selectedTags,
+  setSelectedTags
 }: RecipeFormProps) {
   const { translate } = useLanguage();
-  const [recipeDescription, setRecipeDescription] = useState("");
-  const [instructions, setInstructions] = useState<string[]>([]);
   const [currentInstruction, setCurrentInstruction] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Available tags
   const availableTags = [

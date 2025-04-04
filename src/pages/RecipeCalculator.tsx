@@ -5,17 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { 
   BookIcon, 
   ChevronLeftIcon, 
   CalculatorIcon, 
   UtensilsIcon,
-  PercentIcon,
   ClockIcon,
   UsersIcon
 } from "lucide-react";
-import { IngredientSelector } from "@/components/recipe-calculator/IngredientSelector";
+import { IngredientSelector, Ingredient } from "@/components/recipe-calculator/IngredientSelector";
 import { NutritionInfo } from "@/components/recipe-calculator/NutritionInfo";
 import { RecipeForm } from "@/components/recipe-calculator/RecipeForm";
 import { useLanguage } from "@/context/LanguageContextFixed";
@@ -23,21 +21,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { foodDatabase } from "@/data/foodDatabase";
 
-// Define the Ingredient interface that matches what IngredientSelector expects
-interface Ingredient {
-  id: number;
-  foodId: number;
-  name: string;
-  amount: number;
-  unit: string;
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-}
-
 export default function RecipeCalculator() {
-  const { translate, language } = useLanguage();
+  const { translate } = useLanguage();
   const navigate = useNavigate();
   
   const [recipeName, setRecipeName] = useState("");
@@ -51,12 +36,12 @@ export default function RecipeCalculator() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [totalWeight, setTotalWeight] = useState("1000");
 
-  // Обработчик сохранения рецепта
+  // Handle saving recipe
   const handleSaveRecipe = () => {
     navigate("/recipes");
   };
 
-  // Обработчик загрузки сохраненного рецепта
+  // Handle loading saved recipe
   const handleLoadRecipe = (recipe: any) => {
     if (recipe) {
       setRecipeName(recipe.name);
@@ -66,7 +51,7 @@ export default function RecipeCalculator() {
       setServings(recipe.servings.toString());
       setTotalWeight(recipe.totalWeight.toString());
       
-      // Показываем уведомление об успешной загрузке
+      // Show notification for successful loading
       toast({
         title: translate("recipe_loaded"),
         description: recipe.name
@@ -74,14 +59,14 @@ export default function RecipeCalculator() {
     }
   };
 
-  // Функция для обновления веса
+  // Function to update total weight
   const handleUpdateTotalWeight = () => {
-    // Расчет общего веса ингредиентов
+    // Calculate total weight of ingredients
     const total = ingredients.reduce((sum, ing) => sum + ing.amount, 0);
     setTotalWeight(total.toString());
   };
 
-  // Обновляем общий вес при изменении ингредиентов
+  // Update total weight when ingredients change
   useEffect(() => {
     handleUpdateTotalWeight();
   }, [ingredients]);
@@ -184,6 +169,12 @@ export default function RecipeCalculator() {
                 setServings={setServings}
                 totalWeight={totalWeight}
                 setTotalWeight={setTotalWeight}
+                recipeDescription={recipeDescription}
+                setRecipeDescription={setRecipeDescription}
+                instructions={instructions}
+                setInstructions={setInstructions}
+                selectedTags={selectedTags}
+                setSelectedTags={setSelectedTags}
               />
             </TabsContent>
           </Tabs>

@@ -15,5 +15,6 @@ export const translations: Translations = {
 };
 
 export const availableLanguages = [
-  { code: 'ru' as Language, label: 'Русский' }
+  { code: 'ru' as Language, label: 'Русский' },
+  { code: 'en' as Language, label: 'English' }
 ];

@@ -6,7 +6,7 @@ export const mealPlanner = {
   week: 'Неделя',
   month: 'Месяц',
   select_template: 'Выбрать шаблон',
-  daily_nutrition: 'Ежедневное питание',
+  daily_nutrition_summary: 'Ежедневное питание',
   shopping_list: 'Список покупок',
   add_item: 'Добавить позицию',
   save_list: 'Сохранить список',

@@ -16,12 +16,12 @@ interface RecentlyAddedFoodsProps {
 }
 
 export function RecentlyAddedFoods({ onFoodSelection }: RecentlyAddedFoodsProps) {
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
   
   const recentFoods = [
     {
       id: "1", 
-      name: translate("chicken_breast"), 
+      name: language === "ru" ? "Куриная грудка" : "Chicken breast", 
       calories: 165, 
       protein: 31, 
       carbs: 0, 
@@ -29,7 +29,7 @@ export function RecentlyAddedFoods({ onFoodSelection }: RecentlyAddedFoodsProps)
     },
     {
       id: "3", 
-      name: translate("buckwheat"), 
+      name: language === "ru" ? "Гречка" : "Buckwheat", 
       calories: 143, 
       protein: 5.7, 
       carbs: 25, 
@@ -37,7 +37,7 @@ export function RecentlyAddedFoods({ onFoodSelection }: RecentlyAddedFoodsProps)
     },
     {
       id: "4", 
-      name: translate("cottage_cheese"), 
+      name: language === "ru" ? "Творог" : "Cottage cheese", 
       calories: 121, 
       protein: 18, 
       carbs: 3.3, 
@@ -45,7 +45,7 @@ export function RecentlyAddedFoods({ onFoodSelection }: RecentlyAddedFoodsProps)
     },
     {
       id: "5", 
-      name: translate("apple"), 
+      name: language === "ru" ? "Яблоко" : "Apple", 
       calories: 52, 
       protein: 0.3, 
       carbs: 14, 
@@ -55,7 +55,7 @@ export function RecentlyAddedFoods({ onFoodSelection }: RecentlyAddedFoodsProps)
 
   return (
     <div className="mt-6">
-      <h3 className="text-md font-semibold mb-3">{translate("recently_added")}</h3>
+      <h3 className="text-md font-semibold mb-3">{language === "ru" ? "Недавно добавленные" : "Recently added"}</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {recentFoods.map((food) => (
           <div 

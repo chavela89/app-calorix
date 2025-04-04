@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,13 +39,14 @@ declare global {
 
 interface VoiceSearchProps {
   onResult: (transcript: string) => void;
+  onClose?: () => void;
 }
 
-export function VoiceSearch({ onResult }: VoiceSearchProps) {
+export function VoiceSearch({ onResult, onClose }: VoiceSearchProps) {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const [transcript, setTranscript] = useState("");
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -77,7 +79,7 @@ export function VoiceSearch({ onResult }: VoiceSearchProps) {
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognitionAPI();
     
-    recognition.lang = 'ru-RU';
+    recognition.lang = language === 'ru' ? 'ru-RU' : 'en-US';
     recognition.continuous = false;
     recognition.interimResults = false;
 
@@ -116,6 +118,9 @@ export function VoiceSearch({ onResult }: VoiceSearchProps) {
 
   const stopListening = () => {
     setIsListening(false);
+    if (onClose) {
+      onClose();
+    }
   };
 
   if (!isSupported) {

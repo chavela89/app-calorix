@@ -15,14 +15,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserProfileForm } from "@/components/UserProfileForm";
 import { BarChart3, CalendarDays, List, Trophy, User2, UserIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/context/LanguageContextFixed";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Profile() {
   const { user } = useUser();
+  const { translate } = useLanguage();
   const [activeTab, setActiveTab] = useState("overview");
+
+  const handleEditProfile = () => {
+    toast({
+      title: translate("profile_edit"),
+      description: translate("profile_edit_success")
+    });
+  };
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <h1 className="text-3xl font-bold mb-6">Профиль</h1>
+      <h1 className="text-3xl font-bold mb-6">{translate("profile")}</h1>
 
       <PremiumBanner />
 
@@ -47,60 +57,67 @@ export default function Profile() {
               
               <div className="mt-4 w-full">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Стаж</span>
-                  <span className="text-sm">98 дней</span>
+                  <span className="text-sm font-medium">{translate("experience")}</span>
+                  <span className="text-sm">98 {translate("days")}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Активные дни</span>
-                  <span className="text-sm">83 дня</span>
+                  <span className="text-sm font-medium">{translate("active_days")}</span>
+                  <span className="text-sm">83 {translate("days")}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Достижения</span>
+                  <span className="text-sm font-medium">{translate("achievements")}</span>
                   <span className="text-sm">12</span>
                 </div>
               </div>
               
-              <Button className="mt-6 w-full" variant="outline">Редактировать профиль</Button>
+              <Button 
+                className="mt-6 w-full" 
+                variant="outline"
+                onClick={handleEditProfile}
+              >
+                {translate("edit_profile")}
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Content */}
         <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <Tabs defaultValue={activeTab} className="w-full" value={activeTab} onValueChange={setActiveTab}>
+          <Tabs defaultValue={activeTab} className="w-full" value={activeTab} onValueChange={setActiveTab}>
+            <Card>
+              <CardHeader>
                 <TabsList className="grid grid-cols-4 mb-2">
                   <TabsTrigger value="overview" className="flex items-center gap-2">
                     <List className="w-4 h-4" />
-                    <span className="hidden sm:inline">Обзор</span>
+                    <span className="hidden sm:inline">{translate("overview")}</span>
                   </TabsTrigger>
                   <TabsTrigger value="stats" className="flex items-center gap-2">
                     <BarChart3 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Статистика</span>
+                    <span className="hidden sm:inline">{translate("statistics")}</span>
                   </TabsTrigger>
                   <TabsTrigger value="achievements" className="flex items-center gap-2">
                     <Trophy className="w-4 h-4" />
-                    <span className="hidden sm:inline">Достижения</span>
+                    <span className="hidden sm:inline">{translate("achievements")}</span>
                   </TabsTrigger>
                   <TabsTrigger value="settings" className="flex items-center gap-2">
                     <User2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Данные</span>
+                    <span className="hidden sm:inline">{translate("data")}</span>
                   </TabsTrigger>
                 </TabsList>
-
+              </CardHeader>
+              <CardContent className="pt-2">
                 <TabsContent value="overview" className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-medium mb-2">Недавняя активность</h3>
+                    <h3 className="text-lg font-medium mb-2">{translate("recent_activity")}</h3>
                     <div className="space-y-4">
                       <div className="flex gap-4">
                         <div className="min-w-[48px] h-12 flex items-center justify-center rounded-full bg-primary/10">
                           <CalendarDays className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium">Отслеживание питания</p>
-                          <p className="text-sm text-muted-foreground">Вы вели дневник питания 7 дней подряд</p>
-                          <p className="text-xs text-muted-foreground">Сегодня</p>
+                          <p className="font-medium">{translate("food_tracking")}</p>
+                          <p className="text-sm text-muted-foreground">{translate("diary_streak_7")}</p>
+                          <p className="text-xs text-muted-foreground">{translate("today")}</p>
                         </div>
                       </div>
                       <div className="flex gap-4">
@@ -108,37 +125,37 @@ export default function Profile() {
                           <Trophy className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium">Достижение разблокировано</p>
-                          <p className="text-sm text-muted-foreground">Первый кулинарный рецепт</p>
-                          <p className="text-xs text-muted-foreground">Вчера</p>
+                          <p className="font-medium">{translate("achievement_unlocked")}</p>
+                          <p className="text-sm text-muted-foreground">{translate("first_recipe")}</p>
+                          <p className="text-xs text-muted-foreground">{translate("yesterday")}</p>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-medium mb-2">Текущие цели</h3>
+                    <h3 className="text-lg font-medium mb-2">{translate("current_goals")}</h3>
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <div>
-                          <p className="font-medium">Калории</p>
-                          <p className="text-sm text-muted-foreground">Ежедневная цель</p>
+                          <p className="font-medium">{translate("calories")}</p>
+                          <p className="text-sm text-muted-foreground">{translate("daily_goal")}</p>
                         </div>
-                        <p className="font-medium">{user?.settings?.calorieGoal || 2200} ккал</p>
+                        <p className="font-medium">{user?.settings?.calorieGoal || 2200} {translate("kcal")}</p>
                       </div>
                       <div className="flex justify-between">
                         <div>
-                          <p className="font-medium">Белки</p>
-                          <p className="text-sm text-muted-foreground">Ежедневная цель</p>
+                          <p className="font-medium">{translate("protein")}</p>
+                          <p className="text-sm text-muted-foreground">{translate("daily_goal")}</p>
                         </div>
-                        <p className="font-medium">{user?.settings?.proteinGoal || 150} г</p>
+                        <p className="font-medium">{user?.settings?.proteinGoal || 150} {translate("g")}</p>
                       </div>
                       <div className="flex justify-between">
                         <div>
-                          <p className="font-medium">Вес</p>
-                          <p className="text-sm text-muted-foreground">Целевой вес</p>
+                          <p className="font-medium">{translate("weight_label")}</p>
+                          <p className="text-sm text-muted-foreground">{translate("target_weight")}</p>
                         </div>
-                        <p className="font-medium">{user?.bodyMetrics?.targetWeight || 70} кг</p>
+                        <p className="font-medium">{user?.bodyMetrics?.targetWeight || 70} {translate("kg")}</p>
                       </div>
                     </div>
                   </div>
@@ -146,13 +163,13 @@ export default function Profile() {
                 
                 <TabsContent value="stats" className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-medium mb-4">Статистика по питанию</h3>
+                    <h3 className="text-lg font-medium mb-4">{translate("nutrition_statistics")}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       <Card>
                         <CardContent className="pt-6">
                           <div className="text-center">
                             <p className="text-3xl font-bold">83</p>
-                            <p className="text-sm text-muted-foreground">Активных дней</p>
+                            <p className="text-sm text-muted-foreground">{translate("active_days")}</p>
                           </div>
                         </CardContent>
                       </Card>
@@ -160,7 +177,7 @@ export default function Profile() {
                         <CardContent className="pt-6">
                           <div className="text-center">
                             <p className="text-3xl font-bold">156,427</p>
-                            <p className="text-sm text-muted-foreground">Отслеженных калорий</p>
+                            <p className="text-sm text-muted-foreground">{translate("tracked_calories")}</p>
                           </div>
                         </CardContent>
                       </Card>
@@ -168,7 +185,7 @@ export default function Profile() {
                         <CardContent className="pt-6">
                           <div className="text-center">
                             <p className="text-3xl font-bold">42</p>
-                            <p className="text-sm text-muted-foreground">Достигнутых целей</p>
+                            <p className="text-sm text-muted-foreground">{translate("goals_met")}</p>
                           </div>
                         </CardContent>
                       </Card>
@@ -178,31 +195,31 @@ export default function Profile() {
                 
                 <TabsContent value="achievements" className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-medium mb-4">Достижения</h3>
+                    <h3 className="text-lg font-medium mb-4">{translate("achievements")}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       <div className="flex flex-col items-center border rounded-lg p-4">
                         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-3">
                           <Trophy className="w-8 h-8 text-green-600" />
                         </div>
-                        <p className="font-medium text-center">Первая неделя</p>
-                        <p className="text-xs text-muted-foreground text-center">7 дней подряд ведения дневника</p>
-                        <Badge className="mt-2">Выполнено</Badge>
+                        <p className="font-medium text-center">{translate("first_week")}</p>
+                        <p className="text-xs text-muted-foreground text-center">{translate("diary_streak_7")}</p>
+                        <Badge className="mt-2">{translate("completed")}</Badge>
                       </div>
                       <div className="flex flex-col items-center border rounded-lg p-4">
                         <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                           <Trophy className="w-8 h-8 text-blue-600" />
                         </div>
-                        <p className="font-medium text-center">Первый месяц</p>
-                        <p className="text-xs text-muted-foreground text-center">30 дней подряд ведения дневника</p>
-                        <Badge className="mt-2">Выполнено</Badge>
+                        <p className="font-medium text-center">{translate("first_month")}</p>
+                        <p className="text-xs text-muted-foreground text-center">{translate("diary_streak_30")}</p>
+                        <Badge className="mt-2">{translate("completed")}</Badge>
                       </div>
                       <div className="flex flex-col items-center border rounded-lg p-4">
                         <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                           <Trophy className="w-8 h-8 text-purple-600" />
                         </div>
-                        <p className="font-medium text-center">Первый рецепт</p>
-                        <p className="text-xs text-muted-foreground text-center">Создание собственного рецепта</p>
-                        <Badge className="mt-2">Выполнено</Badge>
+                        <p className="font-medium text-center">{translate("first_recipe")}</p>
+                        <p className="text-xs text-muted-foreground text-center">{translate("create_own_recipe")}</p>
+                        <Badge className="mt-2">{translate("completed")}</Badge>
                       </div>
                     </div>
                   </div>
@@ -211,12 +228,9 @@ export default function Profile() {
                 <TabsContent value="settings">
                   <UserProfileForm />
                 </TabsContent>
-              </Tabs>
-            </CardHeader>
-            <CardContent className="pt-2">
-              {/* Remove the duplicate TabsContent components that were here */}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Tabs>
         </div>
       </div>
     </div>

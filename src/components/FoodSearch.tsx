@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,18 +22,16 @@ interface FoodSearchProps {
 }
 
 export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
-  const { translate } = useLanguage();
-  const [isVoiceSearchOpen, setIsVoiceSearchOpen] = useState(false);
-  const [isBarcodeScannerOpen, setIsBarcodeScannerOpen] = useState(false);
+  const { translate, language } = useLanguage();
+  const [showVoiceSearch, setShowVoiceSearch] = useState(false);
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-
-  const toggleVoiceSearch = () => setIsVoiceSearchOpen(!isVoiceSearchOpen);
-  const toggleBarcodeScanner = () => setIsBarcodeScannerOpen(!isBarcodeScannerOpen);
 
   const handleVoiceResult = (result: string) => {
     setSearchTerm(result);
     setIsSearching(true);
+    setShowVoiceSearch(false);
   };
 
   const handleBarcodeResult = (barcode: string) => {
@@ -40,6 +39,7 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
     // In a real app would search for the product using this barcode
     const mockProduct = foodDatabase[Math.floor(Math.random() * foodDatabase.length)];
     onSelectFood(mockProduct);
+    setShowBarcodeScanner(false);
   };
 
   const filteredFoods = searchTerm.trim() 
@@ -79,21 +79,35 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
           />
         </div>
         
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={toggleVoiceSearch}
-        >
-          <MicIcon className="h-4 w-4" />
-        </Button>
+        {showVoiceSearch ? (
+          <VoiceSearch 
+            onResult={handleVoiceResult}
+            onClose={() => setShowVoiceSearch(false)}
+          />
+        ) : (
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => setShowVoiceSearch(true)}
+          >
+            <MicIcon className="h-4 w-4" />
+          </Button>
+        )}
         
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={toggleBarcodeScanner}
-        >
-          <BarcodeIcon className="h-4 w-4" />
-        </Button>
+        {showBarcodeScanner ? (
+          <BarcodeScanner 
+            onScan={handleBarcodeResult}
+            onClose={() => setShowBarcodeScanner(false)}
+          />
+        ) : (
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => setShowBarcodeScanner(true)}
+          >
+            <BarcodeIcon className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       
       {isSearching && (
@@ -122,22 +136,6 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
             </CommandGroup>
           </CommandList>
         </Command>
-      )}
-      
-      {isVoiceSearchOpen && (
-        <VoiceSearch 
-          isOpen={isVoiceSearchOpen} 
-          onClose={() => setIsVoiceSearchOpen(false)}
-          onResult={handleVoiceResult}
-        />
-      )}
-      
-      {isBarcodeScannerOpen && (
-        <BarcodeScanner 
-          isOpen={isBarcodeScannerOpen}
-          onClose={() => setIsBarcodeScannerOpen(false)}
-          onScan={handleBarcodeResult}
-        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContextFixed";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,16 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, BookOpenIcon, PlusIcon, SaveIcon, Trash2Icon, CheckCircleIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { CalendarIcon, BookOpenIcon, PlusIcon, SaveIcon, Trash2Icon, CheckCircleIcon, Coffee, UtensilsCrossed, ChefHat, IceCream } from "lucide-react";
 import { FoodSearch } from "@/components/FoodSearch";
 import { useNutrition, FoodItem } from "@/context/NutritionContext";
 import { toast } from "@/components/ui/use-toast";
+import { MealCard } from "@/components/MealCard";
 
 export default function Planner() {
   const { translate, language } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState("day");
-  const { addFoodToMeal } = useNutrition();
+  const { addFoodToMeal, removeFoodFromMeal, meals } = useNutrition();
   const [shoppingItems, setShoppingItems] = useState([
     { id: 1, name: language === "ru" ? "Куриная грудка (500г)" : "Chicken breast (500g)", checked: true },
     { id: 2, name: language === "ru" ? "Овощи для салата" : "Vegetables for salad", checked: false },
@@ -25,6 +27,20 @@ export default function Planner() {
     { id: 5, name: language === "ru" ? "Бананы (6 шт)" : "Bananas (6 pcs)", checked: false }
   ]);
   const [newShoppingItem, setNewShoppingItem] = useState("");
+  const [shoppingLists, setShoppingLists] = useState<{id: number, name: string, items: any[]}[]>([]);
+  const [showNewMealDialog, setShowNewMealDialog] = useState(false);
+  const [newMealName, setNewMealName] = useState("");
+  const [newMealTime, setNewMealTime] = useState("");
+  const [editingMealInfo, setEditingMealInfo] = useState<{day: string, mealType: string} | null>(null);
+  const [showSavedLists, setShowSavedLists] = useState(false);
+
+  // Meal icons
+  const mealIcons = {
+    breakfast: <Coffee className="h-5 w-5 text-orange-500" />,
+    lunch: <UtensilsCrossed className="h-5 w-5 text-green-500" />,
+    dinner: <ChefHat className="h-5 w-5 text-blue-500" />,
+    snack: <IceCream className="h-5 w-5 text-purple-500" />
+  };
 
   // Демо-данные для планировщика
   const mealPlan = [
@@ -33,9 +49,9 @@ export default function Planner() {
       label: translate("breakfast"),
       time: "08:00",
       items: [
-        { name: language === "ru" ? "Овсяная каша" : "Oatmeal", calories: 150, protein: 5, fat: 3, carbs: 27 },
-        { name: language === "ru" ? "Банан" : "Banana", calories: 105, protein: 1.3, fat: 0.4, carbs: 27 },
-        { name: language === "ru" ? "Миндальное молоко" : "Almond milk", calories: 30, protein: 1, fat: 2.5, carbs: 1 }
+        { id: "1", name: language === "ru" ? "Овсяная каша" : "Oatmeal", calories: 150, proteins: 5, fats: 3, carbs: 27, amount: 100, unit: "г" },
+        { id: "2", name: language === "ru" ? "Банан" : "Banana", calories: 105, proteins: 1.3, fats: 0.4, carbs: 27, amount: 100, unit: "г" },
+        { id: "3", name: language === "ru" ? "Миндальное молоко" : "Almond milk", calories: 30, proteins: 1, fats: 2.5, carbs: 1, amount: 100, unit: "мл" }
       ]
     },
     {
@@ -43,9 +59,9 @@ export default function Planner() {
       label: translate("lunch"),
       time: "13:00",
       items: [
-        { name: language === "ru" ? "Куриная грудка" : "Chicken breast", calories: 165, protein: 31, fat: 3.6, carbs: 0 },
-        { name: language === "ru" ? "Рис бурый" : "Brown rice", calories: 110, protein: 2.5, fat: 0.9, carbs: 23 },
-        { name: language === "ru" ? "Овощной салат" : "Vegetable salad", calories: 45, protein: 1, fat: 0.2, carbs: 10 }
+        { id: "4", name: language === "ru" ? "Куриная грудка" : "Chicken breast", calories: 165, proteins: 31, fats: 3.6, carbs: 0, amount: 100, unit: "г" },
+        { id: "5", name: language === "ru" ? "Рис бурый" : "Brown rice", calories: 110, proteins: 2.5, fats: 0.9, carbs: 23, amount: 100, unit: "г" },
+        { id: "6", name: language === "ru" ? "Овощной салат" : "Vegetable salad", calories: 45, proteins: 1, fats: 0.2, carbs: 10, amount: 100, unit: "г" }
       ]
     },
     {
@@ -53,9 +69,9 @@ export default function Planner() {
       label: translate("dinner"),
       time: "19:00",
       items: [
-        { name: language === "ru" ? "Лосось" : "Salmon", calories: 180, protein: 22, fat: 10, carbs: 0 },
-        { name: language === "ru" ? "Киноа" : "Quinoa", calories: 120, protein: 4, fat: 1.9, carbs: 22 },
-        { name: language === "ru" ? "Брокколи" : "Broccoli", calories: 55, protein: 2.6, fat: 0.4, carbs: 11 }
+        { id: "7", name: language === "ru" ? "Лосось" : "Salmon", calories: 180, proteins: 22, fats: 10, carbs: 0, amount: 100, unit: "г" },
+        { id: "8", name: language === "ru" ? "Киноа" : "Quinoa", calories: 120, proteins: 4, fats: 1.9, carbs: 22, amount: 100, unit: "г" },
+        { id: "9", name: language === "ru" ? "Брокколи" : "Broccoli", calories: 55, proteins: 2.6, fats: 0.4, carbs: 11, amount: 100, unit: "г" }
       ]
     },
     {
@@ -63,8 +79,8 @@ export default function Planner() {
       label: translate("snack"),
       time: "16:00",
       items: [
-        { name: language === "ru" ? "Греческий йогурт" : "Greek yogurt", calories: 100, protein: 10, fat: 2, carbs: 8 },
-        { name: language === "ru" ? "Черника" : "Blueberries", calories: 45, protein: 0.6, fat: 0.2, carbs: 11 }
+        { id: "10", name: language === "ru" ? "Греческий йогурт" : "Greek yogurt", calories: 100, proteins: 10, fats: 2, carbs: 8, amount: 100, unit: "г" },
+        { id: "11", name: language === "ru" ? "Черника" : "Blueberries", calories: 45, proteins: 0.6, fats: 0.2, carbs: 11, amount: 100, unit: "г" }
       ]
     }
   ];
@@ -87,9 +103,9 @@ export default function Planner() {
     mealPlan.forEach(meal => {
       meal.items.forEach(item => {
         totals.calories += item.calories;
-        totals.protein += item.protein;
-        totals.fat += item.fat;
-        totals.carbs += item.carbs;
+        totals.protein += item.proteins || 0;
+        totals.fat += item.fats || 0;
+        totals.carbs += item.carbs || 0;
       });
     });
     
@@ -108,7 +124,7 @@ export default function Planner() {
   ];
 
   // Function to handle adding a food item to a meal plan
-  const handleAddFood = (mealType) => {
+  const handleAddFood = (mealType: string) => {
     toast({
       title: translate("add_food"),
       description: `${translate("to")} ${translate(mealType)}`,
@@ -116,16 +132,16 @@ export default function Planner() {
   };
 
   // Handle food selection from search
-  const handleFoodSelect = (food, mealType) => {
-    const newFood = {
+  const handleFoodSelect = (food: any, mealType: string) => {
+    const newFood: FoodItem = {
       id: Math.random().toString(36).substring(7),
       name: food.name,
       calories: food.calories,
-      proteins: food.protein,
-      fats: food.fat,
-      carbs: food.carbs,
+      proteins: food.proteins || food.protein || 0,
+      fats: food.fats || food.fat || 0,
+      carbs: food.carbs || 0,
       amount: 100,
-      unit: "g"
+      unit: language === "ru" ? "г" : "g"
     };
     
     addFoodToMeal(mealType, newFood);
@@ -137,12 +153,8 @@ export default function Planner() {
   };
 
   // Handler for removing a food item
-  const handleRemoveFood = (mealType, itemIndex) => {
-    // In a real app, you would remove the item from the state/database
-    toast({
-      title: translate("item_deleted"),
-      description: `${translate("item_removed_from_meal")}`,
-    });
+  const handleRemoveFood = (mealType: string, foodId: string) => {
+    removeFoodFromMeal(mealType, foodId);
   };
 
   // Shopping list handlers
@@ -161,7 +173,7 @@ export default function Planner() {
     }
   };
 
-  const toggleShoppingItemCheck = (id) => {
+  const toggleShoppingItemCheck = (id: number) => {
     setShoppingItems(
       shoppingItems.map(item => 
         item.id === id ? {...item, checked: !item.checked} : item
@@ -170,21 +182,44 @@ export default function Planner() {
   };
 
   const handleSaveList = () => {
+    const newList = {
+      id: Date.now(),
+      name: `${language === "ru" ? "Список" : "List"} ${shoppingLists.length + 1}`,
+      items: [...shoppingItems]
+    };
+    
+    setShoppingLists([...shoppingLists, newList]);
+    
     toast({
       title: translate("save_list"),
       description: language === "ru" ? "Список покупок сохранен" : "Shopping list saved",
     });
+    
+    // Show saved lists after saving
+    setShowSavedLists(true);
   };
 
   const handleAddNewMeal = () => {
-    toast({
-      title: translate("add_meal"),
-      description: language === "ru" ? "Добавлен новый прием пищи" : "New meal added",
-    });
+    setShowNewMealDialog(true);
+  };
+
+  const createNewMeal = () => {
+    if (newMealName.trim()) {
+      toast({
+        title: translate("add_meal"),
+        description: language === "ru" ? "Добавлен новый прием пищи" : "New meal added",
+      });
+      
+      setShowNewMealDialog(false);
+      setNewMealName("");
+      setNewMealTime("");
+    }
   };
 
   // Handler for week view meal plan
-  const handleWeekdayMealClick = (day, mealType) => {
+  const handleWeekdayMealClick = (day: string, mealType: string) => {
+    setEditingMealInfo({ day, mealType });
+    
     toast({
       title: `${translate(mealType)} - ${day}`,
       description: language === "ru" ? "Редактирование питания" : "Editing meal plan",
@@ -192,7 +227,7 @@ export default function Planner() {
   };
 
   // Handler for month view day selection
-  const handleMonthDayClick = (day) => {
+  const handleMonthDayClick = (day: number) => {
     if (day > 0 && day <= 30) {
       setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
       setActiveTab("day");
@@ -244,63 +279,15 @@ export default function Planner() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3 space-y-6">
               {mealPlan.map((meal, index) => (
-                <Card key={index}>
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-lg font-medium">{meal.label} • {meal.time}</CardTitle>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleAddFood(meal.mealType)}
-                      >
-                        <PlusIcon className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="divide-y">
-                      {meal.items.map((item, itemIndex) => (
-                        <div key={itemIndex} className="py-2 flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {item.calories} {translate("kcal")} • {item.protein}g {translate("protein")} • 
-                              {item.fat}g {translate("fat")} • {item.carbs}g {translate("carbs")}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => handleRemoveFood(meal.mealType, itemIndex)}
-                            >
-                              <Trash2Icon className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      <div className="py-2">
-                        <FoodSearch 
-                          onSelectFood={(food) => handleFoodSelect(food, meal.mealType)}
-                          placeholder={`${translate("add_food")} ${translate("to")} ${meal.label}`}
-                        />
-                      </div>
-                      
-                      <div className="py-2 text-center">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full" 
-                          size="sm"
-                          onClick={() => handleAddFood(meal.mealType)}
-                        >
-                          <PlusIcon className="h-4 w-4 mr-2" />
-                          {translate("add_food")}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <MealCard 
+                  key={index}
+                  title={meal.label}
+                  time={meal.time}
+                  icon={mealIcons[meal.mealType as keyof typeof mealIcons]}
+                  foods={meal.items as FoodItem[]}
+                  onAddFood={() => handleAddFood(meal.mealType)}
+                  onRemoveFood={(id) => handleRemoveFood(meal.mealType, id)}
+                />
               ))}
               
               <Button className="w-full" onClick={handleAddNewMeal}>
@@ -373,9 +360,44 @@ export default function Planner() {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>{translate("shopping_list")}</CardTitle>
+                  <CardTitle className="flex justify-between items-center">
+                    {translate("shopping_list")}
+                    {shoppingLists.length > 0 && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowSavedLists(!showSavedLists)}
+                      >
+                        {showSavedLists ? translate("hide_lists") : translate("show_lists")}
+                      </Button>
+                    )}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {showSavedLists && shoppingLists.length > 0 && (
+                    <div className="mb-4 space-y-2 border-b pb-4">
+                      <h3 className="font-medium">{language === "ru" ? "Сохраненные списки" : "Saved Lists"}</h3>
+                      {shoppingLists.map(list => (
+                        <div key={list.id} className="flex justify-between items-center">
+                          <span>{list.name} ({list.items.length})</span>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setShoppingItems(list.items);
+                              setShowSavedLists(false);
+                              toast({
+                                title: language === "ru" ? "Список загружен" : "List loaded",
+                              });
+                            }}
+                          >
+                            {language === "ru" ? "Загрузить" : "Load"}
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Input 
@@ -445,7 +467,7 @@ export default function Planner() {
                         variant="ghost" 
                         size="sm" 
                         className="w-full"
-                        onClick={() => handleAddNewMeal()}
+                        onClick={handleAddNewMeal}
                       >
                         <PlusIcon className="h-3 w-3" />
                       </Button>
@@ -492,6 +514,86 @@ export default function Planner() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* New Meal Dialog */}
+      <Dialog open={showNewMealDialog} onOpenChange={setShowNewMealDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{translate("add_meal")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="mealName">{language === "ru" ? "Название приема пищи" : "Meal Name"}</Label>
+              <Input 
+                id="mealName" 
+                value={newMealName} 
+                onChange={(e) => setNewMealName(e.target.value)}
+                placeholder={language === "ru" ? "Например: Полдник" : "Example: Afternoon Snack"}
+              />
+            </div>
+            <div>
+              <Label htmlFor="mealTime">{language === "ru" ? "Время" : "Time"}</Label>
+              <Input 
+                id="mealTime" 
+                value={newMealTime} 
+                onChange={(e) => setNewMealTime(e.target.value)}
+                placeholder="15:00"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewMealDialog(false)}>
+              {language === "ru" ? "Отмена" : "Cancel"}
+            </Button>
+            <Button onClick={createNewMeal}>
+              {language === "ru" ? "Создать" : "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Week Day Meal Edit Dialog */}
+      {editingMealInfo && (
+        <Dialog open={!!editingMealInfo} onOpenChange={() => setEditingMealInfo(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingMealInfo.day} - {translate(editingMealInfo.mealType)}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>{language === "ru" ? "Продукты" : "Foods"}</Label>
+                <div className="mt-2 space-y-2">
+                  {mealPlan.find(m => m.mealType === editingMealInfo.mealType)?.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <span>{item.name}</span>
+                      <span>{item.calories} {translate("kcal")}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4">
+                <Label>{language === "ru" ? "Добавить продукт" : "Add Food"}</Label>
+                <FoodSearch 
+                  onSelectFood={(food) => {
+                    handleFoodSelect(food, editingMealInfo.mealType);
+                    toast({
+                      title: translate("food_added"),
+                      description: `${food.name} ${translate("added_to")} ${translate(editingMealInfo.mealType)}`,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={() => setEditingMealInfo(null)}>
+                {language === "ru" ? "Готово" : "Done"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

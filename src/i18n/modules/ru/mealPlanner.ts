@@ -28,5 +28,7 @@ export const mealPlanner = {
   calories: 'Калории',
   nutrition: 'Питание',
   nutrients: 'Нутриенты',
-  daily_nutrition: 'Дневное питание'
+  daily_nutrition: 'Дневное питание',
+  no_planned_meals: 'Нет запланированных блюд',
+  g: 'г'
 };

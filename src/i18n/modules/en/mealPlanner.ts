@@ -24,5 +24,11 @@ export const mealPlanner = {
   added_to: 'added to',
   protein: 'Protein',
   fat: 'Fat',
-  carbs: 'Carbs'
+  carbs: 'Carbs',
+  calories: 'Calories',
+  nutrition: 'Nutrition',
+  nutrients: 'Nutrients',
+  daily_nutrition_summary: 'Daily Nutrition Summary',
+  no_planned_meals: 'No planned meals',
+  g: 'g'
 };

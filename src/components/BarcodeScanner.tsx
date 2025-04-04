@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Camera, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,9 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
+  onClose: () => void;
 }
 
-export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
+export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -79,60 +81,47 @@ export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
       videoRef.current.srcObject = null;
     }
     setIsScanning(false);
+    onClose();
   };
 
+  // We'll now directly start scanning without showing a button first
+  useEffect(() => {
+    startScanning();
+  }, []);
+
   if (!isSupported) {
-    return (
-      <Button 
-        variant="ghost" 
-        size="icon"
-        className="text-muted-foreground"
-        disabled
-      >
-        <Camera className="h-5 w-5" />
-      </Button>
-    );
+    onClose();
+    return null;
   }
 
   return (
-    <>
-      <Button 
-        variant="ghost" 
-        size="icon"
-        onClick={startScanning}
-        className="text-muted-foreground"
-      >
-        <Camera className="h-5 w-5" />
-      </Button>
-
-      <Dialog open={isScanning} onOpenChange={(open) => !open && stopScanning()}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{translate("scan_barcode")}</DialogTitle>
-          </DialogHeader>
-          <div className="relative aspect-video w-full overflow-hidden rounded-md">
-            <video 
-              ref={videoRef} 
-              autoPlay 
-              playsInline
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-48 w-48 border-4 border-primary rounded-lg opacity-50"></div>
-            </div>
+    <Dialog open={isScanning} onOpenChange={(open) => !open && stopScanning()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{translate("scan_barcode")}</DialogTitle>
+        </DialogHeader>
+        <div className="relative aspect-video w-full overflow-hidden rounded-md">
+          <video 
+            ref={videoRef} 
+            autoPlay 
+            playsInline
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-48 w-48 border-4 border-primary rounded-lg opacity-50"></div>
           </div>
-          <div className="flex justify-center">
-            <Button 
-              variant="secondary" 
-              onClick={stopScanning}
-              className="mt-2"
-            >
-              <X className="mr-2 h-4 w-4" />
-              {translate("cancel")}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+        <div className="flex justify-center">
+          <Button 
+            variant="secondary" 
+            onClick={stopScanning}
+            className="mt-2"
+          >
+            <X className="mr-2 h-4 w-4" />
+            {translate("cancel")}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

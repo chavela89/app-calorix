@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchIcon, MicIcon, BarcodeIcon } from "lucide-react";
@@ -27,6 +27,21 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
   const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [filteredFoods, setFilteredFoods] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Update filtered foods whenever search term changes
+    if (searchTerm.trim()) {
+      const filtered = foodDatabase.filter(food => 
+        food.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredFoods(filtered);
+      setIsSearching(true);
+    } else {
+      setFilteredFoods([]);
+      setIsSearching(false);
+    }
+  }, [searchTerm]);
 
   const handleVoiceResult = (result: string) => {
     setSearchTerm(result);
@@ -41,12 +56,6 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
     onSelectFood(mockProduct);
     setShowBarcodeScanner(false);
   };
-
-  const filteredFoods = searchTerm.trim() 
-    ? foodDatabase.filter(food => 
-        food.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
 
   const handleFoodSelection = (food: any) => {
     onSelectFood(food);
@@ -63,11 +72,6 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              if (e.target.value.trim()) {
-                setIsSearching(true);
-              } else {
-                setIsSearching(false);
-              }
             }}
             onFocus={() => {
               if (searchTerm.trim()) {
@@ -79,38 +83,38 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
           />
         </div>
         
-        {showVoiceSearch ? (
-          <VoiceSearch 
-            onResult={handleVoiceResult}
-            onClose={() => setShowVoiceSearch(false)}
-          />
-        ) : (
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={() => setShowVoiceSearch(true)}
-          >
-            <MicIcon className="h-4 w-4" />
-          </Button>
-        )}
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={() => setShowVoiceSearch(true)}
+        >
+          <MicIcon className="h-4 w-4" />
+        </Button>
         
-        {showBarcodeScanner ? (
-          <BarcodeScanner 
-            onScan={handleBarcodeResult}
-            onClose={() => setShowBarcodeScanner(false)}
-          />
-        ) : (
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={() => setShowBarcodeScanner(true)}
-          >
-            <BarcodeIcon className="h-4 w-4" />
-          </Button>
-        )}
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={() => setShowBarcodeScanner(true)}
+        >
+          <BarcodeIcon className="h-4 w-4" />
+        </Button>
       </div>
       
-      {isSearching && (
+      {showVoiceSearch && (
+        <VoiceSearch 
+          onResult={handleVoiceResult}
+          onClose={() => setShowVoiceSearch(false)}
+        />
+      )}
+      
+      {showBarcodeScanner && (
+        <BarcodeScanner 
+          onScan={handleBarcodeResult}
+          onClose={() => setShowBarcodeScanner(false)}
+        />
+      )}
+      
+      {isSearching && filteredFoods.length > 0 && (
         <Command className="absolute top-full left-0 right-0 mt-1 z-10 border rounded-md bg-background shadow-md">
           <CommandInput 
             placeholder={translate("search_food")}
@@ -119,7 +123,7 @@ export function FoodSearch({ onSelectFood, placeholder }: FoodSearchProps) {
             className="border-none focus:ring-0"
           />
           <CommandList>
-            <CommandEmpty>{translate("no_results")}</CommandEmpty>
+            {filteredFoods.length === 0 && <CommandEmpty>{translate("no_results")}</CommandEmpty>}
             <CommandGroup>
               {filteredFoods.map((food) => (
                 <CommandItem 

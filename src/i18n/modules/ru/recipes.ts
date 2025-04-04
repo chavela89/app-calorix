@@ -75,4 +75,10 @@ export const recipes = {
   added_to_diary: 'Добавлено в дневник',
   recipe_loaded: 'Рецепт загружен',
   favorite_recipes: 'Избранные рецепты',
+  total: 'Всего',
+  calories: 'Калории',
+  protein: 'Белки',
+  fat: 'Жиры',
+  carbs: 'Углеводы',
+  kcal: 'ккал',
 };

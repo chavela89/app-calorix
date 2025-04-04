@@ -75,4 +75,10 @@ export const recipes = {
   added_to_diary: 'Added to diary',
   recipe_loaded: 'Recipe loaded',
   favorite_recipes: 'Favorite Recipes',
+  total: 'Total',
+  calories: 'Calories',
+  protein: 'Protein',
+  fat: 'Fat',
+  carbs: 'Carbs',
+  kcal: 'kcal',
 };

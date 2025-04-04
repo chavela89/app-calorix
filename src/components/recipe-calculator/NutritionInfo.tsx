@@ -15,6 +15,7 @@ import {
 
 interface Ingredient {
   id: number;
+  foodId: number;
   name: string;
   amount: number;
   unit: string;
@@ -56,10 +57,10 @@ export function NutritionInfo({
   const calculateTotalNutrition = () => {
     return ingredients.reduce(
       (acc, ingredient) => {
-        acc.calories += ingredient.calories * (ingredient.amount / 100);
-        acc.protein += ingredient.protein * (ingredient.amount / 100);
-        acc.fat += ingredient.fat * (ingredient.amount / 100);
-        acc.carbs += ingredient.carbs * (ingredient.amount / 100);
+        acc.calories += ingredient.calories;
+        acc.protein += ingredient.protein;
+        acc.fat += ingredient.fat;
+        acc.carbs += ingredient.carbs;
         return acc;
       },
       { calories: 0, protein: 0, fat: 0, carbs: 0 }
@@ -134,11 +135,6 @@ export function NutritionInfo({
   const handleLoadRecipe = (recipe: any) => {
     if (onLoadRecipe) {
       onLoadRecipe(recipe);
-      
-      toast({
-        title: translate("recipe_loaded"),
-        description: recipe.name
-      });
     }
   };
 
@@ -199,19 +195,19 @@ export function NutritionInfo({
                 <TabsContent value="per_serving" className="pt-4">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span>{translate("calories")}:</span>
+                      <span>{language === "ru" ? "Калории" : "Calories"}:</span>
                       <span className="font-medium">{Math.round(nutrition.calories)} {language === "ru" ? "ккал" : "kcal"}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{translate("protein")}:</span>
+                      <span>{language === "ru" ? "Белки" : "Protein"}:</span>
                       <span className="font-medium">{nutrition.protein.toFixed(1)}г</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{translate("fat")}:</span>
+                      <span>{language === "ru" ? "Жиры" : "Fat"}:</span>
                       <span className="font-medium">{nutrition.fat.toFixed(1)}г</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{translate("carbs")}:</span>
+                      <span>{language === "ru" ? "Углеводы" : "Carbs"}:</span>
                       <span className="font-medium">{nutrition.carbs.toFixed(1)}г</span>
                     </div>
                   </div>
@@ -219,19 +215,19 @@ export function NutritionInfo({
                 <TabsContent value="per_100g" className="pt-4">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span>{translate("calories")}:</span>
+                      <span>{language === "ru" ? "Калории" : "Calories"}:</span>
                       <span className="font-medium">{Math.round(nutrition.calories)} {language === "ru" ? "ккал" : "kcal"}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{translate("protein")}:</span>
+                      <span>{language === "ru" ? "Белки" : "Protein"}:</span>
                       <span className="font-medium">{nutrition.protein.toFixed(1)}г</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{translate("fat")}:</span>
+                      <span>{language === "ru" ? "Жиры" : "Fat"}:</span>
                       <span className="font-medium">{nutrition.fat.toFixed(1)}г</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{translate("carbs")}:</span>
+                      <span>{language === "ru" ? "Углеводы" : "Carbs"}:</span>
                       <span className="font-medium">{nutrition.carbs.toFixed(1)}г</span>
                     </div>
                   </div>

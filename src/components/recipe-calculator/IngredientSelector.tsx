@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContextFixed";
+import { FoodItem } from "@/context/NutritionContext";
 
 export interface Ingredient {
   id: number;
@@ -25,7 +26,7 @@ export interface Ingredient {
 }
 
 interface IngredientSelectorProps {
-  foodDatabase: any[];
+  foodDatabase: FoodItem[];
   ingredients: Ingredient[];
   setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
 }
@@ -38,7 +39,7 @@ export function IngredientSelector({
   const { translate, language } = useLanguage();
   const [selectedFood, setSelectedFood] = useState<number | null>(null);
   const [amount, setAmount] = useState<string>("100");
-  const [unit, setUnit] = useState<string>("г");
+  const [unit, setUnit] = useState<string>(language === "ru" ? "г" : "g");
   
   // Units available for selection
   const units = language === "ru" 
@@ -63,8 +64,8 @@ export function IngredientSelector({
       amount: amountNum,
       unit: unit,
       calories: Math.round(food.calories * scaleFactor),
-      protein: parseFloat((food.protein * scaleFactor).toFixed(1)),
-      fat: parseFloat((food.fat * scaleFactor).toFixed(1)),
+      protein: parseFloat((food.proteins * scaleFactor).toFixed(1)),
+      fat: parseFloat((food.fats * scaleFactor).toFixed(1)),
       carbs: parseFloat((food.carbs * scaleFactor).toFixed(1))
     };
     
@@ -157,7 +158,7 @@ export function IngredientSelector({
               <div>
                 <p className="font-medium">{ingredient.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {ingredient.amount} {ingredient.unit} • {ingredient.calories} {translate("kcal")}
+                  {ingredient.amount} {ingredient.unit} • {ingredient.calories} {language === "ru" ? "ккал" : "kcal"}
                 </p>
               </div>
               <Button 
@@ -171,8 +172,8 @@ export function IngredientSelector({
           ))}
           
           <div className="flex justify-between font-medium p-2">
-            <span>{translate("total")}</span>
-            <span>{totalCalories} {translate("kcal")}</span>
+            <span>{language === "ru" ? "Всего" : "Total"}</span>
+            <span>{totalCalories} {language === "ru" ? "ккал" : "kcal"}</span>
           </div>
         </div>
       ) : (

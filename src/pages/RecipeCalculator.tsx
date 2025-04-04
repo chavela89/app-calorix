@@ -21,9 +21,12 @@ import { RecipeForm } from "@/components/recipe-calculator/RecipeForm";
 import { useLanguage } from "@/context/LanguageContextFixed";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { foodDatabase } from "@/data/foodDatabase";
 
+// Define the Ingredient interface that matches what IngredientSelector expects
 interface Ingredient {
   id: number;
+  foodId: number;
   name: string;
   amount: number;
   unit: string;
@@ -47,16 +50,6 @@ export default function RecipeCalculator() {
   const [cookingTime, setCookingTime] = useState("45");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [totalWeight, setTotalWeight] = useState("1000");
-
-  // Обработчик добавления ингредиента
-  const handleAddIngredient = (ingredient: Ingredient) => {
-    setIngredients(prev => [...prev, ingredient]);
-  };
-
-  // Обработчик удаления ингредиента
-  const handleRemoveIngredient = (id: number) => {
-    setIngredients(prev => prev.filter(i => i.id !== id));
-  };
 
   // Обработчик сохранения рецепта
   const handleSaveRecipe = () => {
@@ -177,20 +170,20 @@ export default function RecipeCalculator() {
             
             <TabsContent value="ingredients" className="space-y-6 mt-6">
               <IngredientSelector 
-                onAddIngredient={handleAddIngredient}
+                foodDatabase={foodDatabase}
                 ingredients={ingredients}
-                onRemoveIngredient={handleRemoveIngredient}
+                setIngredients={setIngredients}
               />
             </TabsContent>
 
             <TabsContent value="recipe" className="space-y-6 mt-6">
               <RecipeForm 
-                instructions={instructions} 
-                setInstructions={setInstructions}
-                selectedTags={selectedTags}
-                setSelectedTags={setSelectedTags}
-                recipeDescription={recipeDescription}
-                setRecipeDescription={setRecipeDescription}
+                recipeName={recipeName}
+                setRecipeName={setRecipeName}
+                servings={servings}
+                setServings={setServings}
+                totalWeight={totalWeight}
+                setTotalWeight={setTotalWeight}
               />
             </TabsContent>
           </Tabs>

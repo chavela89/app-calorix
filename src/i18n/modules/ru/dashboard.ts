@@ -84,5 +84,19 @@ export const dashboard = {
   community: 'Сообщество',
   settings: 'Настройки',
   profile: 'Профиль',
-  logout: 'Выйти'
+  logout: 'Выйти',
+  
+  // Добавляем недостающие переводы
+  hide_lists: 'Скрыть списки',
+  show_lists: 'Показать списки',
+  daily_nutrition_summary: 'Ежедневное питание',
+  weekly: 'Еженедельно',
+  monthly: 'Ежемесячно',
+  yearly: 'Ежегодно',
+  daily_streak: 'Ежедневная активность',
+  days_left: 'дней осталось',
+  follow: 'Подписаться',
+  unfollow: 'Отписаться',
+  message: 'Сообщение',
+  upload_photo: 'Загрузить фото'
 };

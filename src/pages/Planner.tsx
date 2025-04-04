@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContextFixed";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -18,7 +17,7 @@ export default function Planner() {
   const { translate, language } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState("day");
-  const { addFoodToMeal, removeFoodFromMeal, meals } = useNutrition();
+  const { addFoodToMeal, removeFoodFromMeal, todayNutrition } = useNutrition();
   const [shoppingItems, setShoppingItems] = useState([
     { id: 1, name: language === "ru" ? "Куриная грудка (500г)" : "Chicken breast (500g)", checked: true },
     { id: 2, name: language === "ru" ? "Овощи для салата" : "Vegetables for salad", checked: false },
@@ -96,7 +95,6 @@ export default function Planner() {
     }).format(date);
   };
 
-  // Расчет общих макронутриентов за день
   const calculateDailyTotals = () => {
     let totals = { calories: 0, protein: 0, fat: 0, carbs: 0 };
     
@@ -114,7 +112,6 @@ export default function Planner() {
 
   const dailyTotals = calculateDailyTotals();
 
-  // Шаблоны питания для выбора
   const mealTemplates = [
     { id: 1, name: language === "ru" ? "Стандартное питание" : "Standard diet", description: language === "ru" ? "Сбалансированное питание для поддержания веса" : "Balanced diet for weight maintenance" },
     { id: 2, name: language === "ru" ? "Низкоуглеводная диета" : "Low-carb diet", description: language === "ru" ? "Диета с ограничением углеводов для похудения" : "Diet with limited carbs for weight loss" },
@@ -123,7 +120,6 @@ export default function Planner() {
     { id: 5, name: language === "ru" ? "Кето-диета" : "Keto diet", description: language === "ru" ? "Высокожировая и низкоуглеводная диета" : "High-fat and low-carb diet" },
   ];
 
-  // Function to handle adding a food item to a meal plan
   const handleAddFood = (mealType: string) => {
     toast({
       title: translate("add_food"),
@@ -131,7 +127,6 @@ export default function Planner() {
     });
   };
 
-  // Handle food selection from search
   const handleFoodSelect = (food: any, mealType: string) => {
     const newFood: FoodItem = {
       id: Math.random().toString(36).substring(7),
@@ -152,12 +147,10 @@ export default function Planner() {
     });
   };
 
-  // Handler for removing a food item
   const handleRemoveFood = (mealType: string, foodId: string) => {
     removeFoodFromMeal(mealType, foodId);
   };
 
-  // Shopping list handlers
   const handleAddShoppingItem = () => {
     if (newShoppingItem.trim()) {
       setShoppingItems([
@@ -195,7 +188,6 @@ export default function Planner() {
       description: language === "ru" ? "Список покупок сохранен" : "Shopping list saved",
     });
     
-    // Show saved lists after saving
     setShowSavedLists(true);
   };
 
@@ -216,7 +208,6 @@ export default function Planner() {
     }
   };
 
-  // Handler for week view meal plan
   const handleWeekdayMealClick = (day: string, mealType: string) => {
     setEditingMealInfo({ day, mealType });
     
@@ -226,7 +217,6 @@ export default function Planner() {
     });
   };
 
-  // Handler for month view day selection
   const handleMonthDayClick = (day: number) => {
     if (day > 0 && day <= 30) {
       setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
@@ -273,7 +263,6 @@ export default function Planner() {
         </div>
       </div>
 
-      {/* Main tabs content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsContent value="day">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -515,7 +504,6 @@ export default function Planner() {
         </TabsContent>
       </Tabs>
 
-      {/* New Meal Dialog */}
       <Dialog open={showNewMealDialog} onOpenChange={setShowNewMealDialog}>
         <DialogContent>
           <DialogHeader>
@@ -552,7 +540,6 @@ export default function Planner() {
         </DialogContent>
       </Dialog>
 
-      {/* Week Day Meal Edit Dialog */}
       {editingMealInfo && (
         <Dialog open={!!editingMealInfo} onOpenChange={() => setEditingMealInfo(null)}>
           <DialogContent>

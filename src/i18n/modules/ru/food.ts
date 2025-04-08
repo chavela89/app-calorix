@@ -49,5 +49,8 @@ export const food = {
   cancel: 'Отмена',
   g: 'г',
   hide_lists: 'Скрыть списки',
-  show_lists: 'Показать списки'
+  show_lists: 'Показать списки',
+  recently_added: 'Недавно добавленные',
+  food_added: 'Продукт добавлен',
+  added_to: 'добавлен в',
 };

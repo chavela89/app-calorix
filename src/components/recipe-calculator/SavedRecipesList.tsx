@@ -34,11 +34,12 @@ export function SavedRecipesList({ onLoadRecipe }: SavedRecipesListProps) {
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
 
   useEffect(() => {
-    // Загружаем сохраненные рецепты из localStorage при монтировании компонента
+    // Load saved recipes from localStorage when component mounts
     const savedRecipesStr = localStorage.getItem('savedRecipes');
     if (savedRecipesStr) {
       try {
-        setSavedRecipes(JSON.parse(savedRecipesStr));
+        const parsedRecipes = JSON.parse(savedRecipesStr);
+        setSavedRecipes(parsedRecipes);
       } catch (error) {
         console.error("Error parsing saved recipes:", error);
         setSavedRecipes([]);

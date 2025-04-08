@@ -85,4 +85,9 @@ export const general = {
   basic_recipes_description: 'Доступ к основным рецептам',
   water_tracking: 'Отслеживание воды',
   water_tracking_description: 'Учет потребления воды',
+  saved_recipes: 'Сохраненные рецепты',
+  load_recipe: 'Загрузить рецепт',
+  cost: 'Стоимость',
+  servings: 'Порций',
+  min: 'мин',
 };

@@ -1,6 +1,6 @@
 
 import { Badge } from "@/components/ui/badge";
-import { CircleDollarSignIcon, BuildingIcon } from "lucide-react";
+import { CircleDollarSignIcon, UsersIcon } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContextFixed";
 
 interface Ingredient {
@@ -24,11 +24,10 @@ export function RecipeCost({ ingredients, servings }: RecipeCostProps) {
   const { translate } = useLanguage();
   
   const calculateTotalCost = () => {
-    // Более точный расчет стоимости
+    // Improved cost calculation
     return ingredients.reduce((total, ingredient) => {
-      // Предположим, что у каждого ингредиента есть базовая стоимость
-      // В реальном приложении здесь должны быть точные расчеты
-      const baseCost = 25; // базовая стоимость за 100г
+      // Base cost for each ingredient (in real app, this would come from a database)
+      const baseCost = 25; // base cost per 100g
       return total + (ingredient.amount / 100) * baseCost;
     }, 0).toFixed(0);
   };
@@ -44,7 +43,7 @@ export function RecipeCost({ ingredients, servings }: RecipeCostProps) {
       </div>
       
       <Badge variant="secondary" className="flex items-center gap-1">
-        <BuildingIcon className="h-4 w-4" />
+        <UsersIcon className="h-4 w-4" />
         {parseInt(servings) || 1} {translate("servings")}
       </Badge>
     </div>

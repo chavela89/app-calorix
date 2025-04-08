@@ -3,8 +3,20 @@ import { Badge } from "@/components/ui/badge";
 import { CircleDollarSignIcon, BuildingIcon } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContextFixed";
 
+interface Ingredient {
+  id: number;
+  foodId: string;
+  name: string;
+  amount: number;
+  unit: string;
+  calories: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+}
+
 interface RecipeCostProps {
-  ingredients: Array<any>;
+  ingredients: Ingredient[];
   servings: string;
 }
 
@@ -12,8 +24,13 @@ export function RecipeCost({ ingredients, servings }: RecipeCostProps) {
   const { translate } = useLanguage();
   
   const calculateTotalCost = () => {
-    // Placeholder for cost calculation
-    return ingredients.length * 25;
+    // Более точный расчет стоимости
+    return ingredients.reduce((total, ingredient) => {
+      // Предположим, что у каждого ингредиента есть базовая стоимость
+      // В реальном приложении здесь должны быть точные расчеты
+      const baseCost = 25; // базовая стоимость за 100г
+      return total + (ingredient.amount / 100) * baseCost;
+    }, 0).toFixed(0);
   };
 
   return (

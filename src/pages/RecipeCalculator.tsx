@@ -14,7 +14,7 @@ import {
   UsersIcon
 } from "lucide-react";
 import { IngredientSelector, Ingredient } from "@/components/recipe-calculator/IngredientSelector";
-import { NutritionInfo } from "@/components/recipe-calculator/NutritionInfo";
+import { NutritionInfo, SavedRecipe } from "@/components/recipe-calculator/NutritionInfo";
 import { RecipeForm } from "@/components/recipe-calculator/RecipeForm";
 import { useLanguage } from "@/context/LanguageContextFixed";
 import { useNavigate } from "react-router-dom";
@@ -36,37 +36,58 @@ export default function RecipeCalculator() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [totalWeight, setTotalWeight] = useState("1000");
 
-  // Handle saving recipe
+  // Обработчик сохранения рецепта
   const handleSaveRecipe = () => {
     navigate("/recipes");
   };
 
-  // Handle loading saved recipe
-  const handleLoadRecipe = (recipe: any) => {
+  // Обработчик загрузки сохраненного рецепта
+  const handleLoadRecipe = (recipe: SavedRecipe) => {
     if (recipe) {
+      // Установка всех данных рецепта в форму
       setRecipeName(recipe.name);
+      
       if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
         setIngredients(recipe.ingredients);
       }
+      
       setServings(recipe.servings.toString());
       setTotalWeight(recipe.totalWeight.toString());
       
-      // Show notification for successful loading
-      toast({
-        title: translate("recipe_loaded"),
-        description: recipe.name
-      });
+      // Загрузка дополнительных данных рецепта, если они существуют
+      if (recipe.recipeDescription) {
+        setRecipeDescription(recipe.recipeDescription);
+      }
+      
+      if (recipe.instructions && Array.isArray(recipe.instructions)) {
+        setInstructions(recipe.instructions);
+      }
+      
+      if (recipe.selectedTags && Array.isArray(recipe.selectedTags)) {
+        setSelectedTags(recipe.selectedTags);
+      }
+      
+      if (recipe.prepTime) {
+        setPrepTime(recipe.prepTime);
+      }
+      
+      if (recipe.cookingTime) {
+        setCookingTime(recipe.cookingTime);
+      }
+      
+      // Переключение на вкладку ингредиентов после загрузки
+      setActiveTab("ingredients");
     }
   };
 
-  // Function to update total weight
+  // Функция обновления общего веса
   const handleUpdateTotalWeight = () => {
-    // Calculate total weight of ingredients
+    // Расчет общего веса ингредиентов
     const total = ingredients.reduce((sum, ing) => sum + ing.amount, 0);
     setTotalWeight(total.toString());
   };
 
-  // Update total weight when ingredients change
+  // Обновление общего веса при изменении ингредиентов
   useEffect(() => {
     handleUpdateTotalWeight();
   }, [ingredients]);
@@ -186,6 +207,11 @@ export default function RecipeCalculator() {
             recipeName={recipeName}
             servings={servings}
             totalWeight={totalWeight}
+            instructions={instructions}
+            recipeDescription={recipeDescription}
+            selectedTags={selectedTags}
+            prepTime={prepTime}
+            cookingTime={cookingTime}
             onSaveRecipe={handleSaveRecipe}
             onLoadRecipe={handleLoadRecipe}
           />

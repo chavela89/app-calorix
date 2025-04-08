@@ -10,7 +10,7 @@ import { NutritionTabs } from "./NutritionTabs";
 import { RecipeCost } from "./RecipeCost";
 import { SavedRecipesList } from "./SavedRecipesList";
 
-interface Ingredient {
+export interface Ingredient {
   id: number;
   foodId: string;
   name: string;
@@ -22,13 +22,38 @@ interface Ingredient {
   carbs: number;
 }
 
+export interface SavedRecipe {
+  id: number;
+  name: string;
+  ingredients: Ingredient[];
+  servings: number;
+  totalWeight: number;
+  nutrition: {
+    calories: number;
+    protein: number;
+    fat: number;
+    carbs: number;
+  };
+  createdAt: string;
+  instructions?: string[];
+  recipeDescription?: string;
+  selectedTags?: string[];
+  prepTime?: string;
+  cookingTime?: string;
+}
+
 interface NutritionInfoProps {
   ingredients: Ingredient[];
   recipeName: string;
   servings: string;
   totalWeight: string;
+  instructions?: string[];
+  recipeDescription?: string;
+  selectedTags?: string[];
+  prepTime?: string;
+  cookingTime?: string;
   onSaveRecipe: () => void;
-  onLoadRecipe: (recipe: any) => void;
+  onLoadRecipe: (recipe: SavedRecipe) => void;
 }
 
 export function NutritionInfo({ 
@@ -36,6 +61,11 @@ export function NutritionInfo({
   recipeName, 
   servings, 
   totalWeight, 
+  instructions,
+  recipeDescription,
+  selectedTags,
+  prepTime,
+  cookingTime,
   onSaveRecipe,
   onLoadRecipe
 }: NutritionInfoProps) {
@@ -91,31 +121,40 @@ export function NutritionInfo({
       return;
     }
 
-    const newRecipe = {
+    const newRecipe: SavedRecipe = {
       id: Date.now(),
       name: recipeName,
       ingredients,
       servings: parseInt(servings) || 1,
       totalWeight: parseInt(totalWeight) || 1000,
       nutrition: calculateTotalNutrition(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      instructions,
+      recipeDescription,
+      selectedTags,
+      prepTime,
+      cookingTime
     };
 
-    // Get existing recipes from localStorage
+    // Получаем существующие рецепты из localStorage
     const savedRecipesStr = localStorage.getItem('savedRecipes');
     const savedRecipes = savedRecipesStr ? JSON.parse(savedRecipesStr) : [];
     
-    // Add new recipe and save back to localStorage
+    // Добавляем новый рецепт и сохраняем обратно в localStorage
     const updatedRecipes = [...savedRecipes, newRecipe];
     localStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
     
-    // Call the passed handler
+    // Вызываем переданный обработчик
     onSaveRecipe();
     
     toast({
       title: translate("recipe_saved_successfully"),
       description: recipeName
     });
+  };
+
+  const handleLoadRecipe = (recipe: SavedRecipe) => {
+    onLoadRecipe(recipe);
   };
 
   return (
@@ -153,7 +192,7 @@ export function NutritionInfo({
         </CardContent>
       </Card>
 
-      <SavedRecipesList onLoadRecipe={onLoadRecipe} />
+      <SavedRecipesList onLoadRecipe={handleLoadRecipe} />
 
       <Button 
         onClick={handleSaveRecipe}

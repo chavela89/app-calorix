@@ -21,7 +21,7 @@ interface RecipeCostProps {
 }
 
 export function RecipeCost({ ingredients, servings }: RecipeCostProps) {
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
   
   const calculateTotalCost = () => {
     // Improved cost calculation
@@ -32,13 +32,16 @@ export function RecipeCost({ ingredients, servings }: RecipeCostProps) {
     }, 0).toFixed(0);
   };
 
+  // Currency symbol based on language
+  const currencySymbol = language === 'ru' ? '₽' : '$';
+
   return (
     <div className="flex justify-between items-center pt-2 border-t">
       <div className="flex items-center">
         <CircleDollarSignIcon className="h-5 w-5 text-muted-foreground mr-2" />
         <div>
           <p className="text-sm font-medium">{translate("cost")}:</p>
-          <p className="text-lg font-semibold">{calculateTotalCost()} ₽</p>
+          <p className="text-lg font-semibold">{calculateTotalCost()} {currencySymbol}</p>
         </div>
       </div>
       

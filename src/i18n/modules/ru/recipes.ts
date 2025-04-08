@@ -84,5 +84,10 @@ export const recipes = {
   link_copied_to_clipboard: 'Ссылка скопирована в буфер обмена',
   search_recipes: 'Поиск рецептов',
   no_favorite_recipes: 'У вас нет избранных рецептов',
-  no_recipes_found: 'Рецепты не найдены'
+  no_recipes_found: 'Рецепты не найдены',
+  breakfast: 'Завтрак',
+  lunch: 'Обед',
+  dinner: 'Ужин',
+  snack: 'Перекус',
+  error: 'Ошибка'
 };

@@ -82,5 +82,12 @@ export const recipes = {
   carbs: 'Carbs',
   kcal: 'kcal',
   link_copied_to_clipboard: 'Link copied to clipboard',
-  search_recipes: 'Search recipes'
-};
+  search_recipes: 'Search recipes',
+  breakfast: 'Breakfast',
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  snack: 'Snack',
+  error: 'Error',
+  no_favorite_recipes: 'You have no favorite recipes',
+  no_recipes_found: 'No recipes found'
+}

@@ -74,7 +74,7 @@ const RecipeDetail = ({ recipe, isOpen, onClose }: RecipeDetailProps) => {
     if (navigator.share) {
       navigator.share({
         title: recipe.name,
-        text: `${recipe.name} - ${recipe.description}`,
+        text: `${recipe.name} - ${recipe.description || ''}`,
         url: window.location.href
       }).then(() => {
         toast({
@@ -112,17 +112,128 @@ const RecipeDetail = ({ recipe, isOpen, onClose }: RecipeDetailProps) => {
       description: recipe.name
     });
     
-    setTimeout(() => {
-      const content = document.getElementById('recipe-for-print');
-      const originalContents = document.body.innerHTML;
+    try {
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        toast({
+          title: translate("error"),
+          description: "Не удалось открыть окно печати",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      const content = printRef.current;
       
       if (content) {
-        document.body.innerHTML = content.innerHTML;
-        window.print();
-        document.body.innerHTML = originalContents;
-        window.location.reload(); // Перезагружаем страницу после печати
+        printWindow.document.write('<html><head><title>' + recipe.name + '</title>');
+        printWindow.document.write('<style>');
+        printWindow.document.write(`
+          body { font-family: system-ui, sans-serif; line-height: 1.5; padding: 20px; max-width: 800px; margin: 0 auto; }
+          h1 { font-size: 24px; margin-bottom: 10px; }
+          h2 { font-size: 18px; margin: 20px 0 10px; }
+          .recipe-image { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
+          .recipe-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+          .recipe-info-item { padding: 10px; background: #f5f5f5; border-radius: 8px; text-align: center; }
+          .recipe-info-item-title { font-size: 12px; color: #666; }
+          .recipe-info-item-value { font-weight: bold; }
+          .nutrition { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+          .nutrition-item { padding: 10px; background: #f5f5f5; border-radius: 8px; text-align: center; }
+          .ingredients-list { margin: 0; padding: 0 0 0 20px; }
+          .ingredients-list li { margin-bottom: 8px; }
+          .instructions-list { margin: 0; padding: 0 0 0 20px; }
+          .instructions-list li { margin-bottom: 12px; }
+        `);
+        printWindow.document.write('</style></head><body>');
+        
+        // Заголовок
+        printWindow.document.write('<h1>' + recipe.name + '</h1>');
+        
+        // Изображение
+        if (recipe.image) {
+          printWindow.document.write('<img src="' + recipe.image + '" alt="' + recipe.name + '" class="recipe-image" />');
+        }
+        
+        // Информация о рецепте
+        printWindow.document.write('<div class="recipe-info">');
+        printWindow.document.write(`
+          <div class="recipe-info-item">
+            <div class="recipe-info-item-value">${recipe.prepTime} ${translate("min")}</div>
+            <div class="recipe-info-item-title">${translate("preparation_time")}</div>
+          </div>
+          <div class="recipe-info-item">
+            <div class="recipe-info-item-value">${recipe.difficulty || translate("medium")}</div>
+            <div class="recipe-info-item-title">${translate("difficulty")}</div>
+          </div>
+          <div class="recipe-info-item">
+            <div class="recipe-info-item-value">${recipe.calories} ${translate("kcal")}</div>
+            <div class="recipe-info-item-title">${translate("calories")}</div>
+          </div>
+          <div class="recipe-info-item">
+            <div class="recipe-info-item-value">${recipe.servings || 4} ${translate("servings")}</div>
+            <div class="recipe-info-item-title">${translate("servings")}</div>
+          </div>
+        `);
+        printWindow.document.write('</div>');
+        
+        // Пищевая ценность
+        printWindow.document.write('<h2>' + translate("nutritional_value") + '</h2>');
+        printWindow.document.write('<div class="nutrition">');
+        printWindow.document.write(`
+          <div class="nutrition-item">
+            <div>${recipe.protein}г</div>
+            <div>${translate("protein")}</div>
+          </div>
+          <div class="nutrition-item">
+            <div>${recipe.carbs}г</div>
+            <div>${translate("carbs")}</div>
+          </div>
+          <div class="nutrition-item">
+            <div>${recipe.fat}г</div>
+            <div>${translate("fat")}</div>
+          </div>
+        `);
+        printWindow.document.write('</div>');
+        
+        // Ингредиенты
+        printWindow.document.write('<h2>' + translate("ingredients") + '</h2>');
+        printWindow.document.write('<ul class="ingredients-list">');
+        [
+          { name: translate("chicken"), amount: "400g" },
+          { name: translate("olive_oil"), amount: `2 ${translate("tbsp")}` },
+          { name: translate("salt"), amount: translate("to_taste") },
+          { name: translate("black_pepper"), amount: translate("to_taste") },
+          { name: translate("garlic"), amount: `3 ${translate("cloves")}` },
+          { name: translate("lemon"), amount: "1" },
+          { name: translate("rosemary"), amount: `2 ${translate("sprigs")}` }
+        ].forEach(ingredient => {
+          printWindow.document.write('<li><strong>' + ingredient.name + ':</strong> ' + ingredient.amount + '</li>');
+        });
+        printWindow.document.write('</ul>');
+        
+        // Инструкции
+        printWindow.document.write('<h2>' + translate("instructions") + '</h2>');
+        printWindow.document.write('<ol class="instructions-list">');
+        [1, 2, 3, 4, 5].forEach((step) => {
+          printWindow.document.write('<li>' + translate(`recipe_step_${step}`) + '</li>');
+        });
+        printWindow.document.write('</ol>');
+        
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
       }
-    }, 500);
+    } catch (error) {
+      console.error("Printing error:", error);
+      toast({
+        title: translate("error"),
+        description: "Ошибка при подготовке к печати",
+        variant: "destructive"
+      });
+    }
   };
 
   // Обработчик добавления в дневник
@@ -146,6 +257,9 @@ const RecipeDetail = ({ recipe, isOpen, onClose }: RecipeDetailProps) => {
       title: translate("added_to_diary"),
       description: recipe.name
     });
+    
+    // Закрываем диалог после добавления
+    onClose();
   };
 
   return (

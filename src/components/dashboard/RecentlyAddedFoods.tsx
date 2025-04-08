@@ -8,50 +8,50 @@ interface RecentlyAddedFoodsProps {
 }
 
 export function RecentlyAddedFoods({ onFoodSelection }: RecentlyAddedFoodsProps) {
-  const { translate, language } = useLanguage();
+  const { translate } = useLanguage();
   const { recentlyAddedFoods } = useNutrition();
   
   // Fallback to default foods if no recently added foods
   const defaultFoods = [
     {
       id: "1", 
-      name: language === "ru" ? "Куриная грудка" : "Chicken breast", 
+      name: translate("chicken_breast"), 
       calories: 165, 
       proteins: 31, 
       carbs: 0, 
       fats: 3.6,
       amount: 100,
-      unit: "г"
+      unit: translate("g")
     },
     {
       id: "3", 
-      name: language === "ru" ? "Гречка" : "Buckwheat", 
+      name: translate("buckwheat"), 
       calories: 143, 
       proteins: 5.7, 
       carbs: 25, 
       fats: 1.5,
       amount: 100,
-      unit: "г"
+      unit: translate("g")
     },
     {
       id: "4", 
-      name: language === "ru" ? "Творог" : "Cottage cheese", 
+      name: translate("cottage_cheese"), 
       calories: 121, 
       proteins: 18, 
       carbs: 3.3, 
       fats: 5,
       amount: 100,
-      unit: "г"
+      unit: translate("g")
     },
     {
       id: "5", 
-      name: language === "ru" ? "Яблоко" : "Apple", 
+      name: translate("apple"), 
       calories: 52, 
       proteins: 0.3, 
       carbs: 14, 
       fats: 0.2,
       amount: 100,
-      unit: "г"
+      unit: translate("g")
     }
   ];
 

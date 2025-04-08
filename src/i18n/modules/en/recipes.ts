@@ -81,4 +81,6 @@ export const recipes = {
   fat: 'Fat',
   carbs: 'Carbs',
   kcal: 'kcal',
+  link_copied_to_clipboard: 'Link copied to clipboard',
+  search_recipes: 'Search recipes'
 };

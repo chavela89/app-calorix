@@ -44,6 +44,8 @@ export default function RecipeCalculator() {
   // Обработчик загрузки сохраненного рецепта
   const handleLoadRecipe = (recipe: SavedRecipe) => {
     if (recipe) {
+      console.log("Loading recipe:", recipe);
+      
       // Установка всех данных рецепта в форму
       setRecipeName(recipe.name);
       
@@ -77,6 +79,11 @@ export default function RecipeCalculator() {
       
       // Переключение на вкладку ингредиентов после загрузки
       setActiveTab("ingredients");
+      
+      toast({
+        title: translate("recipe_loaded"),
+        description: recipe.name
+      });
     }
   };
 

@@ -53,4 +53,10 @@ export const food = {
   recently_added: 'Недавно добавленные',
   food_added: 'Продукт добавлен',
   added_to: 'добавлен в',
+  
+  // Добавляем названия продуктов
+  chicken_breast: 'Куриная грудка',
+  buckwheat: 'Гречка',
+  cottage_cheese: 'Творог',
+  apple: 'Яблоко'
 };
